@@ -11,9 +11,7 @@ ENV PYTHONUNBUFFERED=1
 
 # Install python packages
 COPY Pipfile* .
-RUN pip install --user pipenv && \
-    export PATH="$PATH:$(python -m site --user-base)/bin" && \
-    pipenv install
+RUN pip install pipenv && pipenv install
 
 # Copy files
 WORKDIR /app
