@@ -10,13 +10,17 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install python packages
-COPY Pipfile* .
-RUN pip install --user pipenv && \
-    export PATH="$PATH:$(python -m site --user-base)/bin" && \
-    pipenv install
+RUN pip install poetry
+
+# Copy only requirements to cache them in docker layer
+WORKDIR /app
+COPY poetry* pyproject* /app/
+
+# Project initialization
+RUN poetry config virtualenvs.create false && \
+    poetry install --no-root --no-interaction --no-ansi
 
 # Copy files
-WORKDIR /app
 COPY . /app
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
