@@ -13,10 +13,10 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install poetry
 
 # Set current working directory
-WORKDIR /workspace/project
+WORKDIR /workspace
 
 # Copy only requirements to cache them in docker layer
-COPY project/poetry* project/pyproject* ./
+COPY poetry* pyproject* /workspace/
 
 # Project initialization
 RUN poetry config virtualenvs.create false && \
@@ -31,5 +31,5 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
-# CMD ["python", "project/manage.py", "runserver", "0.0.0.0:8000"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
