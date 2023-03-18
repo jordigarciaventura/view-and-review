@@ -1,10 +1,12 @@
 version: '3.4'
 
 services:
-  viewandreview:
-    image: viewandreview
+  django:
+    image: django
     build:
       context: .
       dockerfile: ./Dockerfile
     ports:
       - 8000:8000
+    volumes:
+      - .:/workspace
