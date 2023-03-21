@@ -30,3 +30,7 @@ Add a python package:
 ```
 poetry add <package>
 ```
+
+### Environment variables
+Copy [`.env.template`](project/.env.template) as `.env` and feel free to modify it.
+If you add new variables ensure to add them to the template.
