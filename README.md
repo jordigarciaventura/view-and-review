@@ -1,20 +1,28 @@
 # view-and-review
 
 ## Development
-### Docker
-Build and run a dettached container:
+
+> Use `TAB` for autocomplete and double `TAB` to list commands and containers.
+
+### Docker Compose
+Build and run:
 ```
-docker compose up --build -d
+docker compose up --build
 ```
 
-Capture logs from the container:
+List running containers:
 ```
-docker compose logs -f django
+docker compose ps
 ```
 
-Run bash inside the container:
+Develop inside a running container:
 ```
-docker compose exec django bash
+docker compose exec <container> bash
+```
+
+Stop and remove services:
+```
+docker compose down
 ```
 
 ### Poetry
