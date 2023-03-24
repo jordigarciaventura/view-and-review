@@ -1,3 +1,23 @@
 from django.db import models
 
 # Create your models here.
+class Film(models.Model):
+    ...
+    
+class Actor(models.Model):
+    ...
+    
+class Director(models.Model):
+    ...
+    
+class Language(models.Model):
+    ...
+    
+class Genre(models.Model):
+    ...    
+    
+class Rating(models.Model):     
+    ...
+    
+class Review(models.Model):
+    ...
