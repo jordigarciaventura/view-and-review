@@ -1,0 +1,13 @@
+{% extends "web/base_generic.html" %}
+
+{% block content %}
+  <h1>Main Page</h1>
+  <h2>Dynamic content</h2>
+  <p>We have the following films:</p>
+  <ul>
+    {% for film in films %}
+      <li><a href={% url 'film' film.id %}><strong>{{ film.title }}</strong></li>
+    {% endfor %}
+  </ul>   
+{% endblock %}
+
