@@ -1,10 +1,14 @@
 {% extends "web/base_generic.html" %}
 
 {% block content %}
-  <h1>Description:</h1>
-  <h2>{{ film.title }}</h2>
-  <h2>{{ film.release_date }}</h2>
-  <h2>{{ film.duration }}</h2>
-  <h2>{{ film.plot }}</h2>
-{% endblock %}
+  <h1>{{ film.title }}</h1>
+  <p><strong>Duration:</strong> {{ film.duration }}</p>
+  <p><strong>Release Date:</strong> {{ film.release_date }}</p>
 
+  <p><strong>Plot:</strong> {{ film.plot }}</p>
+  <p><strong>Actors:</strong> {{ film.actors.all|join:", " }}</p>
+  <p><strong>Directors:</strong> {{ film.directors.all|join:", " }}</p>
+  <p><strong>Language:</strong> {{ film.languages.all|join:", " }}</p>
+  <p><strong>Genre:</strong> {{ film.genres.all|join:", " }}</p>
+
+{% endblock %}
