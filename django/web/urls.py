@@ -4,6 +4,6 @@ from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('film/<id>', views.film, name='film'),
+    path('film/<pk>', views.FilmView.as_view(), name='film'),
     # path('accounts/', include())
 ]
