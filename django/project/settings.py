@@ -11,26 +11,21 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
-import environ
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Initialize environment variables
-env = environ.Env()
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = os.environ.get('SECRET_KEY', "q5^1o5nuuy#rf*(@)76_1)&0!lqo+%*b#jg+rg0r(y&q4jzya6")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = int(os.environ.get("DEBUG", 1))
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', "localhost").split(' ')
 
 
 # Application definition
@@ -47,6 +42,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,12 +77,12 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env('DB_NAME'),
-        "USER": env('DB_USER'),
-        "PASSWORD": env('DB_PASS'),
-        "HOST": env('DB_HOST'),     # set in docker-compose.yml
-        "PORT": env('DB_PORT'),     # default postgres port
+        "ENGINE": os.environ.get('DB_ENGINE', "django.db.backends.sqlite3"),
+        "NAME": os.environ.get('DB_NAME', BASE_DIR / "db.sqlite3"),
+        "USER": os.environ.get('DB_USER', "user"),
+        "PASSWORD": os.environ.get('DB_PASS', "password"),
+        "HOST": os.environ.get('DB_HOST', "localhost"),     # set in docker-compose.yml
+        "PORT": os.environ.get('DB_PORT', "5432"),     # default postgres port
         "CONN_MAX_AGE": 60          # don't close connection after X seconds
     }
 }
@@ -127,6 +123,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static'
+# ]
+
+STATIC_ROOT = BASE_DIR / 'staticfiles' # Tell Django to copy statics to the `staticfiles` directory
+
+if not DEBUG:
+    # Turn on WhiteNoise storage backend that takes care of compressing static files
+    # and creating unique names for each version so they can safely be cached forever.
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
