@@ -1,4 +1,3 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
 FROM python:3.10-slim
 
 EXPOSE 8000
@@ -13,23 +12,27 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install poetry
 
 # Set current working directory
-WORKDIR /workspace
+WORKDIR /app
 
 # Copy only requirements to cache them in docker layer
-COPY poetry* pyproject* /workspace/
+COPY poetry* pyproject* ./
 
 # Project initialization
 RUN poetry config virtualenvs.create false && \
     poetry install --no-root --no-interaction --no-ansi
 
 # Copy files
-COPY . /workspace
+COPY . .
+
+# Propagate changes in database schema
+RUN python manage.py migrate --no-input
+
+# Collect the static files into STATIC_ROOT (settings.py)
+RUN python manage.py collectstatic --noinput --clear
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /workspace
+RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
 USER appuser
 
-# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-# CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
-# CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
