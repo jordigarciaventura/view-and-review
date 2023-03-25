@@ -14,4 +14,4 @@ def index(request):
 
 class FilmView(generic.DetailView):
     template_name = 'web/film.html'    
-    model = Film    
+    model = Film
