@@ -5,8 +5,6 @@
 
 ## Run Locally
 
-> Copy `secrets/*.template` files without the `.template` suffix.
-
 Development
 ```
 docker compose up --build
@@ -21,7 +19,7 @@ docker compose -f docker-compose.prod.yml up  --build
 
 ||Development|Production|
 |--|--|--|
-| Web app | django | django
-| WSGI      | django bulit-in | gunicorn
-| Database  | postgreSQL| postgreSQL
-| Web Server | -| nginx
+| **Web app** | django | django
+| **WSGI**      | django bulit-in | gunicorn
+| **Database**  | postgreSQL| postgreSQL
+| **Web Server** | -| nginx
