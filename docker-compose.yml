@@ -12,7 +12,7 @@ services:
     volumes:
       - ./django/:/app/django
     env_file:
-      - secrets/.env
+      - secrets/.env.dev
     links:
       - db
     depends_on:
@@ -25,7 +25,7 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - secrets/.env
+      - secrets/.env.dev
 
 volumes:
   postgres_data:

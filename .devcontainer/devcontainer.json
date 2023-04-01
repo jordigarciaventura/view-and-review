@@ -16,7 +16,7 @@
 
 	// The optional 'workspaceFolder' property is the path VS Code should open by default when
 	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/app/django",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
@@ -32,6 +32,9 @@
 	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
 	// "shutdownAction": "none",
 
+	// Copy secret templates
+	// "initializeCommand": "find secrets/ -type f | sed 's/.template//g' | xargs -i  cp -u {}.template {}",
+
 	// Uncomment the next line to run commands after the container is created.
 	"postCreateCommand": "git config --global --add safe.directory /app",
 
@@ -40,11 +43,8 @@
 		"vscode": {
 			"extensions": ["ms-python.python", "mhutchie.git-graph"]
 		}
-	},
-
-	// Don't run Docker commands
-	"overrideCommand": true,
+	}
 
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "appuser"
+	// "remoteUser": "devcontainer"
 }
