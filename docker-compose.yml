@@ -1,16 +1,18 @@
-version: '3.8'
+version: "3.8"
 
 services:
   app:
     image: django
-    build: ./django
+    build:
+      context: ./django
+      target: dev
     ports:
       - 8000:8000
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./django/:/app/
+      - ./django/:/app/django
     env_file:
-      - .env/.env
+      - secrets/.env.dev
     links:
       - db
     depends_on:
@@ -23,13 +25,7 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - .env/.env
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
-      interval: 1s
-      timeout: 60s
-      retries: 5
-      start_period: 80s
+      - secrets/.env.dev
 
 volumes:
   postgres_data:
