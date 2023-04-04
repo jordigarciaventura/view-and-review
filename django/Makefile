@@ -6,3 +6,9 @@ migrations:
 
 migrate:
 	python /app/django/manage.py migrate --no-input
+
+static:
+	python /app/django/manage.py collectstatic --no-input
+
+clean:
+	rm -rf staticfiles
