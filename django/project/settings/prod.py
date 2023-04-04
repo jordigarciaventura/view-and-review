@@ -6,9 +6,9 @@ from .base import *
 SECURE_BROWSER_XSS_FILTER = True
 
 # CSP
-MIDDLEWARE += {
+MIDDLEWARE += [
     'csp.middleware.CSPMiddleware'
-}
+]
 
 CSP_DEFAULT_SRC = ("'self'",)
 CSP_SCRIPT_SRC = ("'self'",)
