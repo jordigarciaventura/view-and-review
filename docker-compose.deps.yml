@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    image: django
+    build:
+      context: ./django
+      target: base
+    command: bash -cx "python manage.py migrate --no-input && gunicorn --bind 0.0.0.0:8000 project.wsgi"
+    restart: always
+    volumes:
+      - ./django/:/app/django
+    expose:
+      - 8000
+    env_file:
+      - secrets/.env.deps
+    links:
+      - db
+    depends_on:
+      - db
+  db:
+    image: postgres:13.0-alpine
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - secrets/.env.deps
+  server:
+    image: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.https
+    restart: on-failure
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - app
+
+volumes:
+  postgres_data:
