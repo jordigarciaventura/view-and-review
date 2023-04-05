@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Actor(models.Model):
@@ -24,12 +25,9 @@ class Genre(models.Model):
     
     def __str__(self):
         return self.name  
+
     
-class Rating(models.Model):     
-    ...
-    
-class Review(models.Model):
-    ...
+ 
     
 class Film(models.Model):
     title = models.CharField(max_length=64)
@@ -44,3 +42,21 @@ class Film(models.Model):
     
     def __str__(self):
         return self.title
+        
+class Rating(models.Model):     
+    score_choices = ((0, 0), (0.5, 0.5), (1, 1), (1.5, 1.5), (2, 2), (2.5, 2.5), (3, 3), (3.5, 3.5), (4, 4), (4.5, 4.5), (5, 5))
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
+    film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
+    site = models.URLField(default="")
+    score = models.DecimalField(decimal_places=1, max_digits=2, choices=score_choices)    
+    
+    def __str__(self) -> str:
+        return str(self.user) + " " + str(self.score) 
+    
+class Review(models.Model):
+    film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
+    rating = models.ForeignKey(Rating, on_delete=models.CASCADE, default="")
+    body = models.CharField(max_length=1024, default="")
+
+    def __str__(self):
+        return self.rating.__str__() + " " + self.body   

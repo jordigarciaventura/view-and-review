@@ -1,4 +1,5 @@
-FROM python:3.10-slim
+# BASE IMAGE
+FROM python:3.10-slim AS base
 
 EXPOSE 8000
 
@@ -12,7 +13,7 @@ ENV PYTHONUNBUFFERED=1
 RUN pip install poetry
 
 # Set current working directory
-WORKDIR /app
+WORKDIR /app/django
 
 # Copy only requirements to cache them in docker layer
 COPY poetry* pyproject* ./
@@ -32,7 +33,12 @@ RUN python manage.py collectstatic --noinput --clear
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser /app
+FROM dev AS prod
+RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser .
 USER appuser
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
+# DEVELOPMENT IMAGE
+FROM base AS dev
+
+RUN apt update && \
+    apt install -y make
