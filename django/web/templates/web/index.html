@@ -1,32 +1,7 @@
-<!DOCTYPE html>
-<html>
+{% extends "base_generic.html" %}
+{% load static %}
 
-<head lang="en">
-  <title>View&Review</title>
-  {% load static %}
-  <link rel="shortcut icon" href="{% static 'logo/logo.png' %}" />
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-</head>
-
-
-<body>
-
-<div class="black_logo_banner">
-<div class="login"><u>Login/Sign Up</u></div>
-</div>
-
-<img src="{% static 'logo/extended_logo.png' %}" class="img_logo">
-</img>
-
-<div class="menu_bar">
-  <ul class="menu">
-    <li><a class="text_menu" href="page.html">Home</a></li>
-    <li><a class="text_menu" href="#">Trending</a></li>
-    <li><a class="text_menu" href="Categories.html">Categories</a></li>
-    <li><a class="text_menu" href="#">My List</a> </li>
-  </ul>
-</div>
-
+{% block content %}
 <div class="white_search_bar">
   <div class="search_bar">
     <input type="text" placeholder=" Search movies, actors, genres...">
@@ -97,25 +72,4 @@
   <div class="copyright">Copyright © View&Review. All rights reserved.</div>
 </div>
 
-<!--
-<div class="large_space">
-  <div class="title_text"><b>
-    Most Searched Categories
-  </b></div>
-  <div class="text_down">
-    <div class="">▸Oscar Winners 2023</div>
-    <div class="">▸Movies Based on Comics</div>
-  </div>
-  <div class="text_down">
-    <div class="">▸Best Rated Films</div>
-    <div class="">▸Best Horror Movies</div>
-  </div>
-  <div class="text_down">
-    <div class="">▸Top Christopher Nolan Films</div>
-    <div class="">▸Most Viewed Films</div>
-  </div>
-</div>
--->
-
-</body>
-</html>
+{% endblock %}

@@ -88,6 +88,8 @@ ccc {
 
 .white_search_bar{
     background-image: url("/static/mammamia.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
     background-attachment: fixed;    
     height: 280px;
     object-fit: contain;
