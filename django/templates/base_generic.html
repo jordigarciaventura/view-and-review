@@ -6,14 +6,14 @@
   {% block title %}<title>View&Review</title>{% endblock %}
   {% load static %}
   <link rel="shortcut icon" href="{% static 'logo/logo.png' %}" />
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'css/generic.css' %}">
 </head>
 
 
 <body>
   {% block login %}
   <div class="black_logo_banner">
-    <div class="login"><u>Login/Sign Up</u></div>
+    <div class="login"><a class="login_text" href={% url 'login' %}><u>Login</u></div>
   </div>
   {% endblock %}
 

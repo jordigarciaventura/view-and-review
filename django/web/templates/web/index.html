@@ -1,7 +1,10 @@
 {% extends "base_generic.html" %}
-{% load static %}
 
 {% block content %}
+
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+
 <div class="white_search_bar">
   <div class="search_bar">
     <input type="text" placeholder=" Search movies, actors, genres...">
