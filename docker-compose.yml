@@ -5,10 +5,9 @@ services:
     image: django
     build:
       context: ./django
-      target: dev
+      dockerfile: Dockerfile.dev
     ports:
       - 8000:8000
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./django/:/app/django
     env_file:
