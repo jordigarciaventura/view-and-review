@@ -15,3 +15,6 @@ def index(request):
 class FilmView(generic.DetailView):
     template_name = 'web/film.html'    
     model = Film
+    
+class LogoutView(generic.TemplateView):
+    template_name = 'registration/logout.html'
