@@ -6,6 +6,11 @@
     color: red;
 }
 
+h1 {
+	text-align: center;
+    margin-bottom: 20px;
+}
+
 .login-container {
 	max-width: 400px;
 	margin: 0 auto;
@@ -24,8 +29,13 @@ label {
 	margin-bottom: 5px;
 }
 
-td[type="text"],
-td[type="password"] {
+table {
+	width: 100%;
+	padding: 0px;
+}
+
+input[type="text"],
+input[type="password"] {
 	width: 100%;
 	padding: 10px;
 	border-radius: 5px;
