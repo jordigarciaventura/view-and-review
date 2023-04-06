@@ -28,7 +28,7 @@ COPY . .
 RUN python manage.py collectstatic --noinput --clear
 
 # Apply database migrations
-# RUN python manage.py migrate --noinput
+RUN python manage.py migrate --noinput
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
