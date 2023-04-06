@@ -9,7 +9,6 @@ services:
     region: frankfurt
     branch: main
     rootDir: django
-    dockerCommand: ./run.sh
     healthCheckPath: /
     envVars:
       - key: DEBUG
