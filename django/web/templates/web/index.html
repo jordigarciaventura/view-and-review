@@ -16,9 +16,10 @@
     <ccc>❚</ccc>Recommendations
   </b></div>
   
-  <div class="movie_container"> 
-    <img src="https://th.bing.com/th/id/OIP.cd7rK-ogsdTwxkmopS9OlwAAAA?pid=ImgDet&rs=1" class="movie_cover">
-    </img>
+  <div class="movie_container">
+    {% for film in films %}
+      <a href=""><img src={{ film.photo_url }} class="movie_cover"></img></a>
+    {% endfor %}
     <img src="https://th.bing.com/th/id/R.fd8a92ef5d9d8c7db80c7b8edcfcab01?rik=FwTL2j8UgEhyxA&riu=http%3a%2f%2ffr.web.img6.acsta.net%2fpictures%2f210%2f412%2f21041261_20130918111051913.jpg&ehk=UUnUpk0VBWv%2fuRufPKZc7%2babzAa4KENjpSOeAhmKOz4%3d&risl=&pid=ImgRaw&r=0" class="movie_cover">
     </img>
     <img src="https://pics.filmaffinity.com/Creed_III-358416025-large.jpg" class="movie_cover">

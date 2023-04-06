@@ -4,8 +4,8 @@ from django.views import generic
 from web.models import Film 
 
 # Create your views here.
-def index(request):    
-    films = Film.objects.all()
+def index(request): 
+    films = Film.objects.all()[:5]
     context = {
         'films': films,
     }
