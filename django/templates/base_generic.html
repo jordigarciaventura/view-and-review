@@ -16,7 +16,8 @@
       {% if user.is_authenticated %}
         <a class="login_text" href={% url 'logout' %}><u>Logout</u></a>
       {% else %}  
-        <a class="login_text" href={% url 'login' %}><u>Login</u></a>
+        <a class="login_text" href={% url 'login' %}><u>Login</u></a> /
+        <a class="login_text" href={% url 'register' %}><u>Register</u></a>
       {% endif %}
       </div>
   </div>

@@ -20,6 +20,8 @@
       <button type="submit" value="login">Login</button>
     </form>
     <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
+	  <p class="text-center">Don't have an account? <a href="{% url 'register' %}">Register</a> instead.</p>
+
     {% if form.errors %}
       <p class="warning">Your username and password didn't match. Please try again.</p>
     {% endif %}
