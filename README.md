@@ -15,7 +15,7 @@
 ### Deployment
 1. Run the containers:
     ```
-    docker compose -f docker-compose.dep.yml up  --build
+    docker compose -f docker-compose.dep.yml up --build
     ```
 2. Visit http://localhost
 
@@ -36,7 +36,7 @@
     ```
 4. Run the containers:
     ```
-    docker compose -f docker-compose.deps.yml up  --build
+    docker compose -f docker-compose.deps.yml up --build
     ```
 5. Visit https://localhost
 
