@@ -1,0 +1,47 @@
+services:
+  - type: web
+    name: view-and-review
+    env: docker
+    dockerfilePath: Dockerfile
+    dockerContext: .
+    repo: https://github.com/GEI-WP/view-and-review
+    region: frankfurt
+    branch: main
+    rootDir: django
+    dockerCommand: ./run.sh
+    healthCheckPath: /
+    envVars:
+      - key: DEBUG
+        value: 0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DB_ENGINE
+        value: django.db.backends.postgresql
+      - key: DB_NAME
+        fromDatabase:
+          name: view-and-review-db
+          property: database   
+      - key: DB_USER
+        fromDatabase:
+          name: view-and-review-db
+          property: user       
+      - key: DB_PASS
+        fromDatabase:
+          name: view-and-review-db
+          property: password              
+      - key: DB_HOST
+        fromDatabase:
+          name: view-and-review-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: view-and-review-db
+          property: port
+      - key: DJANGO_SETTINGS_MODULE
+        value: project.settings
+
+databases:
+  - name: view-and-review-db
+    region: frankfurt
+    databaseName: viewandreview
+    postgresMajorVersion: 15
