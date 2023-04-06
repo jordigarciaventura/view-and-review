@@ -12,7 +12,13 @@
 <body>
   {% block login %}
   <div class="black_logo_banner">
-    <div class="login"><a class="login_text" href={% url 'login' %}><u>Login</u></div>
+    <div class="login">
+      {% if user.is_authenticated %}
+        <a class="login_text" href={% url 'logout' %}><u>Logout</u></a>
+      {% else %}  
+        <a class="login_text" href={% url 'login' %}><u>Login</u></a>
+      {% endif %}
+      </div>
   </div>
   {% endblock %}
 
