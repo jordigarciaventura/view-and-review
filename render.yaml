@@ -41,7 +41,7 @@ services:
           name: view-and-review-db
           property: port
       - key: DJANGO_SETTINGS_MODULE
-        value: project.settings
+        value: project.settings.deps
 
 databases:
   - name: view-and-review-db
