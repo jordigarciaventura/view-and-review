@@ -138,5 +138,6 @@ if not DEBUG:
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'logout-page'
 # To test password reset emailing (writes the mail in console instead)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 

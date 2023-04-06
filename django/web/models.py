@@ -34,6 +34,7 @@ class Film(models.Model):
     release_date = models.DateField()
     duration = models.IntegerField()
     plot = models.CharField(max_length=512)
+    photo_url = models.URLField(default="")
     
     directors = models.ManyToManyField(Director)
     languages = models.ManyToManyField(Language)
