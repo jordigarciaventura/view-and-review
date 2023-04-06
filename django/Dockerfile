@@ -34,4 +34,4 @@ ENTRYPOINT [ "./entrypoint.sh" ]
 RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser .
 USER appuser
 
-CMD gunicorn --bind 0.0.0.0:8000 project.wsgi
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
