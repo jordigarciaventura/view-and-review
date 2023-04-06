@@ -5,7 +5,7 @@ services:
     env: docker
     dockerfilePath: Dockerfile
     dockerContext: .
-    dockerCommand: ./django/entrypoint.sh gunicorn --bind 0.0.0.0:8000 project.wsgi
+    dockerCommand: /bin/bash -c python manage.py migrate --noinput && python manage.py collectstatic --noinput --clear && gunicorn --bind 0.0.0.0:8000 project.wsgi
     repo: https://github.com/GEI-WP/view-and-review
     region: frankfurt
     branch: main
