@@ -147,25 +147,6 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'logs.log',
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers':['file'],
-            'propagate': True,
-            'level':'DEBUG',
-        },
-        'web': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-        },
-    },
     'formatters': {
         'verbose': {
             'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
@@ -174,5 +155,36 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/debug.log',
+            'backupCount': 10,
+            'formatter': 'verbose',
+            'maxBytes': 5242880, # 5MB
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        '': {
+            'handlers': ['file'],
+        }
     }
 }
