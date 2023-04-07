@@ -56,6 +56,7 @@ class Rating(models.Model):
     
 class Review(models.Model):
     film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
     rating = models.ForeignKey(Rating, on_delete=models.CASCADE, default="")
     body = models.CharField(max_length=1024, default="")
 
