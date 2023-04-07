@@ -10,7 +10,7 @@ MIDDLEWARE += [
     'csp.middleware.CSPMiddleware'
 ]
 
-CSP_DEFAULT_SRC = ("'self'",)
+CSP_DEFAULT_SRC = ("'none'",)
 CSP_SCRIPT_SRC = ("'self'",)
 CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net",)
 CSP_IMG_SRC = ("'self'", "https://m.media-amazon.com", "https://th.bing.com", "https://pics.filmaffinity.com", "https://i.ebayimg.com")
