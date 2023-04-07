@@ -7,8 +7,6 @@ services:
       context: ./django
       dockerfile: Dockerfile
     restart: always
-    volumes:
-      - ./django/:/app/django
     expose:
       - 8000
     env_file:
