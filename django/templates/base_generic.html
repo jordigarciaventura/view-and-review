@@ -14,7 +14,7 @@
   <div class="black_logo_banner">
     <div class="login">
       {% if user.is_authenticated %}
-        <a class="login_text" href={% url 'logout' %}><u>Logout</u></a>
+        <p>Hello, <i>{{ user.username }}</i>. <a class="login_text" href={% url 'logout' %}><u>Logout</u></a></p>
       {% else %}  
         <a class="login_text" href={% url 'login' %}><u>Login</u></a> /
         <a class="login_text" href={% url 'register' %}><u>Register</u></a>
@@ -30,7 +30,7 @@
     <ul class="menu">
       <li><a class="text_menu" href="/">Home</a></li>
       <li><a class="text_menu" href="#">Trending</a></li>
-      <li><a class="text_menu" href="Categories.html">Categories</a></li>
+      <li><a class="text_menu" href="#">Categories</a></li>
       <li><a class="text_menu" href="#">My List</a> </li>
     </ul>
   </div>
