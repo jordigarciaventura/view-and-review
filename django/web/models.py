@@ -44,12 +44,11 @@ class Film(models.Model):
     def __str__(self):
         return self.title
         
+SCORE_CHOICES = ((0, 0), (0.5, 0.5), (1, 1), (1.5, 1.5), (2, 2), (2.5, 2.5), (3, 3), (3.5, 3.5), (4, 4), (4.5, 4.5), (5, 5))
 class Rating(models.Model):     
-    score_choices = ((0, 0), (0.5, 0.5), (1, 1), (1.5, 1.5), (2, 2), (2.5, 2.5), (3, 3), (3.5, 3.5), (4, 4), (4.5, 4.5), (5, 5))
     user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
-    film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
-    site = models.URLField(default="")
-    score = models.DecimalField(decimal_places=1, max_digits=2, choices=score_choices)    
+    film = models.ForeignKey(Film, on_delete=models.CASCADE, default="")
+    score = models.DecimalField(decimal_places=1, max_digits=2, choices=SCORE_CHOICES)
     
     def __str__(self) -> str:
         return str(self.user) + " " + str(self.score) 
