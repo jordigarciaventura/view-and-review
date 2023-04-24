@@ -17,7 +17,7 @@
     <div class="login">
       {% if user.is_authenticated %}
         <p>Hello, <i>{{ user.username }}</i>. <a class="login_text" href={% url 'logout' %}><u>Logout</u></a></p>
-      {% else %}  
+      {% else %}
         <a class="login_text" href={% url 'login' %}><u>Login</u></a> /
         <a class="login_text" href={% url 'register' %}><u>Register</u></a>
       {% endif %}
