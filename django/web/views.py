@@ -32,9 +32,9 @@ def RegisterView(request):
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
 class RatingView(FormView):
-    template_name = 'rating.html'
+    template_name = 'web/rating.html'
     form_class = RatingForm
-    success_url = '/'
+    success_url = 'web/rating_success.html'
 
     def form_valid(self, form):
         # Method called when valid form data is POSTED
