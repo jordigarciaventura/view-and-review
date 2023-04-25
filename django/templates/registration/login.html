@@ -38,7 +38,7 @@
                 <input type="hidden" name="next" value="{{ next }}" />
                 <div class="mb-3">
                   <button
-                    class="btn btn-primary d-block w-100"
+                    class="btn btn-primary d-block w-100 main-button"
                     type="submit"
                     value="login"
                     style=""
@@ -46,13 +46,13 @@
                     <strong>Login</strong>
                   </button>
                 </div>
-                <a href="{% url 'password_reset' %}"
+                <a class="text-decoration-none" href="{% url 'password_reset' %}"
                   ><p class="text-muted">Forgot your password?</p></a
                 >
               </form>
             </div>
 
-            <div class="text-center alert-danger p-auto">
+            <div class="text-justify alert-danger p-auto">
               {% if form.errors %}
               <small class="warning">
                 Your username and password didn't match. Please try again.

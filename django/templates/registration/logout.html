@@ -2,9 +2,26 @@
 
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/registration/logout.css' %}">
+
 <div class="container">
-  <p>Logged out!</p>
-  <a href="{% url 'login'%}">Click here to login again</a><small> or </small><a href="{% url 'index' %}">go to the main page</a>.
+  <section class="py-4 py-xl-5">
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-md-8 col-xl-6 text-center mx-auto">
+          <h2>Logged out</h2>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-center">
+        {% comment %} <div class="col-md-6 col-xl-4">
+          <div class="card mb-5"> {% endcomment %}
+            <div class="card-body d-flex flex-column align-items-center">
+              <a href="{% url 'login'%}">Click here to login again</a><small> or </small><a href="{% url 'index' %}">go to the main page.</a>
+            {% comment %} </div>
+          </div> {% endcomment %}
+        </div>
+      </div>
+    </div>
+  </section>
 </div>
+
 {% endblock %}
