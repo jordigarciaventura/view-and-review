@@ -8,6 +8,7 @@ services:
       target: dev
     ports:
       - 8000:8000
+      - 587:587
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./django/:/app/django
