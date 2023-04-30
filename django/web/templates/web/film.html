@@ -11,4 +11,8 @@
   <p><strong>Language:</strong> {{ film.languages.all|join:", " }}</p>
   <p><strong>Genre:</strong> {{ film.genres.all|join:", " }}</p>
 
+  {% for rating in film.rating_set.all %}
+    <p>{{rating.user}}  {{rating.score}}</p>
+  {% endfor%}
+
 {% endblock %}

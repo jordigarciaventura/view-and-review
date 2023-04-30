@@ -14,7 +14,7 @@ class IndexView(generic.TemplateView):
 
 class FilmView(generic.DetailView):
     template_name = 'web/film.html'    
-    model = Film
+    model = Film       
     
 class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
@@ -34,7 +34,6 @@ def RegisterView(request):
 class RatingView(FormView):
     template_name = 'web/rating.html'
     form_class = RatingForm
-    success_url = 'web/rating_success.html'
 
     def form_valid(self, form):
         # Method called when valid form data is POSTED
@@ -47,4 +46,5 @@ class RatingView(FormView):
             old_rating.update(score=rating.score)
         else:
             rating.save()
+        self.success_url = self.request.META.get('HTTP_REFERER')
         return super().form_valid(form)
