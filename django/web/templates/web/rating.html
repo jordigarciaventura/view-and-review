@@ -1,15 +1,17 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-{% load static %}
+
 
 <div class="container">
-    <h1>Rating</h1>
-    <form action="" method="post" class="mb-3">
-        {% csrf_token %}
+    <section class="py-4 py-xl-5">
+        <div class="container">
+          <div class="row mb-5">
+            <div class="col-md-8 col-xl-6 text-center mx-auto">
+                <h2>Succesfully added a rating to <strong>{{film.title}}</strong></h2>
+            </div>
+        </div>
+    </section>
+</div>
 
-        {{ form.as_p }}
-
-        <input type="submit" value="Submit" />
-    </form>
 {% endblock %}

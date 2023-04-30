@@ -11,6 +11,18 @@
   <p><strong>Language:</strong> {{ film.languages.all|join:", " }}</p>
   <p><strong>Genre:</strong> {{ film.genres.all|join:", " }}</p>
 
+  <form action="{% url 'rating' %}" method="POST" class="mb-3">
+    {% csrf_token %}
+
+    <div hidden>
+      {{ form.film }}
+    </div>
+
+    {{ form.score }}
+
+    <input type="submit" value="Submit" />
+</form>
+
   {% for rating in film.rating_set.all %}
     <p>{{rating.user}}  {{rating.score}}</p>
   {% endfor%}
