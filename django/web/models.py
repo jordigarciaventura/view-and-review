@@ -25,9 +25,6 @@ class Genre(models.Model):
     
     def __str__(self):
         return self.name  
-
-    
- 
     
 class Film(models.Model):
     title = models.CharField(max_length=64)
@@ -49,14 +46,7 @@ class Rating(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
     film = models.ForeignKey(Film, on_delete=models.CASCADE, default="")
     score = models.DecimalField(decimal_places=1, max_digits=2, choices=SCORE_CHOICES, default=(0.0, 0.0))
+    review = models.CharField(max_length=512, null=True)
     
     def __str__(self) -> str:
         return str(self.user) + " " + str(self.score) 
-    
-class Review(models.Model):
-    film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
-    rating = models.ForeignKey(Rating, on_delete=models.CASCADE, default="")
-    body = models.CharField(max_length=1024, default="")
-
-    def __str__(self):
-        return self.rating.__str__() + " " + self.body   
