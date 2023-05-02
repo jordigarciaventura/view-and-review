@@ -11,14 +11,22 @@
   <p><strong>Language:</strong> {{ film.languages.all|join:", " }}</p>
   <p><strong>Genre:</strong> {{ film.genres.all|join:", " }}</p>
 
-  <form action="{% url 'rating' %}" method="POST" class="mb-3">
+  <form action="{% url 'rating' film.id %}" method="POST" class="mb-3">
     {% csrf_token %}
+
+    {{ form.errors }}
 
     <div hidden>
       {{ form.film }}
     </div>
 
-    {{ form.score }}
+    <p>{% for score_choice in SCORE_CHOICES %}
+      <input type="radio" name="score" id="score{{ forloop.counter }}" value="{{ score_choice.0 }}" />
+      <label for="choice{{ forloop.counter }}">{{ score_choice.1 }} star{{ score_choice.0|pluralize }}</label>
+      <br/>{% endfor %}
+      </p>
+      
+    {{ form.review }}
 
     <input type="submit" value="Submit" />
 </form>

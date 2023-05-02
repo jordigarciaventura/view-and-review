@@ -1,8 +1,10 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render, redirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import FormView, CreateView, DeleteView, UpdateView
 from django.contrib.auth.models import User
 from django.views import generic
@@ -23,11 +25,13 @@ class FilmView(generic.DetailView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super(FilmView, self).get_context_data(**kwargs)
-        user_ratings = Rating.objects.filter(user=self.request.user)
         context['film'] = self.get_object()
-        if user_ratings:
-            user_film_rating = user_ratings.get(film=self.get_object())
-            context['form'] = RatingForm(instance=user_film_rating)
+        context['SCORE_CHOICES'] = Rating.SCORE_CHOICES
+        if self.request.user.is_authenticated:
+            user_ratings = Rating.objects.filter(user=self.request.user)
+            if user_ratings:
+                user_film_rating = user_ratings.get(film=self.get_object())
+                context['form'] = RatingForm(instance=user_film_rating)
         else:
             context['form'] = RatingForm()
 
@@ -52,24 +56,25 @@ def RegisterView(request):
             request, "Unsuccesful registration. Invalid information.")
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
-
-class RatingView(FormView):
-    template_name = "web/film.html"
-    form_class = RatingForm
-    
-    def form_invalid(self, form):
-        return HttpResponse("Invalid form!")
+@login_required
+def rate(request, pk):
+    if request.method == "POST":    
+        get_object_or_404(Film, pk=pk)
         
-    def form_valid(self, form):        
-        # Method called when valid form data is POSTED
-        rating = form.save(commit=False)
-        rating.user = User.objects.get(username=self.request.user)
-        old_rating = Rating.objects.filter(user=rating.user)
-        if old_rating.exists():
-            # If there is already a rating from this user for this film, update the rating instead of creating a new one
-            old_rating.update(score=rating.score)
+        form = RatingForm(request.POST)
+        if form.is_valid():
+            # Process the data in form.cleaned_data
+            rating = form.save(commit=False)
+            rating.user = User.objects.get(username=request.user)
+            old_rating = Rating.objects.filter(user=rating.user)
+            if old_rating.exists():
+                old_rating.update(score=rating.score, review=rating.review)
+            else:
+                rating.save()
+            return HttpResponseRedirect(reverse('film', args=(pk,)))
         else:
-            rating.save()
-            
-        self.success_url = self.request.META['HTTP_REFERER']
-        return super(RatingView, self).form_valid(form)
+            messages.error(request, "Unsuccesful review. Invalid information")
+
+    return HttpResponseRedirect(reverse('film', args=(pk,)))
+               
+    

@@ -1,6 +1,5 @@
 from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.views.decorators.http import require_POST
 
 from . import views
 
@@ -10,7 +9,7 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.RegisterView, name='register'),
     path('film/<pk>/', views.FilmView.as_view(), name='film'),
-    path('rating/', require_POST(views.RatingView.as_view()), name='rating'),
+    path('rating/<pk>/', views.rate, name='rating'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
