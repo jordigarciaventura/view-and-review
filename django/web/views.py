@@ -27,13 +27,12 @@ class FilmView(generic.DetailView):
         context = super(FilmView, self).get_context_data(**kwargs)
         context['film'] = self.get_object()
         context['RATING_CHOICES'] = Rating.RATING_CHOICES
+        context['form'] = RatingForm(initial={'film': self.get_object()})
         if self.request.user.is_authenticated:
             user_ratings = Rating.objects.filter(user=self.request.user)
             if user_ratings:
                 user_film_rating = user_ratings.get(film=self.get_object())
                 context['form'] = RatingForm(instance=user_film_rating)
-        if context.get('form') is None:
-            context['form'] = RatingForm()
 
         # Gets the form prefilled with the user's past choices
         return context
@@ -59,21 +58,23 @@ def RegisterView(request):
 @login_required
 def rate(request, pk):
     if request.method == "POST":    
-        get_object_or_404(Film, pk=pk)
+        film = get_object_or_404(Film, pk=pk)
         
         form = RatingForm(request.POST)
         if form.is_valid():
+            print(form.cleaned_data['film'])
             # Process the data in form.cleaned_data
             rating = form.save(commit=False)
             rating.user = User.objects.get(username=request.user)
             old_rating = Rating.objects.filter(user=rating.user)
+            print(rating.film)
             if old_rating.exists():
-                old_rating.update(score=rating.score, review=rating.review)
+                old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
             else:
                 rating.save()
             return HttpResponseRedirect(reverse('film', args=(pk,)))
         else:
-            messages.error(request, "Unsuccesful review. Invalid information")
+            messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
 
     return HttpResponseRedirect(reverse('film', args=(pk,)))
                

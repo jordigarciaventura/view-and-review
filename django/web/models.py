@@ -51,9 +51,10 @@ class Film(models.Model):
 
 class Rating(models.Model):
     RATING_CHOICES = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
-    film = models.ForeignKey(Film, on_delete=models.CASCADE, default="")
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    film = models.ForeignKey(Film, on_delete=models.CASCADE)
     review = models.CharField(max_length=512, blank=True)
+    review_title = models.CharField(max_length=64, blank=True)
     score = models.PositiveIntegerField(default=0, choices=RATING_CHOICES)
 
     def __str__(self) -> str:
