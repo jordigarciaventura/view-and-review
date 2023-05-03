@@ -31,5 +31,10 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = web.models.Rating
         fields = "__all__"
-        exclude = ["user", "site"]
+        exclude = ["user"]
+        
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(RatingForm, self).__init__(*args, **kwargs)
+        self.fields['review'].widget.attrs['class'] = 'form-control'
+        self.fields['review'].widget.attrs['placeholder'] = 'lorem ipsum'
         

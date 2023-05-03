@@ -26,13 +26,13 @@ class FilmView(generic.DetailView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super(FilmView, self).get_context_data(**kwargs)
         context['film'] = self.get_object()
-        context['SCORE_CHOICES'] = Rating.SCORE_CHOICES
+        context['RATING_CHOICES'] = Rating.RATING_CHOICES
         if self.request.user.is_authenticated:
             user_ratings = Rating.objects.filter(user=self.request.user)
             if user_ratings:
                 user_film_rating = user_ratings.get(film=self.get_object())
                 context['form'] = RatingForm(instance=user_film_rating)
-        else:
+        if context.get('form') is None:
             context['form'] = RatingForm()
 
         # Gets the form prefilled with the user's past choices
