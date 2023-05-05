@@ -12,11 +12,11 @@
 
 <div class="row">
   <div class="col">
-    <img
+    {% comment %} <img
       class="rounded img-fluid mh-25"
       src="{{film.photo_url}}"
       alt="Film poster"
-    />
+    /> {% endcomment %}
   </div>
   <div class="col">
     <h1>{{ film.title }}</h1>
@@ -60,7 +60,7 @@
           value="{{ rate.0 }}"
           required
         />
-        <label class="mx-1 fa fa-star star fa-2x" for="score{{ forloop.counter }}" id="{{ forloop.counter }}"></label>
+        <label class="fa fa-star star fa-2x" for="score{{ forloop.counter }}" id="{{ forloop.counter }}"></label>
         {% endfor %}
         <div class="rounded text-center alert-danger p-auto px-3">
           {{form.errors}}
@@ -80,7 +80,7 @@
 </div>
 
 {% for rating in film.rating_set.all %}
-<p>{{rating.user}} {{rating.score}} <b>{{rating.review_title}}</b> {{rating.review}}</p>
+<p>{{rating.user}} {{rating.score}} [{{rating.reputation}}]<b>{{rating.review_title}}</b> {{rating.review}}</p>
 
 {% endfor%} 
 <script>
@@ -150,7 +150,7 @@
     handle_select({{form.score.value}})
     // Allows updating review without having to select a score again
     document.getElementById('score' + {{ form.score.value }}).checked = true 
-  }  
+  }
 
 </script>
 {% endblock %}

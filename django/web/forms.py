@@ -32,7 +32,7 @@ class RatingForm(forms.ModelForm):
         model = web.models.Rating
         fields = "__all__"
         hidden = ['film']
-        exclude = ['user']
+        exclude = ['user', 'reputation']
         
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super(RatingForm, self).__init__(*args, **kwargs)

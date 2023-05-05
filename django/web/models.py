@@ -55,6 +55,7 @@ class Rating(models.Model):
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
     review = models.CharField(max_length=512, blank=True)
     review_title = models.CharField(max_length=64, blank=True)
+    reputation = models.IntegerField(default=0)
     score = models.PositiveIntegerField(default=0, choices=RATING_CHOICES)
 
     def __str__(self) -> str:
