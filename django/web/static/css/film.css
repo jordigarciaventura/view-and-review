@@ -1,0 +1,8 @@
+.checked {
+  color: orange;
+}
+
+.star {
+  max-width: 30px;
+  cursor: pointer;
+}

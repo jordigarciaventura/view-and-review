@@ -1,23 +1,8 @@
 {% extends "base_generic.html" %} {% block content %} {% load static %}
-<style>
-  .checked {
-    color: orange;
-  }
 
-  .star {
-    max-width: 30px;
-    cursor: pointer;
-  }
-</style>
+<link rel="stylesheet" href="{% static 'css/film.css' %}" />
 
 <div class="row">
-  <div class="col">
-    {% comment %} <img
-      class="rounded img-fluid mh-25"
-      src="{{film.photo_url}}"
-      alt="Film poster"
-    /> {% endcomment %}
-  </div>
   <div class="col">
     <h1>{{ film.title }}</h1>
     <p><strong>Duration:</strong> {{ film.duration }}</p>
@@ -43,30 +28,31 @@
       {% else %}
       <p>Log in to make a review</p>
       {% endif %}
-      <div hidden>
-        {{ form.film }}
-        {{ form.score }}
-      </div>
-      {{ form.review_title }}
-      {{ form.review }}
+      <div hidden>{{ form.film }} {{ form.score }}</div>
+      {{ form.review_title }} {{ form.review }}
     </div>
     <br />
     <div class="col text-center">
-        {% for rate in RATING_CHOICES %}
-        <input
-          hidden
-          type="radio"
-          name="score" id="score{{ forloop.counter }}"
-          value="{{ rate.0 }}"
-          required
-        />
-        <label class="fa fa-star star fa-2x" for="score{{ forloop.counter }}" id="{{ forloop.counter }}"></label>
-        {% endfor %}
-        <div class="rounded text-center alert-danger p-auto px-3">
-          {{form.errors}}
-        </div>
+      {% for rate in RATING_CHOICES %}
+      <input
+        hidden
+        type="radio"
+        name="score"
+        id="score{{ forloop.counter }}"
+        value="{{ rate.0 }}"
+        required
+      />
+      <label
+        class="fa fa-star star fa-2x"
+        for="score{{ forloop.counter }}"
+        id="{{ forloop.counter }}"
+      ></label>
+      {% endfor %}
+      <div class="rounded text-center alert-danger p-auto px-3">
+        {{form.errors}}
+      </div>
     </div>
-    <br/>
+    <br />
     <button
       class="btn btn-primary d-block main-button"
       type="submit"
@@ -74,7 +60,6 @@
       name="submit"
     >
       <b>{% if form.score.value == 0 %}Submit{% else %}Update{% endif %}</b>
-
     </button>
   </form>
 </div>
@@ -82,36 +67,54 @@
 {% for rating in film.rating_set.all %}
 <div class="d-flex mb-3 w-50">
   <form
-      id="reputation-form-{{rating.pk}}"
-      action="{% url 'reputation' %}"
-      method="POST"
-      class="card-body flex-column align-items-right"
-    >
+    id="reputation-form-{{rating.pk}}"
+    action="{% url 'reputation' %}"
+    method="POST"
+    class="card-body flex-column align-items-right"
+  >
     {% csrf_token %}
 
     <div>
-      <button type="submit" value="upvote" name="button_upvote" onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})">↑</button>
-      <button type="submit" value="downvote" name="button_downvote" onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})">↓</button>
+      <button
+        type="submit"
+        value="upvote"
+        name="button_upvote"
+        onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})"
+      >
+        ↑
+      </button>
+      <button
+        type="submit"
+        value="downvote"
+        name="button_downvote"
+        onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})"
+      >
+        ↓
+      </button>
     </div>
-    </form>
-  <p>{{rating.user}} {{rating.score}} <b>{{rating.review_title}}</b> {{rating.review}}</p>
+  </form>
+  <p>
+    {{rating.user}} {{rating.score}}
+    <b>{{rating.review_title}}</b> {{rating.review}}
+  </p>
 </div>
-{% endfor%} 
+{% endfor%}
+
 <script>
   const one = document.getElementById("1");
   const two = document.getElementById("2");
   const three = document.getElementById("3");
   const four = document.getElementById("4");
   const five = document.getElementById("5");
-  
+
   const arr = [one, two, three, four, five];
 
   const selected_class = "selected"
   const checked_class = "checked"
 
   const reputation_form_id = "reputation-form-"
-  const reputation_arr = document.querySelectorAll('[id^=' + reputation_form_id + ']')
-  
+  document.querySelectorAll('[id^=' + reputation_form_id + ']').forEach((item) => item.addEventListener("submit", preventRefresh))
+
   const handle_mouseout = () => {
       for (let i = 0; i < arr.length; i++) {
           const current_class_list = arr[i].classList
@@ -120,7 +123,7 @@
           }
       }
   }
-  
+
   const handle_select = (target_id) => {
       const target = parseInt(target_id);
       for (let i = 0; i < arr.length; i++) {
@@ -133,7 +136,7 @@
           }
       }
   }
-  
+
   const handle_hover = (target_id) => {
       const target = parseInt(target_id);
       for (let i = 0; i < arr.length; i++) {
@@ -148,22 +151,22 @@
           }
       }
   }
-  
+
   arr.forEach((item) =>
       item.addEventListener("mouseover", (event) => handle_hover(event.target.id))
   )
-  
+
   arr.forEach((item) =>
       item.addEventListener("mouseout", (event) => handle_mouseout(event.target.id))
   )
-  
+
   arr.forEach((item) =>
       item.addEventListener("click", (event) => handle_select(event.target.id))
   )
 
   function reputationSubmit(value, rating_pk, user_pk) {
     var url = '/reputation/'
-    
+
     var form = document.getElementById(reputation_form_id + rating_pk)
     var formData = new FormData(form)
     formData.append("value", value=="upvote")
@@ -179,18 +182,11 @@
     event.preventDefault()
   }
 
-  // and you can attach form submit event like this for example
-  reputation_arr.forEach((item) => 
-    item.addEventListener("submit", preventRefresh)
-  )
-  
-  
   // Initalise previous user rating
   if ({{ form.score.value }} != 0) {
     handle_select({{form.score.value}})
     // Allows updating review without having to select a score again
-    document.getElementById('score' + {{ form.score.value }}).checked = true 
+    document.getElementById('score' + {{ form.score.value }}).checked = true
   }
-
 </script>
 {% endblock %}
