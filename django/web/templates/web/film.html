@@ -80,8 +80,22 @@
 </div>
 
 {% for rating in film.rating_set.all %}
-<p>{{rating.user}} {{rating.score}} [{{rating.reputation}}]<b>{{rating.review_title}}</b> {{rating.review}}</p>
+<div class="d-flex mb-3 w-50">
+  <form
+      id="reputation-form-{{rating.pk}}"
+      action="{% url 'reputation' %}"
+      method="POST"
+      class="card-body flex-column align-items-right"
+    >
+    {% csrf_token %}
 
+    <div>
+      <button type="submit" value="upvote" name="button_upvote" onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})">↑</button>
+      <button type="submit" value="downvote" name="button_downvote" onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})">↓</button>
+    </div>
+    </form>
+  <p>{{rating.user}} {{rating.score}} <b>{{rating.review_title}}</b> {{rating.review}}</p>
+</div>
 {% endfor%} 
 <script>
   const one = document.getElementById("1");
@@ -91,9 +105,12 @@
   const five = document.getElementById("5");
   
   const arr = [one, two, three, four, five];
-  
+
   const selected_class = "selected"
   const checked_class = "checked"
+
+  const reputation_form_id = "reputation-form-"
+  const reputation_arr = document.querySelectorAll('[id^=' + reputation_form_id + ']')
   
   const handle_mouseout = () => {
       for (let i = 0; i < arr.length; i++) {
@@ -104,16 +121,15 @@
       }
   }
   
-  
   const handle_select = (target_id) => {
       const target = parseInt(target_id);
       for (let i = 0; i < arr.length; i++) {
           if (i < target) {
-              arr[i].classList.add(selected_class);
-              arr[i].classList.add(checked_class);
+              arr[i].classList.add(selected_class)
+              arr[i].classList.add(checked_class)
           } else {
-              arr[i].classList.remove(selected_class);
-              arr[i].classList.remove(checked_class);
+              arr[i].classList.remove(selected_class)
+              arr[i].classList.remove(checked_class)
           }
       }
   }
@@ -123,27 +139,51 @@
       for (let i = 0; i < arr.length; i++) {
           if (i < target) {
               if (!arr[i].classList.contains(selected_class)) {
-                  arr[i].classList.add(checked_class);
+                  arr[i].classList.add(checked_class)
               }
           } else {
               if (!arr[i].classList.contains(selected_class)) {
-                  arr[i].classList.remove(checked_class);
+                  arr[i].classList.remove(checked_class)
               }
           }
       }
-  };
+  }
   
   arr.forEach((item) =>
       item.addEventListener("mouseover", (event) => handle_hover(event.target.id))
-  );
+  )
   
   arr.forEach((item) =>
-      item.addEventListener("mouseout", () => handle_mouseout(event.target.id))
-  );
+      item.addEventListener("mouseout", (event) => handle_mouseout(event.target.id))
+  )
   
   arr.forEach((item) =>
       item.addEventListener("click", (event) => handle_select(event.target.id))
-  );
+  )
+
+  function reputationSubmit(value, rating_pk, user_pk) {
+    var url = '/reputation/'
+    
+    var form = document.getElementById(reputation_form_id + rating_pk)
+    var formData = new FormData(form)
+    formData.append("value", value=="upvote")
+    formData.append("rating", rating_pk)
+    formData.append("user", user_pk)
+
+    var request = new XMLHttpRequest()
+    request.open('POST', url, true)
+    request.send(formData)
+  }
+
+  function preventRefresh(event) {
+    event.preventDefault()
+  }
+
+  // and you can attach form submit event like this for example
+  reputation_arr.forEach((item) => 
+    item.addEventListener("submit", preventRefresh)
+  )
+  
   
   // Initalise previous user rating
   if ({{ form.score.value }} != 0) {

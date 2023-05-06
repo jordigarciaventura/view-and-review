@@ -5,12 +5,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.views.generic.edit import FormView, CreateView, DeleteView, UpdateView
+from django.views.decorators.http import require_POST 
 from django.contrib.auth.models import User
 from django.views import generic
 
-from web.models import Film, Rating
-from web.forms import RegisterForm, RatingForm
+from web.models import Film, Rating, Reputation
+from web.forms import RegisterForm, RatingForm, ReputationForm
 
 # Create your views here.
 
@@ -37,7 +37,6 @@ class FilmView(generic.DetailView):
         # Gets the form prefilled with the user's past choices
         return context
 
-
 class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
 
@@ -56,18 +55,31 @@ def RegisterView(request):
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
 @login_required
+@require_POST
+def reputation(request):        
+    form = ReputationForm(request.POST)
+    
+    if form.is_valid():
+        reputation = form.save(commit=False)
+        old_reputation = Reputation.objects.filter(user=reputation.user, rating=reputation.rating)
+        if old_reputation.exists():
+            old_reputation.update(value=reputation.value)
+        else:
+            reputation.save()
+    return HttpResponse()
+            
+
+@login_required
 def rate(request, pk):
     if request.method == "POST":    
-        film = get_object_or_404(Film, pk=pk)
+        get_object_or_404(Film, pk=pk)
         
         form = RatingForm(request.POST)
         if form.is_valid():
-            print(form.cleaned_data['film'])
             # Process the data in form.cleaned_data
             rating = form.save(commit=False)
             rating.user = User.objects.get(username=request.user)
             old_rating = Rating.objects.filter(user=rating.user)
-            print(rating.film)
             if old_rating.exists():
                 old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
             else:

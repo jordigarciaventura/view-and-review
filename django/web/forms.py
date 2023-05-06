@@ -42,3 +42,10 @@ class RatingForm(forms.ModelForm):
         self.fields['review_title'].widget.attrs['class'] = 'form-control'
         self.fields['review_title'].widget.attrs['placeholder'] = 'lorem ipsum'
         
+class ReputationForm(forms.ModelForm):
+    class Meta:
+        model = web.models.Reputation
+        fields = "__all__"
+        
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(ReputationForm, self).__init__(*args, **kwargs)

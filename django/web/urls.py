@@ -10,6 +10,7 @@ urlpatterns = [
     path('accounts/register/', views.RegisterView, name='register'),
     path('film/<pk>/', views.FilmView.as_view(), name='film'),
     path('rating/<pk>/', views.rate, name='rating'),
+    path('reputation/', views.reputation, name='reputation'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

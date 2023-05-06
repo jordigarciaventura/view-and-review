@@ -55,8 +55,18 @@ class Rating(models.Model):
     film = models.ForeignKey(Film, on_delete=models.CASCADE)
     review = models.CharField(max_length=512, blank=True)
     review_title = models.CharField(max_length=64, blank=True)
-    reputation = models.IntegerField(default=0)
     score = models.PositiveIntegerField(default=0, choices=RATING_CHOICES)
 
     def __str__(self) -> str:
         return str(self.user) + " " + str(self.score)
+
+
+"""Stores the user rating upvotes and downvotes"""
+class Reputation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.ForeignKey(Rating, on_delete=models.CASCADE)
+    value = models.BooleanField() # False == downvote, True == upvote
+
+    def __str__(self) -> str:
+        return str(self.user) + str(self.rating) + ("+" if self.value else "-")
+    
