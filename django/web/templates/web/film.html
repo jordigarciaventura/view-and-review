@@ -80,6 +80,7 @@
         value="upvote"
         name="button_upvote"
         onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})"
+        id="upvote-button-{{rating.pk}}"
       >
         ↑
       </button>
@@ -88,6 +89,7 @@
         value="downvote"
         name="button_downvote"
         onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})"
+        id="downvote-button-{{rating.pk}}"
       >
         ↓
       </button>
@@ -112,8 +114,45 @@
   const selected_class = "selected"
   const checked_class = "checked"
 
+  const get_button_type_str = (value) => value == "True" ? "upvote" : "downvote"
+
+  const colorize_reputation = (rating_pk, value) => {
+    const type = get_button_type_str(value)
+    const button = document.getElementById(type + "-button-" + rating_pk)
+    if(button) {
+      button.classList.add(type)
+    }
+  }
+
+  const toggle_reputation_color = (type, rating_pk) => {
+    const othertype = type == "upvote" ? "downvote" : "upvote" 
+    
+    const button = document.getElementById(type + "-button-" + rating_pk).classList
+    const otherbutton = document.getElementById(othertype + "-button-" + rating_pk).classList
+
+    if (button.contains(type)) {
+      button.remove(type)
+      // Send a request to remove the vote
+      
+    } else {
+      button.add(type)
+      otherbutton.remove(othertype)
+    }
+  }
+
+  {% for rating in film.rating_set.all %}
+  document.getElementById("upvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("upvote", {{rating.pk}}))
+  document.getElementById("downvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("downvote", {{rating.pk}}))
+  {% for reputation in rating.reputation_set.all %}{% if reputation.user == user %}
+  colorize_reputation({{rating.pk}}, "{{reputation.value}}")
+  {% endif %}{% endfor%}{% endfor %}
+
   const reputation_form_id = "reputation-form-"
-  document.querySelectorAll('[id^=' + reputation_form_id + ']').forEach((item) => item.addEventListener("submit", preventRefresh))
+  const reputation_form = document.querySelectorAll('[id^=' + reputation_form_id + ']')
+  reputation_form.forEach((item) => {
+    item.addEventListener("submit", preventRefresh) // Prevent page refresh on submit
+    colorize_reputation(item)
+  })
 
   const handle_mouseout = () => {
       for (let i = 0; i < arr.length; i++) {

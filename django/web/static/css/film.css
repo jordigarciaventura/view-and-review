@@ -6,3 +6,11 @@
   max-width: 30px;
   cursor: pointer;
 }
+
+.upvote {
+  background-color: green;
+}
+
+.downvote {
+  background-color: blue;
+}
