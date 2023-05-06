@@ -68,8 +68,6 @@
 <div class="d-flex mb-3 w-50">
   <form
     id="reputation-form-{{rating.pk}}"
-    action="{% url 'reputation' %}"
-    method="POST"
     class="card-body flex-column align-items-right"
   >
     {% csrf_token %}
@@ -124,7 +122,7 @@
     }
   }
 
-  const toggle_reputation_color = (type, rating_pk) => {
+  const toggle_reputation_color = (type, rating_pk, user_pk) => {
     const othertype = type == "upvote" ? "downvote" : "upvote" 
     
     const button = document.getElementById(type + "-button-" + rating_pk).classList
@@ -132,8 +130,6 @@
 
     if (button.contains(type)) {
       button.remove(type)
-      // Send a request to remove the vote
-      
     } else {
       button.add(type)
       otherbutton.remove(othertype)
@@ -141,8 +137,8 @@
   }
 
   {% for rating in film.rating_set.all %}
-  document.getElementById("upvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("upvote", {{rating.pk}}))
-  document.getElementById("downvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("downvote", {{rating.pk}}))
+  document.getElementById("upvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("upvote", {{rating.pk}}, {{rating.user.pk}}))
+  document.getElementById("downvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("downvote", {{rating.pk}}, {{rating.user.pk}}))
   {% for reputation in rating.reputation_set.all %}{% if reputation.user == user %}
   colorize_reputation({{rating.pk}}, "{{reputation.value}}")
   {% endif %}{% endfor%}{% endfor %}
@@ -204,17 +200,27 @@
   )
 
   function reputationSubmit(value, rating_pk, user_pk) {
-    var url = '/reputation/'
+    var formData = new FormData(document.getElementById(reputation_form_id + rating_pk))
+    var isupvote = value=="upvote"
+    
+    var formButton = document.getElementById(value+"-button-"+rating_pk)
+    var httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST" 
 
-    var form = document.getElementById(reputation_form_id + rating_pk)
-    var formData = new FormData(form)
-    formData.append("value", value=="upvote")
-    formData.append("rating", rating_pk)
-    formData.append("user", user_pk)
+    var formData = {
+      'value': isupvote,
+      'rating': rating_pk,
+      'user': user_pk,
+    }
 
-    var request = new XMLHttpRequest()
-    request.open('POST', url, true)
-    request.send(formData)
+    $.ajax({
+      url: '/reputation/',
+      type: httpmethod,
+      headers: {
+          'X-CSRFToken': Cookies.get('csrftoken')
+      },
+      data: formData,
+      success: function(response) { }
+  })
   }
 
   function preventRefresh(event) {

@@ -1,11 +1,11 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST 
+from django.views.decorators.http import require_http_methods 
 from django.contrib.auth.models import User
 from django.views import generic
 
@@ -55,17 +55,23 @@ def RegisterView(request):
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
 @login_required
-@require_POST
-def reputation(request):        
-    form = ReputationForm(request.POST)
-    
-    if form.is_valid():
-        reputation = form.save(commit=False)
-        old_reputation = Reputation.objects.filter(user=reputation.user, rating=reputation.rating)
-        if old_reputation.exists():
-            old_reputation.update(value=reputation.value)
-        else:
-            reputation.save()
+@require_http_methods(["POST", "DELETE"])
+def reputation(request):     
+    if request.method == 'POST':   
+        form = ReputationForm(request.POST)
+        
+        if form.is_valid():
+            reputation = form.save(commit=False)
+            old_reputation = Reputation.objects.filter(user=reputation.user, rating=reputation.rating)
+            if old_reputation.exists():
+                old_reputation.update(value=reputation.value)
+            else:
+                reputation.save()
+    if request.method == 'DELETE':
+        data = QueryDict(request.body)
+
+        reputation = Reputation.objects.filter(user=data.get('user'), rating=data.get('rating'))
+        reputation.delete()
     return HttpResponse()
             
 
