@@ -58,7 +58,7 @@ class Rating(models.Model):
     score = models.PositiveIntegerField(default=0, choices=RATING_CHOICES)
 
     def __str__(self) -> str:
-        return str(self.user) + " " + str(self.score)
+        return str(self.film) + "-" + str(self.user) + " " + str(self.score)
 
 
 """Stores the user rating upvotes and downvotes"""
@@ -68,5 +68,5 @@ class Reputation(models.Model):
     value = models.BooleanField() # False == downvote, True == upvote
 
     def __str__(self) -> str:
-        return str(self.user) + str(self.rating) + ("+" if self.value else "-")
+        return str(self.user) + " " + str(self.rating) + ("+" if self.value else "-")
     
