@@ -2,48 +2,41 @@
 <html>
 <head lang="en">
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   {% block title %}<title>View&Review</title>{% endblock %}
   {% load static %}
-  {% load compress %}
   {% load bootstrap5 %}
   {% bootstrap_css %}
   
 
   <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome-all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/Navbar-Centered-Links-icons.css' %}">
+
   <!-- Custom CSS -->
   <link rel="stylesheet" href="{% static 'css/generic.css' %}">
-  
   <link rel="shortcut icon" href="{% static 'logo/logo.png' %}" />
 </head>
 
 <body>
-  {% block login %}
-  <div class="black_logo_banner">
-    <div class="login">
-      {% if user.is_authenticated %}
-        <p>Hello, <i>{{ user.username }}</i>. <a class="login_text" href={% url 'logout' %}><u>Logout</u></a></p>
-      {% else %}
-        <a class="login_text" href={% url 'login' %}><u>Login</u></a> /
-        <a class="login_text" href={% url 'register' %}><u>Register</u></a>
-      {% endif %}
-      </div>
-  </div>
-  {% endblock %}
 
-  <a href="/"><img src="{% static 'logo/extended_logo.png' %}" class="img_logo"></img></a>
-
-  {% block navbar %}
-  <div class="menu_bar">
-    <ul class="menu">
-      <li><a class="text_menu" href="/">Home</a></li>
-      <li><a class="text_menu" href="#">Trending</a></li>
-      <li><a class="text_menu" href="#">Categories</a></li>
-      <li><a class="text_menu" href="#">My List</a> </li>
-    </ul>
-  </div>
-  {% endblock %}
+  <nav class="navbar navbar-light navbar-expand-md py-1" style="background: var(--bs-gray-900);">
+    <div class="container"><a class="navbar-brand d-flex align-items-center" href="#"><span class="bs-icon-sm bs-icon-rounded bs-icon-primary d-flex justify-content-center align-items-center"><img src="{% static 'assets/img/vr.png' %}" width="38" height="36"></span></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-3" style="background: var(--bs-gray-800);"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navcol-3">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <div class="input-group rounded" style="background: var(--bs-gray-800);width: 350px;"><input type="search" id="form1" class="form-control rounded" placeholder="Search..." aria-label="Search" aria-describedby="search-addon" style="background: var(--bs-gray-800);border-style: none;color: var(--bs-gray-300);"><span id="search-addon" class="input-group-text border-0" style="background: var(--bs-gray-800);"><em class="fas fa-search" style="color: var(--bs-gray-300);"></em></span></div>
+                </li>
+            </ul>
+            {% if user.is_authenticated %}
+              <div class="d-inline-flex align-items-center"><a class="px-2" href="{% url 'index' %}"><i class="fas fa-home" style="color: var(--bs-gray-300);"></i></a><a href="#"><i class="px-3 fas fa-user" style="color: var(--bs-gray-300);"></i><span style="color: var(--bs-gray-300);">{{user.username}}</span></a><a class="px-3" href="{% url 'logout' %}"><i class="fas fa-power-off" style="color: var(--bs-gray-300);"></i></a></div>
+            {% else %}
+              <a href="{% url 'login' %}" style="color: var(--bs-gray-400);">Log in</a>
+            {% endif %}
+          </div>
+    </div>
+  </nav>
 
   <div class="mt-5">
   {% block content%}{% endblock %}
