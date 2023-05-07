@@ -80,9 +80,15 @@ body {
     color: #000000;
 }
 
+.btn-warning {
+    background: #AA4747;
+    opacity: 80%;
+    border: none;
+}
+
 .btn-primary {
     background: #F79189;
-    border-color: #A53F37;
+    border: none;
 }
 
 .btn-primary:hover, .btn-primary:focus, .btn-primary:active, .btn-primary.active, .open>.dropdown-toggle.btn-primary {

@@ -1,5 +1,6 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, QueryDict
+from django.views.generic.edit import DeleteView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -29,10 +30,10 @@ class FilmView(generic.DetailView):
         context['RATING_CHOICES'] = Rating.RATING_CHOICES
         context['form'] = RatingForm(initial={'film': self.get_object()})
         if self.request.user.is_authenticated:
-            user_ratings = Rating.objects.filter(user=self.request.user)
-            if user_ratings:
-                user_film_rating = user_ratings.get(film=self.get_object())
-                context['form'] = RatingForm(instance=user_film_rating)
+            user_rating = Rating.objects.filter(user=self.request.user, film=self.get_object()).first()
+            if user_rating:
+                context['form'] = RatingForm(instance=user_rating)
+                context['user_rating'] = user_rating
 
         # Gets the form prefilled with the user's past choices
         return context
@@ -75,6 +76,21 @@ def reputation(request):
     return HttpResponse()
             
 
+class RatingDeleteView(DeleteView):
+    model = Rating
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        if self.object.user == self.request.user:
+            self.object.delete()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return HttpResponseForbidden("Cannot delete other's posts")
+
+    def get_success_url(self) -> str:
+        return reverse('film', args=(self.object.film.pk,)) 
+    
+
 @login_required
 def rate(request, pk):
     if request.method == "POST":    
@@ -93,7 +109,13 @@ def rate(request, pk):
             return HttpResponseRedirect(reverse('film', args=(pk,)))
         else:
             messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
+    if request.method == "DELETE":    
+        print("Got deletee!!!")
+        
+        data = QueryDict(request.body)
+
+        rating = Rating.objects.filter(user=data.get('user'), film=data.get('film'))
+        rating.delete()
 
     return HttpResponseRedirect(reverse('film', args=(pk,)))
-               
     
