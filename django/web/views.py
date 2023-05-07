@@ -42,6 +42,10 @@ class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
 
 
+class ProfileView(generic.TemplateView):
+    template_name = 'profile.html'
+    
+
 def RegisterView(request):
     form = RegisterForm()
     if request.method == 'POST':

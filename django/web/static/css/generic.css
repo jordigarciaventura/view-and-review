@@ -84,6 +84,13 @@ body {
     background: #AA4747;
     opacity: 80%;
     border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    opacity: 100%;
+    border: none;
+    color: white;
 }
 
 .btn-primary {

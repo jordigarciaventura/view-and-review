@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'assets/fonts/fontawesome-all.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/Navbar-Centered-Links-icons.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/generic.css' %}">
@@ -29,7 +30,7 @@
               </ul>
           </div>
           {% if user.is_authenticated %}
-            <div class="d-inline-flex align-items-center"><a class="px-2" href="{% url 'index' %}"><i class="fas fa-home" style="color: var(--bs-gray-300);"></i></a><a style="text-decoration: none !important;" href="#"><i class="px-3 fas fa-user" style="color: var(--bs-gray-300);"></i><span style="color: var(--bs-gray-300);">{{user.username}}</span></a><a class="px-3" href="{% url 'logout' %}"><i class="fas fa-power-off" style="color: var(--bs-gray-300);"></i></a></div>
+            <div class="d-inline-flex align-items-center"><a class="px-2" href="{% url 'index' %}"><i class="fas fa-home" style="color: var(--bs-gray-300);"></i></a><a style="text-decoration: none !important;" href="{% url 'profile' %}"><i class="px-3 fas fa-user" style="color: var(--bs-gray-300);"></i><span style="color: var(--bs-gray-300);">{{user.username}}</span></a><a class="px-3" href="{% url 'logout' %}"><i class="fas fa-power-off" style="color: var(--bs-gray-300);"></i></a></div>
           {% else %}
             <a href="{% url 'login' %}" style="color: var(--bs-gray-400);">Log in</a>
           {% endif %}
@@ -37,7 +38,7 @@
     </nav>
 
     <div>
-    {% block content%}{% endblock %}
+    {% block content %}{% endblock %}
     </div>
 
     <!-- Optional JavaScript -->
