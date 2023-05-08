@@ -43,7 +43,7 @@ class LogoutView(generic.TemplateView):
 
 
 class ProfileView(generic.TemplateView):
-    template_name = 'profile.html'
+    template_name = 'auth/profile.html'
     
 
 def RegisterView(request):
@@ -79,6 +79,17 @@ def reputation(request):
         reputation.delete()
     return HttpResponse()
             
+            
+class UserDeleteView(DeleteView):
+    model = User
+    
+    def form_valid(self, form):
+        self.object = self.get_object()
+        if self.object == self.request.user:
+            self.object.delete()
+            return HttpResponseRedirect('/')
+        else:
+            return HttpResponseForbidden("Cannot delete other's account")
 
 class RatingDeleteView(DeleteView):
     model = Rating
@@ -114,8 +125,6 @@ def rate(request, pk):
         else:
             messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
     if request.method == "DELETE":    
-        print("Got deletee!!!")
-        
         data = QueryDict(request.body)
 
         rating = Rating.objects.filter(user=data.get('user'), film=data.get('film'))

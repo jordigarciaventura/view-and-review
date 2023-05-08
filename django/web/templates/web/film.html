@@ -1,6 +1,23 @@
 {% extends "base_generic.html" %} {% block content %} {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/film.css' %}" />
+<style>
+  .checked {
+    color: orange;
+  }
+  
+  .star {
+    max-width: 30px;
+    cursor: pointer;
+  }
+  
+  .upvote {
+    color: green;
+  }
+  
+  .downvote {
+    color: blue;
+  }
+</style>
 
 <div class="container">
 <div class="row">
@@ -78,9 +95,7 @@
         </button>
     </div>
   </form>
-  
-    </div>
-
+  </div>
 </div>
 
 
@@ -91,27 +106,8 @@
     class="card-body flex-column align-items-right"
   >
     {% csrf_token %}
-
-    <div>
-      <button
-        type="submit"
-        value="upvote"
-        name="button_upvote"
-        onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})"
-        id="upvote-button-{{rating.pk}}"
-      >
-        ↑
-      </button>
-      <button
-        type="submit"
-        value="downvote"
-        name="button_downvote"
-        onclick="reputationSubmit(this.value, {{rating.pk}}, {{user.pk}})"
-        id="downvote-button-{{rating.pk}}"
-      >
-        ↓
-      </button>
-    </div>
+    <i id="upvote-button-{{rating.pk}}" class="bi bi-arrow-up-square-fill" style="mouse: cursor;" onclick="reputationSubmit('upvote', {{rating.pk}}, {{user.pk}})"></i>
+    <i id="downvote-button-{{rating.pk}}" class="bi bi-arrow-down-square-fill" style="mouse: cursor;" onclick="reputationSubmit('downvote', {{rating.pk}}, {{user.pk}})"></i>
   </form>
   <p>
     {{rating.user}} {{rating.score}}
@@ -219,30 +215,12 @@
       item.addEventListener("click", (event) => handle_select(event.target.id))
   )
 
-  {% comment %} function deleteSubmit() {
-    var formData = {
-      'user': {{ user.pk }},
-      'film': {{ film.pk }},
-    }
-
-    $.ajax({
-      url: '/rating/' + formData['film'] + '/delete/',
-      type: 'POST',
-      headers: {
-        'X-CSRFToken': Cookies.get('csrftoken')
-      },
-      data: formData,
-      success: function(response) {
-        
-      }
-    })
-  } {% endcomment %}
-
   function reputationSubmit(value, rating_pk, user_pk) {
     var formData = new FormData(document.getElementById(reputation_form_id + rating_pk))
     var isupvote = value=="upvote"
 
     var formButton = document.getElementById(value+"-button-"+rating_pk)
+    console.log(value+"-button-"+rating_pk)
     var httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
 
     var formData = {

@@ -22,7 +22,7 @@
       <a href="#" class="btn" style="background: #2D2D2D;color: #CBCBCB;">Request password change</a>
       
     <div class="d-flex flex-row-reverse">
-      <a href="#" class="mt-5 btn d-block w-25" style="color: #CBCBCB;background: #AA4747;">Delete account</a>
+      <a href="{% url 'user-delete' user.pk %}" class="mt-5 btn d-block w-25" style="color: #CBCBCB;background: #AA4747;">Delete account</a>
 </div>
 </div>
   </div>
