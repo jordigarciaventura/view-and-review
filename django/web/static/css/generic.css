@@ -16,7 +16,7 @@ body {
     height: 255.32px;
     left: 50px;
     top: -50px;
-    background: url("/static/logo/extended_logo.png");
+    background: url("/static/assets/img/vr_extended.png");
     transform: matrix(1, 0, 0, 1, 0, 0);
     z-index: 1;
 }
@@ -94,7 +94,7 @@ body {
 }
 
 .btn-primary {
-    background: #F79189;
+    background: #AC4841;
     border: none;
 }
 

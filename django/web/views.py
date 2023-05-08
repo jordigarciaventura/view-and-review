@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, QueryDict
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -79,6 +79,23 @@ def reputation(request):
         reputation.delete()
     return HttpResponse()
             
+@login_required
+def userUpdateView(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    if user != request.user:
+        return HttpResponseForbidden("Cannot update other's account")
+
+    username = QueryDict(request.body).get('username')
+
+    db_user = User.objects.filter(username=username)
+    if db_user.exists():
+        return HttpResponseForbidden("A user already has that username!")
+    
+    user.username = username
+    user.save()
+    return HttpResponse()
+
 class UserDeleteView(DeleteView):
     model = User
     

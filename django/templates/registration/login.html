@@ -1,71 +1,75 @@
-{% extends "base_generic.html" %} {% load static %} {% load bootstrap5 %} 
-{% bootstrap_css %} {% block content %}
-
-<div class="container">
-  <section class="py-4 py-xl-5">
-    <div class="container">
-      <div class="row mb-5">
-        <div class="col-md-8 col-xl-6 text-center mx-auto">
-          <h2><strong>Log in</strong></h2>
-        </div>
+{% extends 'base_generic.html' %} {% block content %} {% load static %}
+<section>
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-8 col-xl-6 text-center mx-auto">
+        <img src="{% static 'assets/img/vr_extended.png' %}" class="w-50" />
+        <h1>Sign in</h1>
+        <p></p>
       </div>
-      <div class="row d-flex justify-content-center">
-        <div class="col-md-6 col-xl-4">
-          <div class="card mb-5">
-            <div class="card-body d-flex flex-column align-items-center">
-              <div class="rounded text-center alert-danger p-auto px-3">
-                {% if form.errors %}
-                <small><strong>
+    </div>
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6 col-xl-4">
+        <div class="mb-5">
+          <div class="d-flex flex-column align-items-center">
+            {% if form.errors %}
+            <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
+              <small
+                ><strong>
                   Your username and password didn't match.
-                </strong></small>
-                {% endif %} {% if next %} {% if user.is_authenticated %}
-                <p class="warning">
-                  Your account doesn't have access to this page. To proceed,
-                  please login with an account that has access.
-                </p>
-                {% else %}
-                <p class="warning">Please login to see this page.</p>
-                {% endif %} {% endif %}
-              </div>
-              <form class="text-center" method="post">
-                {% csrf_token %}
-                <div class="pt-3 pb-2 mb-3">
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    class="form-control"
-                    placeholder="Username"
-                    required
-                  />
-                </div>
-                <div class="pb-2 mb-3">
-                  <input
-                    class="form-control"
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Password"
-                    required
-                  />
-                </div>
-                <input type="hidden" name="next" value="{{ next }}" />
-                <div class="pb-1 mb-3">
-                  <button
-                    class="btn btn-primary d-block w-100 main-button"
-                    type="submit"
-                    value="login"
-                  >
-                    <strong>Login</strong>
-                  </button>
-                </div>
-                <a href="{% url 'password_reset' %}"><p>Forgot your password?</p></a>
-              </form>
+                </strong></small
+              >
+              {% endif %} {% if next %} {% if user.is_authenticated %}
+              <p class="warning">
+                Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.
+              </p>
+              {% else %}
+              <p class="warning">Please login to see this page.</p>
             </div>
+            {% endif %} {% endif %}
+            <form class="text-center w-75" method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <input
+                  class="form-control"
+                  id="username"
+                  style="background-color: #2D2D2D; border: none; color: white;"
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  class="form-control"
+                  id="password"
+                  style="background: #2D2D2D; border: none; color: white;"
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <a href="{% url 'password_reset' %}" style="color: white">
+                <p style="text-align: right">Forgot password?</p>
+              </a>
+              <input type="hidden" name="next" value="{{ next }}" />
+              <div class="mt-5 mb-3">
+                <button class="btn btn-primary d-block w-100" type="submit">
+                  Sign in
+                </button>
+              </div>
+              <p>
+                Not a member?&nbsp;<a href="{% url 'register' %}" style="color: white">Register</a>
+              </p>
+            </form>
           </div>
         </div>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
+
 {% endblock %}

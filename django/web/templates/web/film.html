@@ -214,11 +214,8 @@
   )
 
   function reputationSubmit(value, rating_pk, user_pk) {
-    var formData = new FormData(document.getElementById(reputation_form_id + rating_pk))
     var isupvote = value=="upvote"
-
     var formButton = document.getElementById(value+"-button-"+rating_pk)
-    console.log(value+"-button-"+rating_pk)
     var httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
 
     var formData = {
@@ -243,7 +240,7 @@
   }
 
   // Initalise previous user rating
-  {% if user_score %}
+  {% if user_score.score != 0 %}
     handle_select({{form.score.value}})
     // Allows updating review without having to select a score again
     document.getElementById('score' + {{ form.score.value }}).checked = true
