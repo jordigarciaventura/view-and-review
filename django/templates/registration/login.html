@@ -26,15 +26,17 @@
               </p>
               {% else %}
               <p class="warning">Please login to see this page.</p>
+
+              {% endif %}
             </div>
-            {% endif %} {% endif %}
+            {% endif %}
             <form class="text-center w-75" method="post">
               {% csrf_token %}
               <div class="mb-3">
                 <input
                   class="form-control"
                   id="username"
-                  style="background-color: #2D2D2D; border: none; color: white;"
+                  style="background-color: #2d2d2d; border: none; color: white"
                   type="text"
                   name="username"
                   placeholder="Username"
@@ -45,7 +47,7 @@
                 <input
                   class="form-control"
                   id="password"
-                  style="background: #2D2D2D; border: none; color: white;"
+                  style="background: #2d2d2d; border: none; color: white"
                   type="password"
                   name="password"
                   placeholder="Password"
@@ -62,7 +64,11 @@
                 </button>
               </div>
               <p>
-                Not a member?&nbsp;<a href="{% url 'register' %}" style="color: white">Register</a>
+                Not a member?&nbsp;<a
+                  href="{% url 'register' %}"
+                  style="color: white"
+                  >Register</a
+                >
               </p>
             </form>
           </div>
