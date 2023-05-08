@@ -19,17 +19,20 @@
                   Your username and password didn't match.
                 </strong></small
               >
-              {% endif %} {% if next %} {% if user.is_authenticated %}
-              <p class="warning">
+            </div>
+            {% endif %} {% if next %}
+            <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
+            {% if user.is_authenticated %}
+                <p class="warning">
                 Your account doesn't have access to this page. To proceed,
                 please login with an account that has access.
               </p>
+            </div>
               {% else %}
               <p class="warning">Please login to see this page.</p>
-
-              {% endif %}
             </div>
-            {% endif %}
+
+            {% endif %} {% endif %}
             <form class="text-center w-75" method="post">
               {% csrf_token %}
               <div class="mb-3">

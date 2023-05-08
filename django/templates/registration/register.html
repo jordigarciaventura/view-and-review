@@ -15,16 +15,37 @@
             <form class="text-center" method="POST">
               {% csrf_token %}
 
-              <div class="mb-3">{{form.username}}</div>
-
-              <div class="mb-3">{{form.email}}</div>
-
               <div class="mb-3">
-                {{form.password1}} {{ form.password1.errors }}
+                {{form.username}} {% if form.username.errors %} {% for error in
+                form.username.errors %}
+                <div class="rounded text-center alert-danger my-3 px-3">
+                  <small><strong>{{ error }}</strong></small>
+                </div>
+                {% endfor %} {% endif %}
               </div>
-
               <div class="mb-3">
-                {{form.password2}} {{ form.password2.errors }}
+                {{form.email}} {% if form.email.errors %} {% for error in
+                form.email.errors %}
+                <div class="rounded text-center alert-danger my-3 px-3">
+                  <small><strong>{{ error }}</strong></small>
+                </div>
+                {% endfor %} {% endif %}
+              </div>
+              <div class="mb-3">
+                {{form.password1}} {% if form.password1.errors %} {% for error
+                in form.password1.errors %}
+                <div class="rounded text-center alert-danger my-3 px-3">
+                  <small><strong>{{ error }}</strong></small>
+                </div>
+                {% endfor %} {% endif %}
+              </div>
+              <div class="mb-3">
+                {{form.password2}} {% if form.password2.errors %} {% for error
+                in form.password2.errors %}
+                <div class="rounded text-center alert-danger my-3 px-3">
+                  <small><strong>{{ error }}</strong></small>
+                </div>
+                {% endfor %} {% endif %}
               </div>
 
               <input type="hidden" name="next" value="{{ next }}" />
@@ -39,7 +60,8 @@
               </div>
               <p class="text-center">
                 Already have an account?
-                <a href="{% url 'login' %}" style="color: white;">Log in</a> instead.
+                <a href="{% url 'login' %}" style="color: white">Log in</a>
+                instead.
               </p>
             </form>
           </div>
