@@ -79,7 +79,6 @@ def reputation(request):
         reputation.delete()
     return HttpResponse()
             
-            
 class UserDeleteView(DeleteView):
     model = User
     

@@ -37,7 +37,6 @@
   </div>
 </div>
 
-
 <div class="py-3 row d-flex align-items-center justify-content-center card-body">
   {% if not user.is_authenticated %}
   <p class="text-center">Log in to make a review</p>
@@ -77,13 +76,12 @@
         {% endif %}
       </div>
       <div class="d-inline-flex flex-row justify-content-end col">
-        {% if form.score.value != 0%}
+        {% if user_rating %}
         <a href="{% url 'rating-delete' user_rating.pk %}" class="btn btn-warning d-block" style="background: #aa4747;
         opacity: 80%;
         border: none;
         color: #dd8686;text-decoration: none;">
           <b>Delete</b></a>
-      </form>
         {% endif %}
         <button
           class="btn btn-primary d-block main-button"
@@ -106,8 +104,8 @@
     class="card-body flex-column align-items-right"
   >
     {% csrf_token %}
-    <i id="upvote-button-{{rating.pk}}" class="bi bi-arrow-up-square-fill" style="mouse: cursor;" onclick="reputationSubmit('upvote', {{rating.pk}}, {{user.pk}})"></i>
-    <i id="downvote-button-{{rating.pk}}" class="bi bi-arrow-down-square-fill" style="mouse: cursor;" onclick="reputationSubmit('downvote', {{rating.pk}}, {{user.pk}})"></i>
+    <i id="upvote-button-{{rating.pk}}" class="bi bi-arrow-up-square-fill" style="cursor: pointer;" onclick="reputationSubmit('upvote', {{rating.pk}}, {{user.pk}})"></i>
+    <i id="downvote-button-{{rating.pk}}" class="bi bi-arrow-down-square-fill" style="cursor: pointer;" onclick="reputationSubmit('downvote', {{rating.pk}}, {{user.pk}})"></i>
   </form>
   <p>
     {{rating.user}} {{rating.score}}
@@ -245,10 +243,10 @@
   }
 
   // Initalise previous user rating
-  if ({{ form.score.value }} != 0) {
+  {% if user_score %}
     handle_select({{form.score.value}})
     // Allows updating review without having to select a score again
     document.getElementById('score' + {{ form.score.value }}).checked = true
-  }
-</script>
+  {% endif %}
+  </script>
 {% endblock %}
