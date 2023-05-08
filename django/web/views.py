@@ -13,12 +13,23 @@ from django.views import generic
 from web.models import Film, Rating, Reputation
 from web.forms import RegisterForm, RatingForm, ReputationForm
 
+from . import api
+
 # Create your views here.
 
 
 class IndexView(generic.TemplateView):
     template_name = "web/index.html"
-
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        
+        context['popular'] = api.popular(number=20)
+        context['latest'] = api.latest(number=20)
+        context['top_films'] = api.top_most_rated(number=20)
+        context['top_batfilms'] = api.top_most_rated_includes(includes="Batman")
+        
+        return context
 
 class FilmView(generic.DetailView):
     template_name = 'web/film.html'

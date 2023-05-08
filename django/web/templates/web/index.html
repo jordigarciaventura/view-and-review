@@ -1,4 +1,24 @@
 {% extends 'base_generic.html' %}
 {% block content %}
 
+<h1>POPULAR</h1>
+{% for film in popular %}
+  <p>{{ film.title }}</p>
+{% endfor %}
+
+<h1>LATEST</h1>
+{% for film in latest %}
+  <p>{{ film.title }}</p>
+{% endfor %}
+
+<h1>TOP 20 FILMS</h1>
+{% for film in top_films %}
+  <p>{{ film.title }} {{ film.vote_average }}</p>
+{% endfor %}
+
+<h1>TOP BATMAN FILMS</h1>
+{% for film in top_batfilms %}
+  <p>{{ film.title }} {{ film.vote_average }}</p>
+{% endfor %}
+
 {% endblock %}
