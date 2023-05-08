@@ -13,10 +13,10 @@
         <div class="mb-5">
           <div class="d-flex flex-column align-items-center">
             {% if form.errors %}
-            <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
+            <div class="rounded text-center alert-danger mb-3 px-3">
               <small
                 ><strong>
-                  Your username and password didn't match.
+                  Username and password didn't match.
                 </strong></small
               >
             </div>
@@ -24,12 +24,12 @@
             <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
             {% if user.is_authenticated %}
                 <p class="warning">
-                Your account doesn't have access to this page. To proceed,
-                please login with an account that has access.
+                This account doesn't have access to this page. To proceed,
+                please log in with an account that has access.
               </p>
             </div>
               {% else %}
-              <p class="warning">Please login to see this page.</p>
+              <p class="warning">Please log in to see this page.</p>
             </div>
 
             {% endif %} {% endif %}
