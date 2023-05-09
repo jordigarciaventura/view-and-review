@@ -1,9 +1,12 @@
 from tmdbv3api import TMDb, Movie, Discover
+from os import environ
 
 # Crea una instancia de TMDb
 tmdb = TMDb()
 # Configura la API key de TMDb
 movie = Movie()
+
+tmdb.api_key = environ.get('API_KEY')
 
 def latest(number=20):
     discover = Discover()
