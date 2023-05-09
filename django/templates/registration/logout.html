@@ -3,25 +3,56 @@
 {% block content %}
 {% load static %}
 
-<div class="container">
-  <section class="py-4 py-xl-5">
-    <div class="container">
-      <div class="row mb-5">
-        <div class="col-md-8 col-xl-6 text-center mx-auto">
-          <h2>Logged out</h2>
-        </div>
+{% if not user.is_authenticated %}
+<head>
+  <meta http-equiv="refresh" content="0; URL={% url 'login' %}" />
+</head>
+{% endif %}
+
+<section>
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-8 col-xl-6 text-center mx-auto">
+        <img src="{% static 'assets/img/vr_extended.png' %}" class="w-50" />
+        <h1>Logged out</h1>
+        <p></p>
       </div>
-      <div class="row d-flex justify-content-center">
-        <div class="col-md-6 col-xl-4">
-          <div class="card mb-5">
-            <div class="card-body d-flex flex-column align-items-center text-justify">
-              <p class="pt-2"><a href="{% url 'login'%}">Click here to log in again</a><small> or </small><a href="{% url 'index' %}">go to the main page.</a></p>
+    </div>
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6 col-xl-4">
+        <div class="mb-5">
+          <div class="d-flex flex-column align-items-center">
+            {% if form.errors %}
+            <div class="rounded text-center alert-danger mb-3 px-3">
+              <small
+                ><strong>
+                  Username and password didn't match.
+                </strong></small
+              >
+            </div>
+            {% endif %} {% if next %}
+            <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
+            {% if user.is_authenticated %}
+                <p class="warning">
+                This account doesn't have access to this page. To proceed,
+                please log in with an account that has access.
+              </p>
+            </div>
+              {% else %}
+              <p class="warning">Please log in to see this page.</p>
+            </div>
+
+            {% endif %} {% endif %}
+            <div class="text-center w-75">
+              <div class="mb-3">
+                <p>Click here to <a href="{% url 'login'%}" style="color: white;">log in</a> again</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 {% endblock %}
