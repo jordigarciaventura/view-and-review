@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict, JsonResponse
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -9,8 +9,18 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.views import generic
 
+import requests
+import os
+import json
+
 from web.models import Film, Rating, Reputation
 from web.forms import RegisterForm, RatingForm, ReputationForm
+
+
+endpoint="https://api.themoviedb.org/3"
+image_endpoint="https://image.tmdb.org/t/p"
+api_key = os.environ.get('TMDB_BEARER_TOKEN', "")
+headers = {"Authorization": f"Bearer {api_key}"}
 
 # Create your views here.
 
@@ -96,4 +106,12 @@ def rate(request, pk):
 
     return HttpResponseRedirect(reverse('film', args=(pk,)))
                
-    
+
+def search(request):
+    if 'term' in request.GET:
+        payload = {"query": request.GET.get('term')}
+        json_response = requests.get(endpoint + "/search/movie", headers=headers, params=payload).json()
+        results = json_response["results"]
+        filtered_results = [{prop: d[prop] for prop in ['title', 'release_date']} for d in results]
+        return JsonResponse(filtered_results[:5], safe=False)
+    return HttpResponse()
