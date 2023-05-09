@@ -22,27 +22,6 @@
       <div class="col-md-6 col-xl-4">
         <div class="mb-5">
           <div class="d-flex flex-column align-items-center">
-            {% if form.errors %}
-            <div class="rounded text-center alert-danger mb-3 px-3">
-              <small
-                ><strong>
-                  Username and password didn't match.
-                </strong></small
-              >
-            </div>
-            {% endif %} {% if next %}
-            <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
-            {% if user.is_authenticated %}
-                <p class="warning">
-                This account doesn't have access to this page. To proceed,
-                please log in with an account that has access.
-              </p>
-            </div>
-              {% else %}
-              <p class="warning">Please log in to see this page.</p>
-            </div>
-
-            {% endif %} {% endif %}
             <div class="text-center w-75">
               <div class="mb-3">
                 <p>Click here to <a href="{% url 'login'%}" style="color: white;">log in</a> again</p>
