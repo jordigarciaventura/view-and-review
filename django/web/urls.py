@@ -11,6 +11,7 @@ urlpatterns = [
     path('film/<pk>/', views.FilmView.as_view(), name='film'),
     path('rating/<pk>/', views.rate, name='rating'),
     path('reputation/', views.reputation, name='reputation'),
+    path('search/', views.search, name='search'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
