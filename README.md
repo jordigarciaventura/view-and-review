@@ -6,39 +6,42 @@
 ## Run Locally
 
 ### Development
-1. Run the containers:
+1. Copy the `secrets/env.template` file to `secrets/.env.dev` and fill it
+2. Run the containers:
     ```
     docker compose up --build
     ```
-2. Visit http://localhost:8000
+3. Visit http://localhost:8000
 
 ### Deployment
-1. Run the containers:
+1. Copy the `secrets/env.template` file to `secrets/.env.dep` and fill it
+2. Run the containers:
     ```
     docker compose -f docker-compose.dep.yml up  --build
     ```
-2. Visit http://localhost
+3. Visit http://localhost
 
 ### Deployment over HTTPS
+1. Copy the `secrets/env.template` file to `secrets/.env.deps` and fill it
+   
+2. Install [mkcert](https://github.com/FiloSottile/mkcert#installation)
 
-1. Install [mkcert](https://github.com/FiloSottile/mkcert#installation)
-
-2. Create a local certificate authority
+3. Create a local certificate authority
     ```
     mkcert -install
     ```
-3. Create a trusted certificate on `/ngnix/certficates`
+4. Create a trusted certificate on `/ngnix/certficates`
     ```
     cd nginx/certificates
     ```
     ```
     mkcert localhost
     ```
-4. Run the containers:
+5. Run the containers:
     ```
     docker compose -f docker-compose.deps.yml up  --build
     ```
-5. Visit https://localhost
+6. Visit https://localhost
 
 ## Services
 
