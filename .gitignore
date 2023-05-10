@@ -134,9 +134,6 @@ celerybeat.pid
 # Environments
 .env
 .venv
-secrets/.env.deps
-secrets/.env.dep
-secrets/.env.dev
 env/
 venv/
 ENV/
