@@ -112,6 +112,56 @@ def search(request):
         payload = {"query": request.GET.get('term')}
         json_response = requests.get(endpoint + "/search/movie", headers=headers, params=payload).json()
         results = json_response["results"]
-        filtered_results = [{prop: d[prop] for prop in ['title', 'release_date']} for d in results]
-        return JsonResponse(filtered_results[:5], safe=False)
+        
+        filtered_results = [{prop: d[prop] for prop in ['title', 'release_date', 'vote_average', 'id', 'poster_path', 'genre_ids']} for d in results]
+        filtered_results = filtered_results[:5]
+        
+        for i in range(len(filtered_results)):
+            # Poster path
+            if not filtered_results[i] or not filtered_results[i]['poster_path']:
+                continue
+            
+            poster_path = filtered_results[i]['poster_path']
+            poster_url = get_image_url(poster_path)
+            filtered_results[i]['poster_path'] = poster_url
+                
+            # Genres
+            genre_ids = filtered_results[i]['genre_ids']
+            genres = get_genres_names(genre_ids)
+            filtered_results[i].pop('genre_ids')
+            filtered_results[i]['genres'] = ", ".join(genres[:2])
+                
+            # Release date
+            filtered_results[i]['release_date'] = filtered_results[i]['release_date'][:4]
+                
+        return JsonResponse(filtered_results, safe=False)
     return HttpResponse()
+
+
+def get_image_url(path, width=92):
+    return image_endpoint + f"/w{str(width)}" + path
+    
+
+def get_genres_names(ids):
+    genres = { 
+        "28": "Action",
+        "12": "Adventure",
+        "16": "Animation",
+        "35": "Comedy",
+        "80": "Crime",
+        "99": "Documentary",
+        "18": "Drama",
+        "10751": "Family",
+        "14": "Fantasy",
+        "36": "History",
+        "27": "Horror",
+        "10402": "Music",
+        "9648": "Mystery",
+        "10749": "Romance",
+        "878": "Sci-Fi",
+        "10770": "TV Movie",
+        "53": "Thriller",
+        "10752": "War",
+        "37": "Western"}
+    
+    return [genres[str(id)] for id in ids if str(id) in genres]

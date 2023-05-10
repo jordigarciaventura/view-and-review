@@ -95,18 +95,29 @@
     $("#search").autocomplete({
       source: "{% url 'search' %}",
       minLength: 2,
-      focus: ( event, ui ) => {
-        $( "#search" ).val( ui.item.title );
+      focus: (event, ui) => {
+        $("#search").val(ui.item.title);
       },
       select: (event, ui) => {
-        $( "#search" ).val( ui.item.title );
+        $("#search").val(ui.item.title);
       }
     })
-    .data("ui-autocomplete")._renderItem = (ul, item) => {
-      return $("<li>")
-        .append( "<div>" + item.title + "<br>" + item.release_date + "</div>" )
-        .appendTo(ul);
-    };
+      .data("ui-autocomplete")._renderItem = (ul, item) => {
+        var inner_html = `
+        <div class="search-result">
+          <image src="${item.poster_path}" />
+          <div class="search-result-desc">
+            <div>
+              <p class="search-result-title">${item.title}</p>
+              <p class="search-result-date">${item.release_date}</p>
+            </div>
+            <p>${item.genres} </p>
+          </div>
+        </div>`;
+        return $("<li>")
+          .append(inner_html)
+          .appendTo(ul);
+      };
   });
 </script>
 
