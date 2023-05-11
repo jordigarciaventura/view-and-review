@@ -1,6 +1,7 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict
-from django.views.generic.edit import DeleteView, UpdateView
+from django.db.models import Model, QuerySet
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict
+from django.views.generic.edit import DeleteView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -10,7 +11,8 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.views import generic
 
-from web.models import Rating, Reputation
+
+from web.models import *
 from web.forms import RegisterForm, RatingForm, ReputationForm
 
 from . import api
@@ -30,7 +32,7 @@ class IndexView(generic.TemplateView):
         context['top_batfilms'] = api.top_most_rated_includes(includes="Batman")
         
         return context
-
+    
 class FilmView(generic.TemplateView):
     template_name = 'web/film.html'
 
@@ -55,7 +57,11 @@ class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
 
 
-class ProfileView(generic.TemplateView):
+class ProfileView(generic.DetailView):
+    template_name = 'auth/profile.html'
+    model = MyProfile
+    
+class ProfileSettingsView(generic.TemplateView):
     template_name = 'auth/profile_settings.html'
     
 
@@ -65,6 +71,7 @@ def RegisterView(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            MyProfile.create(user).save()
             login(request, user)
             messages.success(request, "Registration succesful " + str(user))
             return redirect('/')

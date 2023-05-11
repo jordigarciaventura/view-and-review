@@ -91,11 +91,11 @@
         </div>
         {% if user.is_authenticated %}
         <div class="d-inline-flex align-items-center">
-          <a class="px-2" href="{% url 'index' %}"
+          <a class="px-2" href="{% url 'profile' user.username %}"
             ><i class="fas fa-home" style="color: var(--bs-gray-300)"></i></a
           ><a
             style="text-decoration: none !important"
-            href="{% url 'profile' user.pk %}"
+            href="{% url 'profile-settings' user.pk %}"
             ><i class="px-3 fas fa-user" style="color: var(--bs-gray-300)"></i
             ><span style="color: var(--bs-gray-300)">{{user.username}}</span></a
           ><a class="px-3" href="{% url 'logout' %}"
