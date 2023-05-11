@@ -40,3 +40,19 @@ class MyProfile(models.Model):
     def create(cls, user) -> 'MyProfile': 
         profile = cls(user=user, slug=slugify(user))
         return profile
+    
+    def add_to_wishlist(self, film_id) -> None:
+        self.watchlist += str(film_id) + ','
+        self.save()
+        
+    def remove_from_wishlist(self, film_id) -> None:
+        self.watchlist = self.watchlist.replace(str(film_id) + ',', '')
+        self.save()
+        
+    def add_to_favlist(self, film_id) -> None:
+        self.favlist += str(film_id) + ','
+        self.save()
+        
+    def remove_from_favlist(self, film_id) -> None:
+        self.favlist = self.favlist.replace(str(film_id) + ',', '')
+        self.save()

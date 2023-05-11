@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 import web.models
 
 
+class WatchlistForm(forms.Form):
+    film_id = forms.IntegerField()
+
 class RegisterForm(UserCreationForm):
     attrs = {
         'class': 'form-control',

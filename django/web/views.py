@@ -13,7 +13,7 @@ from django.views import generic
 
 
 from web.models import *
-from web.forms import RegisterForm, RatingForm, ReputationForm
+from web.forms import *
 
 from . import api
 
@@ -65,8 +65,39 @@ class ProfileSettingsView(generic.TemplateView):
     template_name = 'auth/profile_settings.html'
     
 
+@login_required()
+@require_http_methods(['POST', 'DELETE'])
+def WatchlistView(request):
+    if request.method == 'POST':
+        form = ListForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            profile = MyProfile.objects.get(user=request.user)
+            profile.add_to_wishlist(data['film_id'])
+    if request.method == 'DELETE':    
+        data = QueryDict(request.body)
+        profile = MyProfile.objects.get(user=request.user)
+        profile.remove_from_wishlist(data['film_id'])
+
+    return HttpResponse()
+
+@login_required()
+@require_http_methods(['POST', 'DELETE'])
+def FavlistView(request):
+    if request.method == 'POST':
+        form = ListForm(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+            profile = MyProfile.objects.get(user=request.user)
+            profile.add_to_favlist(data['film_id'])
+    if request.method == 'DELETE':    
+        data = QueryDict(request.body)
+        profile = MyProfile.objects.get(user=request.user)
+        profile.remove_from_favlist(data['film_id'])
+
+    return HttpResponse()
+
 def RegisterView(request):
-    form = RegisterForm()
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -77,6 +108,7 @@ def RegisterView(request):
             return redirect('/')
         messages.error(
             request, "Unsuccesful registration. Invalid information.")
+    form = RegisterForm()
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
 @login_required
