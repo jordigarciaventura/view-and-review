@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 import web.models
 
 
-class WatchlistForm(forms.Form):
+class ListForm(forms.Form):
     film_id = forms.IntegerField()
 
 class RegisterForm(UserCreationForm):

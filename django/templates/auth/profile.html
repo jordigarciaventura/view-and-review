@@ -5,20 +5,28 @@
 
     {{myprofile.watchlist}}
 
-    <button class="btn-primary d-block main-button btn" onclick="watchlist('POST')">POST</button>
-    <button class="btn-primary d-block main-button btn" onclick="watchlist('DELETE')">DELETE</button>
+    <div>
+        <h1>WATCH</h1>
+        <button class="btn-primary d-block main-button btn" onclick="addtolist('POST', {% url 'watchlist' %})">POST</button>
+        <button class="btn-primary d-block main-button btn" onclick="addtolist('DELETE', {% url 'watchlist' %})">DELETE</button>
+    </div>
+    <div>
+        <h1>FAV</h1>
+        <button class="btn-primary d-block main-button btn" onclick="addtolist('POST', {% url 'favlist' %})">POST</button>
+        <button class="btn-primary d-block main-button btn" onclick="addtolist('DELETE', {% url 'favlist' %})">DELETE</button>
+    </div>
 </div>
 
 
 <script>
 
-function watchlist(httpmethod) {
+function addtolist(httpmethod, url) {
     const formData = {
         'film_id': 1234,
     }
     
     $.ajax({
-        url: '{% url 'watchlist' %}',
+        url: url,
         type: httpmethod,
         headers: {
             'X-CSRFToken': Cookies.get('csrftoken')
