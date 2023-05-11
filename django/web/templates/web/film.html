@@ -47,7 +47,7 @@
     class="flex-column align-items-center w-50"
   >
     {% csrf_token %} {{ form.errors }}
-      <div hidden>{{ form.film }} {{ form.score }}</div>
+      <div hidden> {{ form.film }}</div>
       <div>{{form.review_title}}</div>
       <div class="pt-3 mb-2">{{form.review}}</div>
     <div
@@ -56,12 +56,12 @@
       <div class="d-flex justify-content-between">
         {% for rate in RATING_CHOICES %}
         <input
-          hidden
           type="radio"
           name="score"
           id="score{{ forloop.counter }}"
           value="{{ rate.0 }}"
           required
+          hidden
         />
         <label
           class="fa fa-star star fa-2x mx-2"
@@ -77,7 +77,7 @@
       </div>
       <div class="d-inline-flex flex-row justify-content-end col">
         {% if user_rating %}
-        <a href="{% url 'rating-delete' user_rating.pk %}" class="btn btn-warning d-block" style="background: #aa4747;
+        <a href="{% url 'rating-delete' film.id %}" class="btn btn-warning d-block" style="background: #aa4747;
         opacity: 80%;
         border: none;
         color: #dd8686;text-decoration: none;">
@@ -96,8 +96,7 @@
   </div>
 </div>
 
-
-{% for rating in film.rating_set.all %}
+{% for rating in ratings %}
 <div class="d-flex mb-3 w-50">
   <form
     id="reputation-form-{{rating.pk}}"
@@ -150,10 +149,12 @@
     }
   }
 
-  {% for rating in film.rating_set.all %}
+  {% for rating in ratings %}
   document.getElementById("upvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("upvote", {{rating.pk}}, {{rating.user.pk}}))
   document.getElementById("downvote-button-" + {{rating.pk}}).addEventListener("click", (event) => toggle_reputation_color("downvote", {{rating.pk}}, {{rating.user.pk}}))
-  {% for reputation in rating.reputation_set.all %}{% if reputation.user == user %}
+  {% endfor %}
+  {% for rating in ratings %} {% for reputation in rating.reputation_set.all %}
+  {% if reputation.user == user %}
   colorize_reputation({{rating.pk}}, "{{reputation.value}}")
   {% endif %}{% endfor%}{% endfor %}
 
@@ -214,11 +215,26 @@
   )
 
   function reputationSubmit(value, rating_pk, user_pk) {
-    var isupvote = value=="upvote"
-    var formButton = document.getElementById(value+"-button-"+rating_pk)
-    var httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
+    const getOtherStr = (value) => {
+      return value == "upvote" ? "downvote" : "upvote"
+    }
 
-    var formData = {
+    var formButton = document.getElementById(value+"-button-"+rating_pk)
+    var otherFormButton = document.getElementById(getOtherStr(value)+"-button-"+rating_pk)
+    const isput = () => {
+      const arr = ['upvote', 'downvote']
+      return arr.some((el, ind, arr) => formButton.classList.contains(el) || otherFormButton.classList.contains(el))
+    }
+    
+    var isupvote = value=="upvote"
+
+    var httpmethod
+    if (isput())
+      httpmethod = 'PUT'
+    else
+      httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
+    
+      var formData = {
       'value': isupvote,
       'rating': rating_pk,
       'user': user_pk,
@@ -239,8 +255,8 @@
     event.preventDefault()
   }
 
-  // Initalise previous user rating
-  {% if user_score.score != 0 %}
+  {% if form.score.value != 0 %}
+    // Initalise previous user rating
     handle_select({{form.score.value}})
     // Allows updating review without having to select a score again
     document.getElementById('score' + {{ form.score.value }}).checked = true

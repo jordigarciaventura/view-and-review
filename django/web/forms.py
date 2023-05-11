@@ -42,7 +42,6 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = web.models.Rating
         fields = "__all__"
-        hidden = ['film']
         exclude = ['user', 'reputation']
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:

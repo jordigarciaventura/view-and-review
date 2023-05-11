@@ -8,6 +8,9 @@ movie = Movie()
 
 tmdb.api_key = environ.get('API_KEY')
 
+def film(movie_id):
+    return movie.details(movie_id=movie_id)
+
 def latest(number=20):
     discover = Discover()
     movies = discover.discover_movies({

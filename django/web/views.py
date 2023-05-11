@@ -1,5 +1,5 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, QueryDict
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict
 from django.views.generic.edit import DeleteView, UpdateView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,7 +10,7 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.views import generic
 
-from web.models import Film, Rating, Reputation
+from web.models import Rating, Reputation
 from web.forms import RegisterForm, RatingForm, ReputationForm
 
 from . import api
@@ -31,17 +31,19 @@ class IndexView(generic.TemplateView):
         
         return context
 
-class FilmView(generic.DetailView):
+class FilmView(generic.TemplateView):
     template_name = 'web/film.html'
-    model = Film
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
-        context = super(FilmView, self).get_context_data(**kwargs)
-        context['film'] = self.get_object()
+        context = {}
+        # Can raise 404
+        film = api.film(kwargs['pk'])           
+        context['film'] = film
         context['RATING_CHOICES'] = Rating.RATING_CHOICES
-        context['form'] = RatingForm(initial={'film': self.get_object()})
+        context['form'] = RatingForm(initial={'film': film['id']})
+        context['ratings'] = Rating.objects.filter(film=film['id'])
         if self.request.user.is_authenticated:
-            user_rating = Rating.objects.filter(user=self.request.user, film=self.get_object()).first()
+            user_rating = Rating.objects.filter(user=self.request.user, film=film['id']).first()
             if user_rating:
                 context['form'] = RatingForm(instance=user_rating)
                 context['user_rating'] = user_rating
@@ -54,7 +56,7 @@ class LogoutView(generic.TemplateView):
 
 
 class ProfileView(generic.TemplateView):
-    template_name = 'auth/profile.html'
+    template_name = 'auth/profile_settings.html'
     
 
 def RegisterView(request):
@@ -71,23 +73,19 @@ def RegisterView(request):
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
 @login_required
-@require_http_methods(["POST", "DELETE"])
+@require_http_methods(['POST', 'DELETE', 'PUT'])
 def reputation(request):     
     if request.method == 'POST':   
         form = ReputationForm(request.POST)
-        
         if form.is_valid():
-            reputation = form.save(commit=False)
-            old_reputation = Reputation.objects.filter(user=reputation.user, rating=reputation.rating)
-            if old_reputation.exists():
-                old_reputation.update(value=reputation.value)
-            else:
-                reputation.save()
+            form.save()
+    if request.method == 'PUT':   
+        data = QueryDict(request.body)
+        new_value = data.get('value') == 'true'
+        Reputation.objects.filter(user=data.get('user'), rating=data.get('rating')).update(value=new_value)
     if request.method == 'DELETE':
         data = QueryDict(request.body)
-
-        reputation = Reputation.objects.filter(user=data.get('user'), rating=data.get('rating'))
-        reputation.delete()
+        Reputation.objects.filter(user=data.get('user'), rating=data.get('rating')).delete()
     return HttpResponse()
             
 @login_required
@@ -118,44 +116,32 @@ class UserDeleteView(DeleteView):
         else:
             return HttpResponseForbidden("Cannot delete other's account")
 
-class RatingDeleteView(DeleteView):
-    model = Rating
-
-    def form_valid(self, form):
-        self.object = self.get_object()
-        if self.object.user == self.request.user:
-            self.object.delete()
-            return HttpResponseRedirect(self.get_success_url())
-        else:
-            return HttpResponseForbidden("Cannot delete other's posts")
-
-    def get_success_url(self) -> str:
-        return reverse('film', args=(self.object.film.pk,)) 
-    
 
 @login_required
-def rate(request, pk):
-    if request.method == "POST":    
-        get_object_or_404(Film, pk=pk)
+@require_http_methods(['GET', 'POST'])
+def ratingDelete(request, film_id):
+    object = Rating.objects.filter(film=film_id, user=request.user).first()
+    if request.method == 'GET':
+        return render(request=request, template_name='web/rating_confirm_delete.html', context={'object': object})
         
-        form = RatingForm(request.POST)
-        if form.is_valid():
-            # Process the data in form.cleaned_data
-            rating = form.save(commit=False)
-            rating.user = User.objects.get(username=request.user)
-            old_rating = Rating.objects.filter(user=rating.user)
-            if old_rating.exists():
-                old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
-            else:
-                rating.save()
-            return HttpResponseRedirect(reverse('film', args=(pk,)))
+    # POST request logic
+    object.delete()
+    return HttpResponseRedirect(reverse('film', args=(film_id)))    
+
+@login_required
+@require_http_methods(['POST'])
+def rate(request, film_id):
+    form = RatingForm(request.POST)
+    if form.is_valid():
+        # Process the data in form.cleaned_data
+        rating = form.save(commit=False)
+        rating.user = User.objects.get(username=request.user)
+        old_rating = Rating.objects.filter(user=rating.user)
+        if old_rating.exists():
+            old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
         else:
-            messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
-    if request.method == "DELETE":    
-        data = QueryDict(request.body)
-
-        rating = Rating.objects.filter(user=data.get('user'), film=data.get('film'))
-        rating.delete()
-
-    return HttpResponseRedirect(reverse('film', args=(pk,)))
+            rating.save()
+        return HttpResponseRedirect(reverse('film', args=(film_id,)))
+    else:
+        messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
     
