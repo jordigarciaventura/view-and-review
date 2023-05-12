@@ -15,6 +15,7 @@ urlpatterns = [
     path('rating/<film_id>/', views.rate, name='rating'),
     path('rating/<film_id>/delete/', views.ratingDelete, name='rating-delete'),
     path('reputation/', views.reputation, name='reputation'),
+    path('search/', views.search, name='search'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

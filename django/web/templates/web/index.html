@@ -1,7 +1,17 @@
 {% extends 'base_generic.html' %}
-{% block content %}
 
-<h1>POPULAR</h1>
+{% load static %}
+
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+<script src="{% static 'js/navbar.js' %}"></script>
+<script src="{% static 'js/autocomplete.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+{% include 'navbar.html' %}
+
+<!-- <h1>POPULAR</h1>
 {% for film in popular %}
   <p>{{ film.title }}</p>
 {% endfor %}
@@ -19,6 +29,6 @@
 <h1>TOP BATMAN FILMS</h1>
 {% for film in top_batfilms %}
   <p>{{ film.title }} {{ film.vote_average }}</p>
-{% endfor %}
+{% endfor %} -->
 
 {% endblock %}

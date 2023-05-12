@@ -1,5 +1,6 @@
+
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict, JsonResponse
 from django.views.generic.edit import DeleteView, UpdateView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,10 +11,20 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.views import generic
 
+import requests
+import os
+import json
+
 from web.models import Rating, Reputation
 from web.forms import RegisterForm, RatingForm, ReputationForm
 
 from . import api
+
+
+endpoint="https://api.themoviedb.org/3"
+image_endpoint="https://image.tmdb.org/t/p"
+api_key = os.environ.get('TMDB_BEARER_TOKEN', "")
+headers = {"Authorization": f"Bearer {api_key}"}
 
 # Create your views here.
 
@@ -145,3 +156,80 @@ def rate(request, film_id):
     else:
         messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
     
+        if form.is_valid():
+            # Process the data in form.cleaned_data
+            rating = form.save(commit=False)
+            rating.user = User.objects.get(username=request.user)
+            old_rating = Rating.objects.filter(user=rating.user)
+            if old_rating.exists():
+                old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
+            else:
+                rating.save()
+            return HttpResponseRedirect(reverse('film', args=(pk,)))
+        else:
+            messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
+    if request.method == "DELETE":    
+        data = QueryDict(request.body)
+
+        rating = Rating.objects.filter(user=data.get('user'), film=data.get('film'))
+        rating.delete()
+
+    return HttpResponseRedirect(reverse('film', args=(pk,)))
+               
+
+def search(request):
+    if 'term' in request.GET:
+        payload = {"query": request.GET.get('term')}
+        json_response = requests.get(endpoint + "/search/movie", headers=headers, params=payload).json()
+        results = json_response["results"]
+        
+        filtered_results = [{prop: d[prop] for prop in ['title', 'release_date', 'vote_average', 'id', 'poster_path', 'genre_ids']} for d in results]
+        filtered_results = [d for d in filtered_results if all(d.values())]
+        filtered_results = filtered_results[:10]
+        
+        for i in range(len(filtered_results)):
+            # Change poster path to url
+            poster_path = filtered_results[i]['poster_path']
+            poster_url = get_image_url(poster_path)
+            filtered_results[i]['poster_path'] = poster_url
+                
+            # Change genre ids to names
+            genre_ids = filtered_results[i]['genre_ids']
+            genres = get_genres_names(genre_ids)
+            filtered_results[i].pop('genre_ids')
+            filtered_results[i]['genres'] = ", ".join(genres[:2])
+                
+            # Get only the year from the release date
+            filtered_results[i]['release_date'] = filtered_results[i]['release_date'][:4]
+                
+        return JsonResponse(filtered_results, safe=False)
+    return HttpResponse()
+
+
+def get_image_url(path, width=92):
+    return image_endpoint + f"/w{str(width)}" + path
+    
+
+def get_genres_names(ids):
+    genres = { 
+        "28": "Action",
+        "12": "Adventure",
+        "16": "Animation",
+        "35": "Comedy",
+        "80": "Crime",
+        "99": "Documentary",
+        "18": "Drama",
+        "10751": "Family",
+        "14": "Fantasy",
+        "36": "History",
+        "27": "Horror",
+        "10402": "Music",
+        "9648": "Mystery",
+        "10749": "Romance",
+        "878": "Sci-Fi",
+        "10770": "TV Movie",
+        "53": "Thriller",
+        "10752": "War",
+        "37": "Western"}
+    
+    return [genres[str(id)] for id in ids if str(id) in genres]
