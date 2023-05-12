@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
 <link rel="stylesheet" href="{% static 'css/movie.css' %}" />
 <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<script src="{% static 'js/deep-linking.js' %}"></script>
 <script src="{% static 'js/navbar.js' %}"></script>
 <script src="{% static 'js/autocomplete.js' %}"></script>
 <script src="{% static 'js/movie.js' %}"></script>
@@ -18,13 +19,13 @@
 
 <div class="carousels">
 
-{% include 'web/carousel.html' with title="Upcoming" movies=upcoming only %}
+    {% include 'web/carousel.html' with title="Upcoming" id='upcoming' movies=upcoming only %}
 
-{% include 'web/carousel.html' with title="Popular" movies=popular only %}
+    {% include 'web/carousel.html' with title="Popular" id='popular' movies=popular only %}
 
-{% include 'web/carousel.html' with title="Top rated" movies=top_rated only %}
+    {% include 'web/carousel.html' with title="Top rated" id='top-rated' movies=top_rated only %}
 
-{% include 'web/carousel.html' with title="Latest" movies=latest only %}
+    {% include 'web/carousel.html' with title="Latest" id='latest' movies=latest only %}
 
 </div>
 

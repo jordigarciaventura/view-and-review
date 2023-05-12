@@ -1,4 +1,6 @@
 .carousels {
+    width: 1260px;
+    margin: auto;
     padding: 32px 0;
     display: flex;
     flex-direction: column;
