@@ -11,23 +11,12 @@ from django.views.decorators.http import require_http_methods
 from django.contrib.auth.models import User
 from django.views import generic
 
-import requests
-import os
-import json
-
 from web.models import Rating, Reputation
 from web.forms import RegisterForm, RatingForm, ReputationForm
 
 from . import api
 
-
-endpoint="https://api.themoviedb.org/3"
-image_endpoint="https://image.tmdb.org/t/p"
-api_key = os.environ.get('TMDB_BEARER_TOKEN', "")
-headers = {"Authorization": f"Bearer {api_key}"}
-
 # Create your views here.
-
 
 class IndexView(generic.TemplateView):
     template_name = "web/index.html"
@@ -35,10 +24,14 @@ class IndexView(generic.TemplateView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         
-        context['popular'] = api.popular(number=20)
-        context['latest'] = api.latest(number=20)
-        context['top_films'] = api.top_most_rated(number=20)
-        context['top_batfilms'] = api.top_most_rated_includes(includes="Batman")
+        popular = api.popular()["results"]
+        popular = movie_preview_parser(popular, poster_size="w342", count=10)
+        
+        context['popular'] = popular
+        
+        # context['latest'] = api.latest(number=20)
+        # context['top_films'] = api.top_most_rated(number=20)
+        # context['top_batfilms'] = api.top_most_rated_includes(includes="Batman")
         
         return context
 
@@ -177,59 +170,71 @@ def rate(request, film_id):
     return HttpResponseRedirect(reverse('film', args=(pk,)))
                
 
+def get_dict_keys(dict, keys):
+    return {key:value for key, value in dict.items() if key in keys}
+
 def search(request):
     if 'term' in request.GET:
-        payload = {"query": request.GET.get('term')}
-        json_response = requests.get(endpoint + "/search/movie", headers=headers, params=payload).json()
-        results = json_response["results"]
+        query = request.GET.get('term')
+        results = api.search(query)["results"]
         
-        filtered_results = [{prop: d[prop] for prop in ['title', 'release_date', 'vote_average', 'id', 'poster_path', 'genre_ids']} for d in results]
-        filtered_results = [d for d in filtered_results if all(d.values())]
-        filtered_results = filtered_results[:10]
-        
-        for i in range(len(filtered_results)):
-            # Change poster path to url
-            poster_path = filtered_results[i]['poster_path']
-            poster_url = get_image_url(poster_path)
-            filtered_results[i]['poster_path'] = poster_url
-                
-            # Change genre ids to names
-            genre_ids = filtered_results[i]['genre_ids']
-            genres = get_genres_names(genre_ids)
-            filtered_results[i].pop('genre_ids')
-            filtered_results[i]['genres'] = ", ".join(genres[:2])
-                
-            # Get only the year from the release date
-            filtered_results[i]['release_date'] = filtered_results[i]['release_date'][:4]
+        filtered_results = movie_preview_parser(results, poster_size="w92", count=10)
                 
         return JsonResponse(filtered_results, safe=False)
     return HttpResponse()
 
 
-def get_image_url(path, width=92):
-    return image_endpoint + f"/w{str(width)}" + path
+def movie_preview_parser(results, poster_size="w92", count=10):
+    # Get only the properties we want
+    properties = ["title", "release_date", "id", "poster_path", "genre_ids", "vote_average"]
+    filtered_results = [get_dict_keys(result, properties) for result in results]
     
+    # Check if all properties are not empty
+    filtered_results = [result for result in filtered_results if all(result.values())]
+    
+    # Get only some results
+    filtered_results = filtered_results[:count]
+    
+    for i in range(len(filtered_results)):
+        # Change poster path to url
+        poster_path = filtered_results[i]['poster_path']
+        poster_url = api.get_image_url(poster_path, type="poster", size=poster_size)
+        filtered_results[i]['poster_path'] = poster_url
+        
+        # Change genre ids to names
+        genre_ids = filtered_results[i]['genre_ids']
+        genres = [api.get_genre_name(genre_id) for genre_id in genre_ids]
+        filtered_results[i]['genres'] = ", ".join(genres[:2])
+        filtered_results[i].pop('genre_ids')
+            
+        # Get only the year from the release date
+        filtered_results[i]['release_date'] = filtered_results[i]['release_date'][:4]
+        
+        # Get the score
+        filtered_results[i]['score'] = filtered_results[i]['vote_average'] * 10
+        filtered_results[i].pop('vote_average')
+        
+    return filtered_results
 
-def get_genres_names(ids):
-    genres = { 
-        "28": "Action",
-        "12": "Adventure",
-        "16": "Animation",
-        "35": "Comedy",
-        "80": "Crime",
-        "99": "Documentary",
-        "18": "Drama",
-        "10751": "Family",
-        "14": "Fantasy",
-        "36": "History",
-        "27": "Horror",
-        "10402": "Music",
-        "9648": "Mystery",
-        "10749": "Romance",
-        "878": "Sci-Fi",
-        "10770": "TV Movie",
-        "53": "Thriller",
-        "10752": "War",
-        "37": "Western"}
+
+def section(request, title):
+    print(title)
+    return HttpResponse()
+
+@require_http_methods(['POST'])
+def watchlist(request, movie_id):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
     
-    return [genres[str(id)] for id in ids if str(id) in genres]
+    return HttpResponse()
+
+@require_http_methods(['POST'])
+def favorite(request, movie_id):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+    
+    return HttpResponse()
+
+def trailer(request, movie_id):
+    trailer = api.get_movie_trailer(movie_id)
+    return HttpResponse(trailer)

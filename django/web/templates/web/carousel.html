@@ -1,0 +1,18 @@
+<div class="movie-carousel">
+
+    <div class="movie-carousel-heading">
+        <a class="section-title" href="{% url 'section' title %}" >{{ title }}</a>
+        <span class="iconify s24" data-icon="material-symbols:arrow-back-ios-new-rounded" data-flip="horizontal"></span>
+    </div>
+    <div class="carousel">
+        <div class="movies">
+        
+            {% for movie in movies %}
+            
+            {% include 'web/movie.html' with movie=movie only %}
+
+            {% endfor %}
+        
+        </div>
+    </div>
+</div>

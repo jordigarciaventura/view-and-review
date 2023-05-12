@@ -1,6 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => { 
-    let searching = false;
-    
     let searchOptionElem = document.querySelector(".search-option");
     let searchCloseElem = document.querySelector(".search-close");
 
@@ -12,8 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".search-close").style.display = "flex";
         document.querySelector(".navbar").classList.toggle("navbar-full");
         document.querySelector(".search-bar").classList.toggle("search-bar-full");
-
-        searching = true;
     });
 
     searchCloseElem.addEventListener("click", () => {

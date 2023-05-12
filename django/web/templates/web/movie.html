@@ -1,0 +1,30 @@
+<div class="movie">
+    <div class="movie-poster">
+        <a class="movie-image" href="{% url 'film' movie.id %}">
+            <img src="{{ movie.poster_path }}" alt="poster" draggable="false">
+        </a>
+        <div class="movie-option play-option s64" data-movie-id="{{ movie.id }}">
+            <span class="iconify movie-option-icon s42"
+                data-icon="material-symbols:play-arrow-rounded"></span>
+        </div>  
+    </div>
+    <div class="movie-options">
+        <div class="movie-option watchlist-option s42" data-movie-id="{{ movie.id }}" >    
+            <span class="iconify s24 watchlist-no {% if movie.watchlist %} hidden {% endif %}" data-icon="material-symbols:bookmark-outline-rounded"></span>
+            <span class="iconify s24 watchlist-yes {% if not movie.watchlist %} hidden {% endif %}" data-icon="material-symbols:bookmark-rounded"></span>
+        </div>
+        <div class="movie-option favorite-option s42" data-movie-id="{{ movie.id }}" >
+            <span class="iconify s24 favorite-no {% if movie.favorite %} hidden {% endif %}" data-icon="mdi:heart-outline"></span>
+            <span class="iconify s24 favorite-yes {% if not movie.favorite %} hidden {% endif %}" data-icon="mdi:heart"></span>
+        </div>
+    </div>
+    <div class="movie-info">
+        <p>{{ movie.release_date }}</p>
+        <p>•</p>
+        <p>{{ movie.genres }}</p>
+    </div>
+    <div class="movie-title cut-text lines-2">{{ movie.title }}</div>
+    <div class="progress-container">
+        <div style="--progress: {{ movie.score }}; width: {{ movie.score }}%" class="progress-bar score-great" ></div>
+    </div>
+</div>

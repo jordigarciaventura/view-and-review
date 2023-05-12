@@ -4,12 +4,18 @@
 
 {% block links %}
 <link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
 <script src="{% static 'js/navbar.js' %}"></script>
 <script src="{% static 'js/autocomplete.js' %}"></script>
+{% csrf_token %}
+<script src="{% static 'js/movie.js' %}"></script>
 {% endblock %}
 
 {% block content %}
 {% include 'navbar.html' %}
+
+{% include 'web/carousel.html' with title="Popular" movies=popular only %}
 
 <!-- <h1>POPULAR</h1>
 {% for film in popular %}
