@@ -24,14 +24,21 @@ class IndexView(generic.TemplateView):
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
         
+        upcoming = api.upcoming()["results"]
+        upcoming = movie_preview_parser(upcoming, poster_size="w342", count=10)
+        context['upcoming'] = upcoming
+        
         popular = api.popular()["results"]
         popular = movie_preview_parser(popular, poster_size="w342", count=10)
-        
         context['popular'] = popular
+    
+        top_rated = api.top_rated()["results"]
+        top_rated= movie_preview_parser(top_rated, poster_size="w342", count=10)
+        context['top_rated'] = top_rated
         
-        # context['latest'] = api.latest(number=20)
-        # context['top_films'] = api.top_most_rated(number=20)
-        # context['top_batfilms'] = api.top_most_rated_includes(includes="Batman")
+        latest = api.latest()["results"]
+        latest = movie_preview_parser(latest, poster_size="w342", count=10)
+        context['latest'] = latest
         
         return context
 
@@ -238,3 +245,6 @@ def favorite(request, movie_id):
 def trailer(request, movie_id):
     trailer = api.get_movie_trailer(movie_id)
     return HttpResponse(trailer)
+
+def movie(request, pk):
+    return HttpResponse()

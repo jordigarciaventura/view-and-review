@@ -1,6 +1,6 @@
 <div class="movie">
     <div class="movie-poster">
-        <a class="movie-image" href="{% url 'film' movie.id %}">
+        <a class="movie-image" href="{% url 'movie' movie.id %}">
             <img src="{{ movie.poster_path }}" alt="poster" draggable="false">
         </a>
         <div class="movie-option play-option s64" data-movie-id="{{ movie.id }}">

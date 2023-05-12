@@ -17,13 +17,6 @@ headers = {"Authorization": f"Bearer {api_key}"}
 def film(movie_id):
     return movie.details(movie_id=movie_id)
 
-def latest(number=20):
-    discover = Discover()
-    movies = discover.discover_movies({
-    'sort_by': 'popularity.desc'
-    })[:number]
-    return movies
-
 def top_most_rated(number=20):
     return movie.top_rated()[:number]
 
@@ -58,6 +51,11 @@ def top_rated():
 
 def upcoming():
     return requests.get(f"{endpoint}/movie/upcoming", headers=headers).json()
+
+
+def latest():
+    params = {"sort_by": "popularity.desc", "year": "2023"}
+    return requests.get(f"{endpoint}/discover/movie", headers=headers, params=params).json()
 
 
 def get_image_url(path, type="poster", size="w92"):

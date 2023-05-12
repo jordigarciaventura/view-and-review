@@ -20,6 +20,7 @@ urlpatterns = [
     path('watchlist/<movie_id>', views.watchlist, name='watchlist'),
     path('favorite/<movie_id>', views.favorite, name='favorite'),
     path('trailer/<movie_id>', views.trailer, name='trailer'),
+    path('movie/<pk>/', views.movie, name='movie'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
