@@ -1,5 +1,6 @@
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, QueryDict, JsonResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, QueryDict, JsonResponse
+from django.views.generic.edit import DeleteView, UpdateView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -16,6 +17,8 @@ import json
 from web.models import Film, Rating, Reputation
 from web.forms import RegisterForm, RatingForm, ReputationForm
 
+from . import api
+
 
 endpoint="https://api.themoviedb.org/3"
 image_endpoint="https://image.tmdb.org/t/p"
@@ -27,7 +30,16 @@ headers = {"Authorization": f"Bearer {api_key}"}
 
 class IndexView(generic.TemplateView):
     template_name = "web/index.html"
-
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        
+        context['popular'] = api.popular(number=20)
+        context['latest'] = api.latest(number=20)
+        context['top_films'] = api.top_most_rated(number=20)
+        context['top_batfilms'] = api.top_most_rated_includes(includes="Batman")
+        
+        return context
 
 class FilmView(generic.DetailView):
     template_name = 'web/film.html'
@@ -39,10 +51,10 @@ class FilmView(generic.DetailView):
         context['RATING_CHOICES'] = Rating.RATING_CHOICES
         context['form'] = RatingForm(initial={'film': self.get_object()})
         if self.request.user.is_authenticated:
-            user_ratings = Rating.objects.filter(user=self.request.user)
-            if user_ratings:
-                user_film_rating = user_ratings.get(film=self.get_object())
-                context['form'] = RatingForm(instance=user_film_rating)
+            user_rating = Rating.objects.filter(user=self.request.user, film=self.get_object()).first()
+            if user_rating:
+                context['form'] = RatingForm(instance=user_rating)
+                context['user_rating'] = user_rating
 
         # Gets the form prefilled with the user's past choices
         return context
@@ -50,6 +62,10 @@ class FilmView(generic.DetailView):
 class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
 
+
+class ProfileView(generic.TemplateView):
+    template_name = 'auth/profile.html'
+    
 
 def RegisterView(request):
     form = RegisterForm()
@@ -84,6 +100,48 @@ def reputation(request):
         reputation.delete()
     return HttpResponse()
             
+@login_required
+def userUpdateView(request, pk):
+    user = get_object_or_404(User, pk=pk)
+
+    if user != request.user:
+        return HttpResponseForbidden("Cannot update other's account")
+
+    username = QueryDict(request.body).get('username')
+
+    db_user = User.objects.filter(username=username)
+    if db_user.exists():
+        return HttpResponseForbidden("A user already has that username!")
+    
+    user.username = username
+    user.save()
+    return HttpResponse()
+
+class UserDeleteView(DeleteView):
+    model = User
+    
+    def form_valid(self, form):
+        self.object = self.get_object()
+        if self.object == self.request.user:
+            self.object.delete()
+            return HttpResponseRedirect('/')
+        else:
+            return HttpResponseForbidden("Cannot delete other's account")
+
+class RatingDeleteView(DeleteView):
+    model = Rating
+
+    def form_valid(self, form):
+        self.object = self.get_object()
+        if self.object.user == self.request.user:
+            self.object.delete()
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return HttpResponseForbidden("Cannot delete other's posts")
+
+    def get_success_url(self) -> str:
+        return reverse('film', args=(self.object.film.pk,)) 
+    
 
 @login_required
 def rate(request, pk):
@@ -103,6 +161,11 @@ def rate(request, pk):
             return HttpResponseRedirect(reverse('film', args=(pk,)))
         else:
             messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
+    if request.method == "DELETE":    
+        data = QueryDict(request.body)
+
+        rating = Rating.objects.filter(user=data.get('user'), film=data.get('film'))
+        rating.delete()
 
     return HttpResponseRedirect(reverse('film', args=(pk,)))
                
@@ -114,24 +177,22 @@ def search(request):
         results = json_response["results"]
         
         filtered_results = [{prop: d[prop] for prop in ['title', 'release_date', 'vote_average', 'id', 'poster_path', 'genre_ids']} for d in results]
-        filtered_results = filtered_results[:5]
+        filtered_results = [d for d in filtered_results if all(d.values())]
+        filtered_results = filtered_results[:10]
         
         for i in range(len(filtered_results)):
-            # Poster path
-            if not filtered_results[i] or not filtered_results[i]['poster_path']:
-                continue
-            
+            # Change poster path to url
             poster_path = filtered_results[i]['poster_path']
             poster_url = get_image_url(poster_path)
             filtered_results[i]['poster_path'] = poster_url
                 
-            # Genres
+            # Change genre ids to names
             genre_ids = filtered_results[i]['genre_ids']
             genres = get_genres_names(genre_ids)
             filtered_results[i].pop('genre_ids')
             filtered_results[i]['genres'] = ", ".join(genres[:2])
                 
-            # Release date
+            # Get only the year from the release date
             filtered_results[i]['release_date'] = filtered_results[i]['release_date'][:4]
                 
         return JsonResponse(filtered_results, safe=False)

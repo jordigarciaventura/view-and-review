@@ -134,12 +134,14 @@ celerybeat.pid
 # Environments
 .env
 .venv
-# secrets/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+secrets/*
+!secrets/*.template
+!secrets/*.example
 
 # Spyder project settings
 .spyderproject

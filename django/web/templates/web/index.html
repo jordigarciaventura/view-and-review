@@ -1,124 +1,34 @@
-{% extends "base_generic.html" %}
-
-{% block content %}
+{% extends 'base_generic.html' %}
 
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}">
 
-<div class="white_search_bar_background">
-  <div class="search_bar">
-    <input id="search" type="text" placeholder=" Search movies, actors, genres...">
-  </div>
-</div>
+{% block links %}
+<link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
+<script src="{% static 'js/navbar.js' %}"></script>
+<script src="{% static 'js/autocomplete.js' %}"></script>
+{% endblock %}
 
-<div class="large_pink">
-  <div class="title_text"><b>
-      <ccc>❚</ccc>Recommendations
-    </b></div>
+{% block content %}
+{% include 'navbar.html' %}
 
-  <div class="movie_container">
-    <img src="https://i.ebayimg.com/images/g/V-EAAOSwrKBi4aU1/s-l500.jpg" class="movie_cover"></img>
-    <img
-      src="https://th.bing.com/th/id/R.fd8a92ef5d9d8c7db80c7b8edcfcab01?rik=FwTL2j8UgEhyxA&riu=http%3a%2f%2ffr.web.img6.acsta.net%2fpictures%2f210%2f412%2f21041261_20130918111051913.jpg&ehk=UUnUpk0VBWv%2fuRufPKZc7%2babzAa4KENjpSOeAhmKOz4%3d&risl=&pid=ImgRaw&r=0"
-      class="movie_cover"></img>
-    <img src="https://pics.filmaffinity.com/Creed_III-358416025-large.jpg" class="movie_cover"></img>
-    <img
-      src="https://m.media-amazon.com/images/M/MV5BODZhNzlmOGItMWUyYS00Y2Q5LWFlNzMtM2I2NDFkM2ZkYmE1XkEyXkFqcGdeQXVyMTU5OTA4NTIz._V1_FMjpg_UX1000_.jpg"
-      class="movie_cover"></img>
-  </div>
-</div>
+<!-- <h1>POPULAR</h1>
+{% for film in popular %}
+  <p>{{ film.title }}</p>
+{% endfor %}
 
-<div class="space">
-  <div class="quote"><b><i>"Which would be worse, to live as a monster, or to die as a good man?"</i></b></div>
-  <div class="quote">Shutter Island (2010)</div>
-</div>
+<h1>LATEST</h1>
+{% for film in latest %}
+  <p>{{ film.title }}</p>
+{% endfor %}
 
-<div class="large_pink">
-  <div class="title_text"><b>
-      <ccc>❚</ccc>Best Rated Films
-    </b></div>
+<h1>TOP 20 FILMS</h1>
+{% for film in top_films %}
+  <p>{{ film.title }} {{ film.vote_average }}</p>
+{% endfor %}
 
-  <div class="movie_container">
-    <img
-      src="https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX1000_.jpg"
-      class="movie_cover">
-    </img>
-    <img
-      src="https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg"
-      class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg"
-      class="movie_cover">
-    </img>
-    <img
-      src="https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1000_.jpg"
-      class="movie_cover">
-    </img>
-  </div>
-</div>
-<div class="space">
-  <div class="quote"><b><i>"Good morning, and in case I don't see ya, good afternoon, good evening, and good
-        night."</i></b></div>
-  <div class="quote">The Truman Show (1998)</div>
-</div>
-
-<div class="large_pink">
-  <div class="title_text"><b>
-      <ccc>❚</ccc>Top Christopher Nolan Films
-    </b></div>
-
-  <div class="movie_container">
-    <img
-      src="https://th.bing.com/th/id/R.f29873f5a2ed9069bd85f6b98bd9f205?rik=3YAyevDH37XWWg&riu=http%3a%2f%2fwww.razorfine.com%2fwp-content%2fuploads%2f2008%2f07%2fthe-dark-knight-poster-2.jpg&ehk=gloZCJOyByjSpNKRW5ZKMPlCgcqqMoLf1QhzmRQhnF4%3d&risl=&pid=ImgRaw&r=0"
-      class="movie_cover">
-    </img>
-    <img src="https://th.bing.com/th/id/R.4d7d7c6aad47a525104637ff8b2d3b94?rik=3s%2b3yUyuGQgzpg&pid=ImgRaw&r=0"
-      class="movie_cover">
-    </img>
-    <img
-      src="https://m.media-amazon.com/images/M/MV5BNDhiZTE2NjUtMDlkNS00NGI5LWJkMjYtMjJhNzRhZmFkYTUxXkEyXkFqcGdeQXVyNjMwMzc3MjE@._V1_.jpg"
-      class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg"
-      class="movie_cover">
-    </img>
-  </div>
-</div>
-
-<div class="large_space">
-  <div class="copyright">Copyright © View&Review. All rights reserved.</div>
-</div>
-
-
-<script>
-  $(document).ready(() => {
-    $("#search").autocomplete({
-      source: "{% url 'search' %}",
-      minLength: 2,
-      focus: (event, ui) => {
-        $("#search").val(ui.item.title);
-      },
-      select: (event, ui) => {
-        $("#search").val(ui.item.title);
-      }
-    })
-      .data("ui-autocomplete")._renderItem = (ul, item) => {
-        var inner_html = `
-        <div class="search-result">
-          <image src="${item.poster_path}" />
-          <div class="search-result-desc">
-            <div>
-              <p class="search-result-title">${item.title}</p>
-              <p class="search-result-date">${item.release_date}</p>
-            </div>
-            <p>${item.genres} </p>
-          </div>
-        </div>`;
-        return $("<li>")
-          .append(inner_html)
-          .appendTo(ul);
-      };
-  });
-</script>
+<h1>TOP BATMAN FILMS</h1>
+{% for film in top_batfilms %}
+  <p>{{ film.title }} {{ film.vote_average }}</p>
+{% endfor %} -->
 
 {% endblock %}
