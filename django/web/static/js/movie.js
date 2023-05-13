@@ -54,7 +54,14 @@ $(document).ready(() => {
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             },
             success: data => {
-                console.log(data);
+                if(data == "None") {   
+                    alert("No trailer available")
+                    return
+                }
+
+                key = data
+                url = `https://www.youtube.com/embed/${key}?autoplay=1`
+                window.location.href = url
             }
         });
 
