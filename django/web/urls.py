@@ -12,10 +12,15 @@ urlpatterns = [
     path('accounts/<pk>/settings/', views.ProfileSettingsView.as_view(), name='profile-settings'),
     path('accounts/<pk>/settings/delete/', views.UserDeleteView.as_view(), name='user-delete'),
     path('accounts/<pk>/settings/update/', views.userUpdateView, name='user-update'),
-    path('film/<pk>/', views.FilmView.as_view(), name='film'),
+    
     path('rating/<film_id>/', views.rate, name='rating'),
     path('rating/<film_id>/delete/', views.ratingDelete, name='rating-delete'),
     path('reputation/', views.reputation, name='reputation'),
+    path('search/', views.search, name='search'),
+    path('section/<title>', views.section, name='section'),
+    path('trailer/<movie_id>', views.trailer, name='trailer'),
+    
+    path('movie/<pk>/', views.MovieView.as_view(), name='movie'),
     path('watchlist/', views.WatchlistView, name='watchlist'),
     path('favlist/', views.FavlistView, name='favlist'),
 ]

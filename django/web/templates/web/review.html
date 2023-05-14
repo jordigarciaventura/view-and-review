@@ -1,0 +1,11 @@
+<form id="reputation-form-{{rating.pk}}" class="card-body flex-column align-items-right">
+    {% csrf_token %}
+    <i id="upvote-button-{{rating.pk}}" class="bi bi-arrow-up-square-fill" style="cursor: pointer;"
+        onclick="reputationSubmit('upvote', {{rating.pk}}, {{user.pk}})"></i>
+    <i id="downvote-button-{{rating.pk}}" class="bi bi-arrow-down-square-fill" style="cursor: pointer;"
+        onclick="reputationSubmit('downvote', {{rating.pk}}, {{user.pk}})"></i>
+</form>
+<p>
+    {{rating.user}} {{rating.score}}
+    <b>{{rating.review_title}}</b> {{rating.review}}
+</p>

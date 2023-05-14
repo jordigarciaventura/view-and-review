@@ -1,24 +1,29 @@
 {% extends 'base_generic.html' %}
+
+{% load static %}
+
+{% block links %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<script src="{% static 'js/deep-linking.js' %}"></script>
+<script src="{% static 'js/movie-preview.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 
-<h1>POPULAR</h1>
-{% for film in popular %}
-  <p>{{ film.title }}</p>
-{% endfor %}
+<div class="carousels">
 
-<h1>LATEST</h1>
-{% for film in latest %}
-  <p>{{ film.title }}</p>
-{% endfor %}
+    {% include 'web/carousel.html' with title="Upcoming" id='upcoming' movies=upcoming only %}
 
-<h1>TOP 20 FILMS</h1>
-{% for film in top_films %}
-  <p>{{ film.title }} {{ film.vote_average }}</p>
-{% endfor %}
+    {% include 'web/carousel.html' with title="Popular" id='popular' movies=popular only %}
 
-<h1>TOP BATMAN FILMS</h1>
-{% for film in top_batfilms %}
-  <p>{{ film.title }} {{ film.vote_average }}</p>
-{% endfor %}
+    {% include 'web/carousel.html' with title="Top rated" id='top-rated' movies=top_rated only %}
+
+    {% include 'web/carousel.html' with title="Latest" id='latest' movies=latest only %}
+
+</div>
+
 
 {% endblock %}

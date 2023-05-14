@@ -1,40 +1,4 @@
 {% extends 'base_generic.html' %}
 {% block content %} {% load static %}
 
-<div class="container">
-
-    {{myprofile.watchlist}}
-
-    <div>
-        <h1>WATCH</h1>
-        <button class="btn-primary d-block main-button btn" onclick="addtolist('POST', {% url 'watchlist' %})">POST</button>
-        <button class="btn-primary d-block main-button btn" onclick="addtolist('DELETE', {% url 'watchlist' %})">DELETE</button>
-    </div>
-    <div>
-        <h1>FAV</h1>
-        <button class="btn-primary d-block main-button btn" onclick="addtolist('POST', {% url 'favlist' %})">POST</button>
-        <button class="btn-primary d-block main-button btn" onclick="addtolist('DELETE', {% url 'favlist' %})">DELETE</button>
-    </div>
-</div>
-
-
-<script>
-
-function addtolist(httpmethod, url) {
-    const formData = {
-        'film_id': 1234,
-    }
-    
-    $.ajax({
-        url: url,
-        type: httpmethod,
-        headers: {
-            'X-CSRFToken': Cookies.get('csrftoken')
-        },
-        data: formData,
-        succsess: function(response) { }
-    })
-}
-
-</script>
 {% endblock %}
