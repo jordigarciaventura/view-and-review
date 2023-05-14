@@ -8,7 +8,7 @@ urlpatterns = [
     path('logout/', views.LogoutView.as_view(), name='logout-page'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/register/', views.RegisterView, name='register'),
-    path('accounts/<slug>/', views.ProfileView.as_view(), name='profile'),
+    path('accounts/<slug>/', views.UserView.as_view(), name='profile'),
     path('accounts/<pk>/settings/', views.ProfileSettingsView.as_view(), name='profile-settings'),
     path('accounts/<pk>/settings/delete/', views.UserDeleteView.as_view(), name='user-delete'),
     path('accounts/<pk>/settings/update/', views.userUpdateView, name='user-update'),

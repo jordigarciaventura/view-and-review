@@ -21,6 +21,11 @@ import datetime
 
 # Create your views here.
 
+class UserView(generic.DetailView):
+    model = User
+    template_name = "auth/profile.html" 
+    
+
 class IndexView(generic.TemplateView):
     template_name = "web/index.html"
     
