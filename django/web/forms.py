@@ -40,22 +40,6 @@ class RegisterForm(UserCreationForm):
             user.save()
         return user
 
-
-# class RatingForm(forms.ModelForm):
-#     class Meta:
-#         model = web.models.Rating
-#         fields = "__all__"
-#         exclude = ['user', 'reputation']
-
-#     def __init__(self, *args: Any, **kwargs: Any) -> None:
-#         super(RatingForm, self).__init__(*args, **kwargs)
-#         self.fields['review'].widget = forms.Textarea(attrs={'rows': '5'})
-#         self.fields['review'].widget.attrs['class'] = 'form-control'
-#         self.fields['review'].widget.attrs['placeholder'] = 'lorem ipsum'
-#         self.fields['review_title'].widget.attrs['class'] = 'form-control'
-#         self.fields['review_title'].widget.attrs['placeholder'] = 'lorem ipsum'
-
-
 # class ReputationForm(forms.ModelForm):
 #     class Meta:
 #         model = web.models.Reputation

@@ -16,26 +16,25 @@
   {% endfor %}
 </p> -->
 
+
 {% if not user.is_authenticated %}
 <p class="text-center">Log in to make a review</p>
 {% endif %}
 
 <form action="{% url 'rating' movie.id %}" method="POST" class="flex-column align-items-center w-50">
-  {% csrf_token %} {{ form.errors }}
-  <div hidden> {{ movie.film }}</div>
+  {% csrf_token %}
+  
   <div>{{form.review_title}}</div>
+  <div class="pt-3 mb-2">{{form.review}}</div>
   <div class="pt-3 mb-2">{{form.review}}</div>
   <div class="text-center d-flex flex-row align-items-center w-100">
     <div class="d-flex justify-content-between">
+      
       {% for rate in RATING_CHOICES %}
       <input type="radio" name="score" id="score{{ forloop.counter }}" value="{{ rate.0 }}" required hidden />
       <label class="fa fa-star star fa-2x mx-2" for="score{{ forloop.counter }}" id="{{ forloop.counter }}"></label>
       {% endfor %}
-      {% if form.errors %}
-      <div class="rounded text-center alert-danger p-auto px-3">
-        {{form.errors}}
-      </div>
-      {% endif %}
+    
     </div>
     <div class="d-inline-flex flex-row justify-content-end col" >
       {% if user_rating %}
@@ -50,6 +49,7 @@
       </button>
     </div>
 </form>
+<!--
 
 {% for review in reviews %}
   {% include 'web/review.html' with review=review %}

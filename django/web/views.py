@@ -63,14 +63,13 @@ class MovieView(generic.TemplateView):
         context['movie'] = movie
         
         context['RATING_CHOICES'] = Rating.RATING_CHOICES
-        # context['form'] = RatingForm(initial={'film': movie['id']})
-        # context['ratings'] = Rating.objects.filter(film=movie['id'])
+        context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(user=self.request.user)
         
         if self.request.user.is_authenticated:
-            user_rating = Rating.objects.filter(user=self.request.user, film=movie['id']).first()
-            if user_rating:
-                # context['form'] = RatingForm(instance=user_rating)
-                context['user_rating'] = user_rating
+            user_rating = Rating.objects.filter(user=self.request.user, movie=movie_id)
+            if user_rating.exists():
+                context['ratings'] = context['ratings']
+                context['user_rating'] = user_rating.first()
 
         # Gets the form prefilled with the user's past choices
         return context
