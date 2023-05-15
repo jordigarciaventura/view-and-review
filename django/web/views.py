@@ -1,5 +1,6 @@
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
+from django.db import models
 from django.db.models import Model, QuerySet
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict, JsonResponse
 from django.views.generic.edit import DeleteView
@@ -7,6 +8,7 @@ from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login
+from django.contrib.auth.mixins import LoginRequiredMixin 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods 
 from django.contrib.auth.models import User
@@ -21,9 +23,41 @@ import datetime
 
 # Create your views here.
 
-class UserView(generic.DetailView):
-    model = User
-    template_name = "auth/profile.html" 
+def mark_context_icons(context, user, list_keys):
+    favlist = Favlist.objects.filter(user=user)
+    watchlist = Watchlist.objects.filter(user=user)
+            
+    for key in list_keys:
+        if key not in context: continue
+        for movie in context[key]:
+            if favlist.exists() and favlist.filter(user=user, movie=movie['id']).exists():
+                movie['favlist'] = 1
+            if watchlist.exists() and watchlist.filter(user=user, movie=movie['id']).exists():
+                movie['watchlist'] = 1
+            
+
+class UserView(generic.TemplateView):
+    template_name = "auth/profile.html"
+    
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        user = User.objects.filter(username=kwargs['username']).first()
+
+        context['username'] = user.username
+        
+        favlist = Favlist.objects.filter(user=user).values('movie')
+        if favlist.exists() and favlist.first()['movie']:
+            favlist = list(map(lambda movie: api.movie(movie['movie']), favlist))
+            context['favlist'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in favlist]
+        
+        watchlist = Watchlist.objects.filter(user=user).values('movie')
+        if watchlist.exists() and watchlist.first()['movie']:
+            watchlist = list(map(lambda movie: api.movie(movie['movie']), watchlist))
+            context['watchlist'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in watchlist]            
+        
+        mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
+        
+        return context
     
 
 class IndexView(generic.TemplateView):
@@ -36,6 +70,7 @@ class IndexView(generic.TemplateView):
         upcoming = movie_preview_parser(upcoming, poster_size="w342", count=10)
         context['upcoming'] = upcoming
         
+        
         popular = api.popular()["results"]
         popular = movie_preview_parser(popular, poster_size="w342", count=10)
         context['popular'] = popular
@@ -47,6 +82,9 @@ class IndexView(generic.TemplateView):
         latest = api.latest()["results"]
         latest = movie_preview_parser(latest, poster_size="w342", count=10)
         context['latest'] = latest
+        
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['latest', 'top_rated', 'popular', 'upcoming'])
         
         return context
     
@@ -75,25 +113,26 @@ class MovieView(generic.TemplateView):
 class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
     
-class ProfileSettingsView(generic.TemplateView):
+class ProfileSettingsView(generic.TemplateView, LoginRequiredMixin):
     template_name = 'auth/profile_settings.html'
-    
+    login_url = 'login'
+        
 
 @require_http_methods(['POST', 'DELETE'])
 def WatchlistView(request):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)
     
-    # if request.method == 'POST':
-        # form = ListForm(request.POST)
-        # if form.is_valid():
-            # data = form.cleaned_data
-            # profile = MyProfile.objects.get(user=request.user)
-            # profile.add_to_wishlist(data['movie_id'])
-    # elif request.method == 'DELETE':    
-        # data = QueryDict(request.body)
-        # profile = MyProfile.objects.get(user=request.user)
-        # profile.remove_from_wishlist(data['movie_id'])
+    data = QueryDict(request.body)
+    user_watchlist = Watchlist.objects.get_or_create(user=request.user)[0]
+    movie = Movie.objects.get_or_create(tmdb_id=data.get('movie_id'))[0]
+    
+    if request.method == 'POST':
+        movie.save()
+        user_watchlist.movie.add(data.get('movie_id'))
+
+    elif request.method == 'DELETE':
+        user_watchlist.movie.remove(movie)
 
     return HttpResponse()
 
@@ -102,16 +141,16 @@ def FavlistView(request):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)
     
-    # if request.method == 'POST':
-    #     form = ListForm(request.POST)
-    #     if form.is_valid():
-    #         data = form.cleaned_data
-    #         profile = MyProfile.objects.get(user=request.user)
-    #         profile.add_to_favlist(data['movie_id'])
-    # elif request.method == 'DELETE':    
-    #     data = QueryDict(request.body)
-    #     profile = MyProfile.objects.get(user=request.user)
-    #     profile.remove_from_favlist(data['movie_id'])
+    data = QueryDict(request.body)
+    user_favlist = Favlist.objects.get_or_create(user=request.user)[0]
+    movie = Movie.objects.get_or_create(tmdb_id=data.get('movie_id'))[0]
+    
+    if request.method == 'POST':
+        movie.save()
+        user_favlist.movie.add(data.get('movie_id'))
+
+    elif request.method == 'DELETE':
+        user_favlist.movie.remove(movie)
 
     return HttpResponse()
 
@@ -145,33 +184,31 @@ def reputation(request):
         Reputation.objects.filter(user=data.get('user'), rating=data.get('rating')).delete()
     return HttpResponse()
             
-@login_required
-def userUpdateView(request, pk):
-    user = get_object_or_404(User, pk=pk)
+def userUpdateView(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
 
-    if user != request.user:
-        return HttpResponseForbidden("Cannot update other's account")
+    new_username = QueryDict(request.body).get('username')
 
-    username = QueryDict(request.body).get('username')
-
-    db_user = User.objects.filter(username=username)
+    db_user = User.objects.filter(username=new_username)
     if db_user.exists():
         return HttpResponseForbidden("A user already has that username!")
     
-    user.username = username
-    user.save()
+    request.user.username = new_username
+    request.user.save()
     return HttpResponse()
 
-class UserDeleteView(DeleteView):
-    model = User
+
+@require_http_methods(['GET', 'POST'])
+def userDeleteView(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
     
-    def form_valid(self, form):
-        self.object = self.get_object()
-        if self.object == self.request.user:
-            self.object.delete()
-            return HttpResponseRedirect('/')
-        else:
-            return HttpResponseForbidden("Cannot delete other's account")
+    if request.method == 'GET':
+        return render(request=request, template_name='auth/user-confirm-delete.html', context={'object': request.user})
+    elif request.method == 'POST':
+        request.user.delete()
+        return render(request=request, template_name='auth/user-deleted.html', context={'object': request.user})
 
 
 @login_required
@@ -236,6 +273,28 @@ def search(request):
         return JsonResponse(filtered_results, safe=False)
     return HttpResponse()
 
+def single_movie_preview_parser(movie_result, poster_size="w92"):
+    properties = ["title", "release_date", "id", "poster_path", "genres", "vote_average"]
+    filtered_results = get_dict_keys(movie_result, properties)
+
+    # Change poster path to url
+    poster_path = filtered_results['poster_path']
+    poster_url = api.get_image_url(poster_path, type="poster", size=poster_size)
+    filtered_results['poster_path'] = poster_url
+    
+    # Change genre ids to names
+    genre_ids = filtered_results['genres']
+    genres = [api.get_genre_name(genre_id['id']) for genre_id in genre_ids]
+    filtered_results['genres'] = ", ".join(genres[:2])
+        
+    # Get only the year from the release date
+    filtered_results['release_date'] = filtered_results['release_date'][:4]
+    
+    # Get the score
+    filtered_results['score'] = filtered_results['vote_average'] * 10
+    filtered_results.pop('vote_average')
+
+    return filtered_results
 
 def movie_preview_parser(results, poster_size="w92", count=10):
     # Get only the properties we want
