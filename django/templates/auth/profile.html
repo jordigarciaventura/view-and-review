@@ -4,20 +4,25 @@
 
 {% block links %}
 {% csrf_token %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}" />
-<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
-<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
-<script src="{% static 'js/deep-linking.js' %}"></script>
-<script src="{% static 'js/movie-preview.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+    <script src="{% static 'js/deep-linking.js' %}"></script>
+    <script src="{% static 'js/movie-preview.js' %}"></script>
 {% endblock %}
 
 
 {% block content %}
 <div class="container">
     <h1>{{username}}</h1>
-    <div class="carousels">
+    {% comment %} <div class="carousels">
         {% include 'web/carousel.html' with title='Watch List' id='watchlist' movies=watchlist only %}
         {% include 'web/carousel.html' with title='Favorite List' id='favlist' movies=favlist only %}
+    </div> {% endcomment %}
+    <div>
+        {% for rating in ratings %}
+            {% include 'web/rating.html' with rating=rating only %}
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

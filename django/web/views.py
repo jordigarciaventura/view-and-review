@@ -37,7 +37,7 @@ def mark_context_icons(context, user, list_keys):
             
 
 class UserView(generic.TemplateView):
-    template_name = "auth/profile.html"
+    template_name = 'auth/profile.html'
     
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -57,6 +57,9 @@ class UserView(generic.TemplateView):
         
         mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
         
+        user_ratings = Rating.objects.filter(user=user)
+        context['ratings'] = [rating for rating in user_ratings if rating.review]
+                
         return context
     
 

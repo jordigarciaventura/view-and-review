@@ -13,7 +13,7 @@ class Watchlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
     movie = models.ManyToManyField(Movie)
 
-    # models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie})"
@@ -23,7 +23,7 @@ class Favlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
     movie = models.ManyToManyField(Movie)
 
-    # models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie})"
@@ -43,7 +43,7 @@ class ReviewVote(models.Model):
 
     value = models.BooleanField()  # True == upvote, False == downvote
 
-    # models.UniqueConstraint(fields=['rating', 'user'], name='composite_key')
+    models.UniqueConstraint(fields=['rating', 'user'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, review {self.review}) -> {self.value}"
@@ -61,7 +61,7 @@ class Rating(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, blank=True, null=True)
 
-    # models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie}) -> {self.score} stars"
