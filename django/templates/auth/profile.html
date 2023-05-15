@@ -15,10 +15,10 @@
 {% block content %}
 <div class="container">
     <h1>{{username}}</h1>
-    {% comment %} <div class="carousels">
+    <div class="carousels">
         {% include 'web/carousel.html' with title='Watch List' id='watchlist' movies=watchlist only %}
         {% include 'web/carousel.html' with title='Favorite List' id='favlist' movies=favlist only %}
-    </div> {% endcomment %}
+    </div>
     <div>
         {% for rating in ratings %}
             {% include 'web/rating.html' with rating=rating only %}
