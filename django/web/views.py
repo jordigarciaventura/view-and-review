@@ -24,7 +24,7 @@ import datetime
 # Create your views here.
 
 def mark_context_icons(context, user, list_keys):
-    favlist = Favlist.objects.filter(user=user)
+    favlist   = Favlist.objects.filter(user=user)
     watchlist = Watchlist.objects.filter(user=user)
             
     for key in list_keys:
@@ -105,16 +105,22 @@ class MovieView(generic.TemplateView):
         movie_id = kwargs['pk']
         movie = api.movie(movie_id)           
         movie = movie_section_parser(movie)
-                
         context['movie'] = movie
-        
         context['RATING_CHOICES'] = Rating.RATING_CHOICES
         context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
         
         if self.request.user.is_authenticated:
             context['ratings'] = context['ratings'].exclude(user=self.request.user)
-            context['user_rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first()
-
+            rating = Rating.objects.filter(user=self.request.user, movie=movie_id).first()
+            if rating:
+                context['user_rating'] = rating
+                if rating.review:
+                    form = ReviewForm({'title': rating.review.title, 'content': rating.review.content})
+                    context['form'] = form
+                else:
+                    context['form'] = ReviewForm()
+            else:
+                context['form'] = ReviewForm()
         # Gets the form prefilled with the user's past choices
         return context
 
@@ -239,43 +245,34 @@ def ratingDelete(request, film_id):
     object.delete()
     return HttpResponseRedirect(reverse('film', args=(film_id)))    
 
-@login_required
-@require_http_methods(['POST'])
-def rate(request, film_id):
-    form = RatingForm(request.POST)
-    if form.is_valid():
-        # Process the data in form.cleaned_data
-        rating = form.save(commit=False)
-        rating.user = User.objects.get(username=request.user)
-        old_rating = Rating.objects.filter(user=rating.user)
-        if old_rating.exists():
-            old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
-        else:
-            rating.save()
-        return HttpResponseRedirect(reverse('film', args=(film_id,)))
-    else:
-        messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
-    
+@require_http_methods(['POST', 'PUT', 'DELETE'])
+def review(request, movie_id):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+                
+    related_rating = get_object_or_404(Rating, user=request.user, movie=movie_id)
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
         if form.is_valid():
-            # Process the data in form.cleaned_data
-            rating = form.save(commit=False)
-            rating.user = User.objects.get(username=request.user)
-            old_rating = Rating.objects.filter(user=rating.user)
-            if old_rating.exists():
-                old_rating.update(score=rating.score, review=rating.review, review_title=rating.review_title)
-            else:
-                rating.save()
-            return HttpResponseRedirect(reverse('film', args=(pk,)))
-        else:
-            messages.error(request, "Unsuccesful review. Invalid information: " + str(form.errors))
-    if request.method == "DELETE":    
+            new_review = form.save(commit=False)      
+            if related_rating.review:
+                return HttpResponse('Resource already exists', status=409)
+            new_review.save()
+            related_rating.review = new_review
+            related_rating.review.save()
+    else: 
         data = QueryDict(request.body)
-
-        rating = Rating.objects.filter(user=data.get('user'), film=data.get('film'))
-        rating.delete()
-
-    return HttpResponseRedirect(reverse('film', args=(pk,)))
-               
+        
+        if request.method == 'DELETE':       
+            related_rating.review.delete()
+            related_rating.review = None
+        elif request.method == 'PUT':
+            new_review = Review(title=data.get('title'), content=data.get('content'))
+            related_rating.review = new_review
+            related_rating.review.save()
+    
+    related_rating.save()
+    return HttpResponse()               
 
 def get_dict_keys(dict, keys):
     return {key:value for key, value in dict.items() if key in keys}
@@ -392,7 +389,6 @@ def movie_section_parser(movie_details):
     return filtered_details
 
 def section(request, title):
-    print(title)
     return HttpResponse()
 
 def trailer(request, movie_id):

@@ -13,13 +13,14 @@
         </div>
         <div class="col-md-6">
             <div class="card-body d-block" style="color: antiquewhite;">
-                <h5 class="card-title">{{rating.review.title}}
+                <div class="d-flex flex-row">
+                    <h5 class="card-title">{{rating.review.title}}</h5>
                     <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
                     <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
                     <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
                     <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
                     <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
-                </h5>
+                </div>  
                 <a href="{% url 'user-profile' rating.user.username %}"><p class="card-text">{{rating.user}}</p></a>
                 <p class="card-text">{{rating.review.content}}</p>
                 <div class="position-absolute d-flex flex-row-reverse bottom-0 w-50" style="margin-bottom: 20px; margin-right: 100px;  background-color: red;">

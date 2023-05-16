@@ -6,15 +6,12 @@
     <div class="text-center d-flex flex-row align-items-center w-100">
       <div class="d-flex justify-content-between">
         
-        {% for rate in RATING_CHOICES %}
-        <input type="radio" name="score" id="score{{ forloop.counter }}" value="{{ rate.0 }}" required hidden />
-        <label class="fa fa-star star fa-2x mx-2" for="score{{ forloop.counter }}" id="{{ forloop.counter }}"></label>
-        {% endfor %}
+        
       
       </div>
       <div class="d-inline-flex flex-row justify-content-end col" >
         {% if user_rating %}
-        <a href="{% url 'rating-delete' movie.id %}" class="btn btn-warning d-block" style="background: #aa4747;
+        <a href="{% url 'review' movie.id %}" class="btn btn-warning d-block" style="background: #aa4747;
       opacity: 80%;
       border: none;
       color: #dd8686;text-decoration: none;">

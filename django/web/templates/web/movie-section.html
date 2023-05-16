@@ -23,17 +23,42 @@
 
 <div class="{% if user_rating %} hidden {% endif %}">
   <!-- Rating form -->
-  {% include 'web/user-rating.html' with rating=user_rating %}
+  <div class="m-auto w-50">
+    <form id="review-form" method="POST" action="{% url 'review' movie.id %}">
+      {% csrf_token %}
+      {{ form }}
+      <button>Submit</button>
+    </form>
+    <button onclick="submit_form({{movie.id}}, 'PUT')">Update</button>
+    <button onclick="submit_form({{movie.id}}, 'DELETE')">Delete</button>
+  </div>
+  <script>
+    // Mejorar / Hacer bien    
+    function submit_form(movie_id, http_method) {
+      const form_data = $('form').serialize()
+      $.ajax({
+        url: '/review/' + movie_id + '/',
+        type: http_method,
+        headers: {
+          'X-CSRFToken': Cookies.get('csrftoken')
+        },
+        data: form_data,
+        success: function (response) { 
+          alert("De putis")
+        }
+      })
+    }
+  </script>
 </div>
 
-<div class="{% if not user_rating %} hidden {% endif %}">
+{% comment %} <div class="{% if not user_rating %} hidden {% endif %}">
   <!-- User rating -->
-  {% include 'web/rating.html' with rating=rating %}
-</div>
+  {% include 'web/review.html' with rating=rating movie=movie only %}
+</div> {% endcomment %}
 
-{% for rating in ratings %}
-  {% include 'web/rating.html' with rating=rating %}
-{% endfor%}
+{% comment %} {% for rating in ratings %}
+  {% include 'web/review.html' with rating=rating only %}
+{% endfor %}  {% endcomment %}
 <!--
 
 </div>

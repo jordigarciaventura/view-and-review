@@ -6,8 +6,18 @@ from django.contrib.auth.models import User
 import web.models
 
 
-# class ListForm(forms.Form):
-#     film_id = forms.IntegerField()
+class ReviewForm(forms.ModelForm):    
+    class Meta:
+        model = web.models.Review
+        fields = "__all__"
+        
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super(ReviewForm, self).__init__(*args, **kwargs)
+        self.fields['content'].widget = forms.Textarea(attrs={'rows':'5'})
+        self.fields['content'].widget.attrs['class'] = 'form-control'
+        self.fields['content'].widget.attrs['placeholder'] = 'lorem ipsum'
+        self.fields['title'].widget.attrs['class'] = 'form-control'
+        self.fields['title'].widget.attrs['placeholder'] = 'lorem ipsum'
 
 class RegisterForm(UserCreationForm):
     attrs = {
@@ -39,11 +49,3 @@ class RegisterForm(UserCreationForm):
         if commit:
             user.save()
         return user
-
-# class ReputationForm(forms.ModelForm):
-#     class Meta:
-#         model = web.models.Reputation
-#         fields = "__all__"
-
-#     def __init__(self, *args: Any, **kwargs: Any) -> None:
-#         super(ReputationForm, self).__init__(*args, **kwargs)

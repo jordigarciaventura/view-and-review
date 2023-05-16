@@ -13,8 +13,8 @@ urlpatterns = [
     path('accounts/update/', views.userUpdateView, name='user-update'),
     path('accounts/<slug:username>/', views.UserView.as_view(), name='user-profile'),
     
-    path('rating/<film_id>/', views.rate, name='rating'),
     path('rating/<film_id>/delete/', views.ratingDelete, name='rating-delete'),
+    path('review/<movie_id>/', views.review, name='review'),
     path('review/vote/', views.reviewVote, name='review-vote'),
     path('search/', views.search, name='search'),
     path('section/<title>', views.section, name='section'),
