@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods 
 from django.contrib.auth.models import User
 from django.views import generic
-
+from django.db.models import Q
 
 from web.models import *
 from web.forms import *
@@ -62,12 +62,30 @@ class MovieView(generic.TemplateView):
                 
         context['movie'] = movie
         
-        context['RATING_CHOICES'] = Rating.RATING_CHOICES
-        context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
-        
+        # Rating
         if self.request.user.is_authenticated:
-            context['ratings'] = context['ratings'].exclude(user=self.request.user)
-            context['user_rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first()
+            rating = Rating.objects.filter(user=self.request.user, movie=movie_id)
+            if rating.exists():
+                context['rating'] = int(rating.first().score)
+        
+        # Score
+        score_count =  Rating.objects.filter(movie=movie_id).count()
+        score_value = int(Rating.average(movie_id) * 20)
+        print(score_value)
+        
+        context['score'] = {
+            'value': score_value,
+            'count': score_count,
+            'source': 'V&R'
+        }
+        
+        # Reviews
+        
+        # context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
+        
+        # if self.request.user.is_authenticated:
+        #     context['ratings'] = context['ratings'].exclude(user=self.request.user)
+        #     context['user_rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first()
 
         # Gets the form prefilled with the user's past choices
         return context
@@ -114,6 +132,38 @@ def FavlistView(request):
     #     profile.remove_from_favlist(data['movie_id'])
 
     return HttpResponse()
+
+@require_http_methods(['POST', 'DELETE'])
+def RatingView(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+
+    data = QueryDict(request.body)
+    movie_id = data.get('movie_id')
+    movie, _ = Movie.objects.get_or_create(tmdb_id=movie_id)
+    
+    if request.method == 'POST':
+        rating = data.get('rating')
+
+        Rating.objects.update_or_create(
+            user=request.user,
+            movie=movie,
+            defaults={"score": rating}
+        )
+        
+    elif request.method == 'DELETE':    
+        Rating.objects.filter(movie=movie, user=request.user).delete()
+
+    # Score
+    score_count =  Rating.objects.filter(movie=movie_id).count()
+    score_value = int(Rating.average(movie_id) * 20)
+    
+    response = {
+        'value': score_value,
+        'count': score_count,
+    }
+
+    return JsonResponse(response)
 
 def RegisterView(request):
     if request.method == 'POST':
@@ -276,11 +326,13 @@ def movie_section_parser(movie_details):
 
      # Change poster path to url
     poster_path = filtered_details['poster_path']
-    filtered_details['poster_path'] = api.get_image_url(poster_path, type="poster", size="w500")
+    filtered_details['poster'] = api.get_image_url(poster_path, type="poster", size="w500")
+    filtered_details.pop('poster_path')
 
     # Change backdrop path to url
     backdrop_path = filtered_details['backdrop_path']
-    filtered_details['backdrop_path'] = api.get_image_url(backdrop_path, type="backdrop", size="w1280")
+    filtered_details['cover'] = api.get_image_url(backdrop_path, type="backdrop", size="original")
+    filtered_details.pop('backdrop_path')
 
     # Change genre ids to names
     genres = filtered_details['genres']
@@ -299,19 +351,36 @@ def movie_section_parser(movie_details):
     minutes = runtime % 60
     filtered_details['runtime'] = f"{hours}h {minutes}m"
     
-    # Format vote average
-    filtered_details['vote_average'] = int(filtered_details['vote_average'] * 10)
+    # Format tmdb_score
+    score_value = int(filtered_details['vote_average'] * 10)
+    score_count = format_count(filtered_details['vote_count'])
+    
+    filtered_details['tmdb_score'] = {
+        'value': score_value,
+        'count': score_count,
+        'source': 'TMDB'
+    }
+    
+    filtered_details.pop('vote_average')
+    filtered_details.pop('vote_count')            
+    
+    # Similar movies
+    similar = api.get_similar(filtered_details['id'])["results"]
+    filtered_details['similar'] = movie_preview_parser(similar, poster_size="w342", count=10)
     
     # Add credits
     cast = api.get_movie_credits(filtered_details['id'])
     filtered_details['directors'] = set(x['name'] for x in api.get_directors(cast))
     filtered_details['writers'] = set(x['name'] for x in api.get_writers(cast))
     properties = ['name', 'character', 'profile_path']
-    filtered_details['actors'] = [get_dict_keys(x, properties) for x in api.get_actors(cast)]
+    filtered_details['actors'] = sorted([get_dict_keys(x, properties) for x in api.get_actors(cast)], key=lambda x: x['profile_path'] == None)
     for i in range(len(filtered_details['actors'])):
         # Change profile path to url
         profile_path = filtered_details['actors'][i]['profile_path']
-        filtered_details['actors'][i]['profile_path'] = api.get_image_url(profile_path, type="profile", size="w185")
+        if profile_path:
+            filtered_details['actors'][i]['profile_path'] = api.get_image_url(profile_path, type="profile", size="w185")
+        else:
+            filtered_details['actors'][i]['profile_path'] = ""
 
     return filtered_details
 
@@ -322,3 +391,10 @@ def section(request, title):
 def trailer(request, movie_id):
     trailer = api.get_movie_trailer(movie_id)
     return HttpResponse(trailer)
+
+def format_count(count):
+    if count > 1000000:
+        return f"{count/1000000:.1f}M"
+    if count > 1000:
+        return f"{count/1000:.1f}K"
+    return count

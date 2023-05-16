@@ -23,6 +23,7 @@ urlpatterns = [
     path('movie/<pk>/', views.MovieView.as_view(), name='movie'),
     path('watchlist/', views.WatchlistView, name='watchlist'),
     path('favlist/', views.FavlistView, name='favlist'),
+    path('rating/', views.RatingView, name='rating'),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

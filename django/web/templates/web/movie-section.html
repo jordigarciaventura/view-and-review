@@ -1,40 +1,147 @@
-{% extends "base_generic.html" %} {% block content %} {% load static %}
+{% extends "base_generic.html" %} {% load static %}
 
-<img src="{{ movie.poster_path }}" style="max-width: 100%;" />
-<h1>{{ movie.title }}</h1>
-<p><strong>Duration:</strong> {{ movie.runtime }}</p>
-<p><strong>Release Date:</strong> {{ movie.release_date }}</p>
+{% block links %}
+<!-- Style -->
+<link rel="stylesheet" href="{% static 'css/score.css' %}" />
+<link rel="stylesheet" href="{% static 'css/score-details.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-section.css' %}" />
+<link rel="stylesheet" href="{% static 'css/rating.css' %}" />
 
-<p><strong>Plot:</strong> {{ movie.overview }}</p>
-<p><strong>Directors:</strong> {{ movie.directors|join:", " }}</p>
-<p><strong>Writers:</strong> {{ movie.writers|join:", " }}</p>
-<p><strong>Genre:</strong> {{ movie.genres|join:", " }}</p>
-<!-- <p><strong>Actors:</strong> <br>
-  {% for actor in movie.actors %}
-    <img src="{{ actor.profile_path }}" style="max-width: 100px; max-height: 100px; margin-right: 10px;" />
-    <p>{{ actor.name }} ({{ actor.character }})</p>
-  {% endfor %}
-</p> -->
+<!-- JS -->
+{% csrf_token %}
+<script src="{% static 'js/movie-preview.js' %}"></script>
+<script src="{% static 'js/rating.js' %}"></script>
+{% endblock %}
 
+{% block content %}
+<div id="principal">
+
+  <div class="poster">
+    <img src="{{ movie.cover }}" class="image_poster" draggable="false">
+  </div>
+
+  <div class="cover">
+    <img src="{{ movie.poster }}" class="image_cover" draggable="false">
+  </div>
+
+  <div id="container">
+    <div id="rating-box">
+      {% include 'web/score-details.html' with score=movie.tmdb_score id='tmdb_score' only %}
+      {% include 'web/score-details.html' with score=score id='score' only %}
+    </div>
+
+    <div id="star-box">
+      {% include 'web/rating.html' with rating=rating movie_id=movie.id only %}
+    </div>
+
+    <div id="icon-box">
+      <div class="icon">
+        <div class="movie-option favlist-option s42" data-movie-id="{{ movie.id }}" data-favlist="{{ movie.favlist }}">
+          <span class="iconify s24 favlist-no {% if movie.favlist %} hidden {% endif %}"
+            data-icon="mdi:heart-outline"></span>
+          <span class="iconify s24 favlist-yes {% if not movie.favlist %} hidden {% endif %}"
+            data-icon="mdi:heart"></span>
+        </div>
+        <div class="icon-source">Favorites</div>
+      </div>
+      <div class="icon">
+        <div class="movie-option watchlist-option s42" data-movie-id="{{ movie.id }}"
+          data-watchlist="{{ movie.watchlist }}">
+          <span class="iconify s24 watchlist-no {% if movie.watchlist %} hidden {% endif %}"
+            data-icon="material-symbols:bookmark-outline-rounded"></span>
+          <span class="iconify s24 watchlist-yes {% if not movie.watchlist %} hidden {% endif %}"
+            data-icon="material-symbols:bookmark-rounded"></span>
+        </div>
+        <div class="icon-source">Watchlist</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="genres-box">
+    {% for genre in movie.genres %}
+    <div class="genre">
+      {{ genre }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="all">
+    <div id="info">
+      <div id="prev">
+        <div class="title">{{ movie.title }}</div>
+        <div class="date-time">
+          <div class="icon-inf">
+            <span class="iconify" data-icon="material-symbols:calendar-today-rounded" data-width="25"
+              data-height="25"></span>
+            <div class="big">{{ movie.release_date }}</div>
+          </div>
+          <div class="icon-inf">
+            <span class="iconify" data-icon="mdi:clock-time-four-outline" data-width="25" data-height="25"></span>
+            <div class="big">{{ movie.runtime }}</div>
+          </div>
+        </div>
+
+      </div>
+      <div id="text">{{ movie.overview }}</div>
+    </div>
+
+    <div id="space"></div>
+
+    {% if movie.directors %}
+    <div class="credit">
+      <div class="what">Directed by</div>
+      <div>{{ movie.directors|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    {% if movie.writers %}
+    <div class="credit">
+      <div class="what">Written by</div>
+      <div>{{ movie.writers|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    <div class="cast">
+      {% for actor in movie.actors %}
+      <div class="actor">
+        {% if actor.profile_path %}
+        <img src="{{ actor.profile_path }}" />
+        {% else %}
+        <div class="empty"></div>
+        {% endif %}
+        <div class="info">
+          <div class="name">{{ actor.name }}</div>
+          {% if actor.character %}<div class="character">{{ actor.character }}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% include 'web/carousel.html' with title="Similar movies" id='similar' movies=movie.similar only %}
+  </div>
+</div>
+
+{% endblock %}
+
+<!--
 
 {% if not user.is_authenticated %}
 <p class="text-center">Log in to make a review</p>
 {% endif %}
 
 <div class="{% if user_rating %} hidden {% endif %}">
-  <!-- Rating form -->
   {% include 'web/user-rating.html' with rating=user_rating %}
 </div>
 
 <div class="{% if not user_rating %} hidden {% endif %}">
-  <!-- User rating -->
   {% include 'web/rating.html' with rating=rating %}
 </div>
 
 {% for rating in ratings %}
   {% include 'web/rating.html' with rating=rating %}
 {% endfor%}
-<!--
 
 </div>
 
@@ -187,4 +294,3 @@
   document.getElementById('score' + {{ form.score.value }}).checked = true
   {% endif %}
 </script>
-{% endblock %}

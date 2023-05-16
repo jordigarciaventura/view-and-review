@@ -65,3 +65,9 @@ class Rating(models.Model):
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie}) -> {self.score} stars"
+
+
+    def average(movie_id):
+        all_ratings = Rating.objects.filter(movie=movie_id)
+        return all_ratings.aggregate(models.Avg('score'))['score__avg'] or 0
+    

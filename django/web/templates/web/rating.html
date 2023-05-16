@@ -1,13 +1,17 @@
-<div class="rating-container">
-    <form id="reputation-form-{{rating.pk}}" class="card-body flex-column align-items-right">
-        {% csrf_token %}
-        <i id="upvote-button-{{rating.pk}}" class="bi bi-arrow-up-square-fill" style="cursor: pointer;"
-            onclick="reputationSubmit('upvote', {{rating.pk}}, {{rating.user.pk}})"></i>
-        <i id="downvote-button-{{rating.pk}}" class="bi bi-arrow-down-square-fill" style="cursor: pointer;"
-            onclick="reputationSubmit('downvote', {{rating.pk}}, {{rating.user.pk}})"></i>
-    </form>
-    <p>
-        {{rating.user}} {{rating.score}}
-        <b>{{rating.review.title}}</b> {{rating.review.content}}
-    </p>
+<div class="rating" data-movie-id="{{ movie_id }}">
+    <div class="stars" >
+        <input type="radio" name="rating" id="rating-5" value="5" {% if rating == 5 %} checked {% endif %}>
+        <label for="rating-5"></label>
+        <input type="radio" name="rating" id="rating-4" value="4" {% if rating == 4 %} checked {% endif %}>
+        <label for="rating-4"></label>
+        <input type="radio" name="rating" id="rating-3" value="3" {% if rating == 3 %} checked {% endif %}>
+        <label for="rating-3"></label>
+        <input type="radio" name="rating" id="rating-2" value="2" {% if rating == 2 %} checked {% endif %}>
+        <label for="rating-2"></label>
+        <input type="radio" name="rating" id="rating-1" value="1" {% if rating == 1 %} checked {% endif %}>
+        <label for="rating-1"></label>
+    </div>
+    <div class="delete-rating {% if not rating %} hidden {% endif %}">
+        <span class="iconify" data-icon="material-symbols:delete-outline"></span>
+    </div>
 </div>
