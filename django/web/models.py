@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
 
 class Movie(models.Model):
@@ -36,6 +37,9 @@ class Review(models.Model):
     def __str__(self) -> str:
         return f"(title {self.title}, content {self.content})"
 
+    def vote_values(self) -> int:
+        return ReviewVote.objects.filter(review=self, value=True).count() - ReviewVote.objects.filter(review=self, value=False).count()
+
 
 class ReviewVote(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
@@ -47,7 +51,6 @@ class ReviewVote(models.Model):
 
     def __str__(self) -> str:
         return f"(user {self.user}, review {self.review}) -> {self.value}"
-
 
 class Rating(models.Model):
     RATING_CHOICES = [(1, "1 star"), (2, "2 stars"),

@@ -7,7 +7,7 @@
             <form id="reputation-form-{{rating.review.pk}}" class="d-flex align-items-top">
                 {% csrf_token %}
                 <span id="upvote-button-{{rating.review.pk}}" class="iconify" data-icon="material-symbols:arrow-circle-up" style="cursor: pointer; color:#f5c518;" onclick="reputationSubmit('upvote', {{rating.pk}}, {{rating.user.pk}})"></span>
-                <span>XX</span>
+                <span>{{rating.review.votecount}}</span>
                 <span id="downvote-button-{{rating.review.pk}}" class="iconify" data-icon="material-symbols:arrow-circle-down" style="cursor: pointer; color:#f5c518;" onclick="reputationSubmit('downvote', {{rating.pk}}, {{rating.user.pk}})"></span>
             </form>
         </div>
