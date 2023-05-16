@@ -54,11 +54,16 @@ class UserView(generic.TemplateView):
         if watchlist.exists() and watchlist.first()['movie']:
             watchlist = list(map(lambda movie: api.movie(movie['movie']), watchlist))
             context['watchlist'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in watchlist]            
-        
-        mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
-        
+                
         user_ratings = Rating.objects.filter(user=user)
-        context['ratings'] = [rating for rating in user_ratings if rating.review]
+        ratings = [rating for rating in user_ratings if rating.review]
+        for rating in ratings:
+            rating.movie_info = single_movie_preview_parser(api.movie(rating.movie.tmdb_id), poster_size="w342")
+                
+        mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
+        mark_context_icons(ratings, self.request.user, ['movie_info']) # TODO
+        
+        context['ratings'] = ratings
                 
         return context
     
@@ -162,7 +167,6 @@ def RegisterView(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            # MyProfile.create(user).save()
             login(request, user)
             messages.success(request, "Registration succesful " + str(user))
             return redirect('/')
@@ -171,22 +175,32 @@ def RegisterView(request):
     form = RegisterForm()
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
-@login_required
-@require_http_methods(['POST', 'DELETE', 'PUT'])
-def reputation(request):     
-    if request.method == 'POST':   
-        form = ReputationForm(request.POST)
-        if form.is_valid():
-            form.save()
-    if request.method == 'PUT':   
-        data = QueryDict(request.body)
-        new_value = data.get('value') == 'true'
-        Reputation.objects.filter(user=data.get('user'), rating=data.get('rating')).update(value=new_value)
-    if request.method == 'DELETE':
-        data = QueryDict(request.body)
-        Reputation.objects.filter(user=data.get('user'), rating=data.get('rating')).delete()
+
+@require_http_methods(['POST', 'PUT', 'DELETE'])
+def reviewVote(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+    
+    data = QueryDict(request.body)    
+    review = Review.objects.get(pk=data.get('review'))
+    vote = ReviewVote.objects.filter(user=request.user, review=review)
+        
+    if request.method == 'POST':
+        if vote.exists():
+            return HttpResponse('Resource already exists', status=409)            
+        ReviewVote(user=request.user, review=review, value=data.get('value')=='true').save()
+        return HttpResponse(status=201)
+    else:
+        if not vote.exists():
+            return HttpResponse('Resource not found', status=404)
+        
+        if request.method == 'PUT':
+            new_value = data['value'] == 'true'
+            vote.update(value=new_value)
+        elif request.method == 'DELETE':
+            vote.delete()
     return HttpResponse()
-            
+
 def userUpdateView(request):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)

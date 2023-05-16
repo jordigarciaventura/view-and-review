@@ -1,0 +1,9 @@
+.heading {
+    display: flex;
+    gap: 22px;
+}
+
+.reviews-title {
+    font-size: 24px;
+    font-weight: bold;
+}

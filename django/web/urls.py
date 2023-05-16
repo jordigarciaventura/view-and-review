@@ -15,7 +15,7 @@ urlpatterns = [
     
     path('rating/<film_id>/', views.rate, name='rating'),
     path('rating/<film_id>/delete/', views.ratingDelete, name='rating-delete'),
-    path('reputation/', views.reputation, name='reputation'),
+    path('review/vote/', views.reviewVote, name='review-vote'),
     path('search/', views.search, name='search'),
     path('section/<title>', views.section, name='section'),
     path('trailer/<movie_id>', views.trailer, name='trailer'),
