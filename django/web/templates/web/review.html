@@ -1,34 +1,25 @@
-<div class="card w-75 py-4 my-2" style="background-color: #2A2A2A;">
-    <div class="row no-gutters">
-        <div class="col-3 d-flex justify-content-center">
-            {% include 'web/movie-preview.html' with movie=rating.movie_info only %}
+<div class="review">
+    <div class="votes" data-rating-id="{{ rating.review.id }}">
+        <div class="downvote">
+            <span class="iconify" data-icon="bxs:downvote"></span>
         </div>
-        <div class="col-md-1">
-            <form id="reputation-form-{{rating.review.pk}}" class="d-flex align-items-top">
-                {% csrf_token %}
-                <span id="upvote-button-{{rating.review.pk}}" class="iconify" data-icon="material-symbols:arrow-circle-up" style="cursor: pointer; color:#f5c518;" onclick="reputationSubmit('upvote', {{rating.pk}}, {{rating.user.pk}})"></span>
-                <span>{{rating.review.votecount}}</span>
-                <span id="downvote-button-{{rating.review.pk}}" class="iconify" data-icon="material-symbols:arrow-circle-down" style="cursor: pointer; color:#f5c518;" onclick="reputationSubmit('downvote', {{rating.pk}}, {{rating.user.pk}})"></span>
-            </form>
+        <div>{{ rating.review.votes }}</div>
+        <div class="upvote">
+            <span class="iconify" data-icon="bxs:upvote"></span>
         </div>
-        <div class="col-md-6">
-            <div class="card-body d-block" style="color: antiquewhite;">
-                <div class="d-flex flex-row">
-                    <h5 class="card-title">{{rating.review.title}}</h5>
-                    <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
-                    <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
-                    <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
-                    <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
-                    <span class="iconify" data-icon="ic:round-star" style="color:#f5c518;"></span>
-                </div>  
-                <a href="{% url 'user-profile' rating.user.username %}"><p class="card-text">{{rating.user}}</p></a>
-                <p class="card-text">{{rating.review.content}}</p>
-                <div class="position-absolute d-flex flex-row-reverse bottom-0 w-50" style="margin-bottom: 20px; margin-right: 100px;  background-color: red;">
-                    <div class="rounded-circle" style="width: 42px; height: 42px; background-color: #f5c518;">
-                        <span class="iconify" data-icon="mdi:bin"></span>
-                    </div>
-                </div>
+    </div>
+    <div class="content">
+        <div class="header">
+            <div class="info">
+                <p class="title">{{ rating.review.title }}</p>
+                <a class="author" href="profile/{{ review.author_id }}" >{{ rating.user }}</a>
             </div>
+            <div class="rating-box">
+                {% include 'web/rating.html' with rating=rating.score ro=True id=rating.id|add:'1' %}
+            </div>
+        </div>
+        <div class="body">
+            <p>{{ rating.review.content }}</p>
         </div>
     </div>
 </div>

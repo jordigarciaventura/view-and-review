@@ -122,3 +122,6 @@ def get_writers(movie_cast):
     
 def get_actors(movie_cast):
     return [member for member in movie_cast if member.get("known_for_department", "") == "Acting"]
+
+def get_similar(movie_id):
+    return requests.get(f"{endpoint}/movie/{movie_id}/similar", headers=headers).json()

@@ -1,25 +1,133 @@
-{% extends "base_generic.html" %} {% block content %} {% load static %}
+{% extends "base_generic.html" %} {% load static %}
 
-<img src="{{ movie.poster_path }}" style="max-width: 100%;" />
-<h1>{{ movie.title }}</h1>
-<p><strong>Duration:</strong> {{ movie.runtime }}</p>
-<p><strong>Release Date:</strong> {{ movie.release_date }}</p>
+{% block links %}
+<!-- Style -->
+<link rel="stylesheet" href="{% static 'css/score.css' %}" />
+<link rel="stylesheet" href="{% static 'css/score-details.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-section.css' %}" />
+<link rel="stylesheet" href="{% static 'css/rating.css' %}" />
+<link rel="stylesheet" href="{% static 'css/review.css' %}" />
 
-<p><strong>Plot:</strong> {{ movie.overview }}</p>
-<p><strong>Directors:</strong> {{ movie.directors|join:", " }}</p>
-<p><strong>Writers:</strong> {{ movie.writers|join:", " }}</p>
-<p><strong>Genre:</strong> {{ movie.genres|join:", " }}</p>
-<!-- <p><strong>Actors:</strong> <br>
-  {% for actor in movie.actors %}
-    <img src="{{ actor.profile_path }}" style="max-width: 100px; max-height: 100px; margin-right: 10px;" />
-    <p>{{ actor.name }} ({{ actor.character }})</p>
-  {% endfor %}
-</p> -->
+<!-- JS -->
+{% csrf_token %}
+<script src="{% static 'js/movie-preview.js' %}"></script>
+<script src="{% static 'js/rating.js' %}"></script>
+<script src="{% static 'js/review.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="principal">
+
+  <div class="poster">
+    <img src="{{ movie.cover }}" class="image_poster" draggable="false">
+  </div>
+
+  <div class="cover">
+    <img src="{{ movie.poster }}" class="image_cover" draggable="false">
+  </div>
+
+  <div id="container">
+    <div id="rating-box">
+      {% include 'web/score-details.html' with score=movie.tmdb_score id='tmdb_score' only %}
+      {% include 'web/score-details.html' with score=score id='score' only %}
+    </div>
+
+    <div id="star-box">
+      {% include 'web/rating.html' with rating=rating.score movie_id=movie.id user_rating=True id=rating.id only %}
+    </div>
+
+    <div id="icon-box">
+      <div class="icon">
+        <div class="movie-option favlist-option s42" data-movie-id="{{ movie.id }}" data-favlist="{{ movie.favlist }}">
+          <span class="iconify s24 favlist-no {% if movie.favlist %} hidden {% endif %}"
+            data-icon="mdi:heart-outline"></span>
+          <span class="iconify s24 favlist-yes {% if not movie.favlist %} hidden {% endif %}"
+            data-icon="mdi:heart"></span>
+        </div>
+        <div class="icon-source">Favorites</div>
+      </div>
+      <div class="icon">
+        <div class="movie-option watchlist-option s42" data-movie-id="{{ movie.id }}"
+          data-watchlist="{{ movie.watchlist }}">
+          <span class="iconify s24 watchlist-no {% if movie.watchlist %} hidden {% endif %}"
+            data-icon="material-symbols:bookmark-outline-rounded"></span>
+          <span class="iconify s24 watchlist-yes {% if not movie.watchlist %} hidden {% endif %}"
+            data-icon="material-symbols:bookmark-rounded"></span>
+        </div>
+        <div class="icon-source">Watchlist</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="genres-box">
+    {% for genre in movie.genres %}
+    <div class="genre">
+      {{ genre }}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="all">
+    <div id="info">
+      <div id="prev">
+        <div class="title">{{ movie.title }}</div>
+        <div class="date-time">
+          <div class="icon-inf">
+            <span class="iconify" data-icon="material-symbols:calendar-today-rounded" data-width="25"
+              data-height="25"></span>
+            <div class="big">{{ movie.release_date }}</div>
+          </div>
+          <div class="icon-inf">
+            <span class="iconify" data-icon="mdi:clock-time-four-outline" data-width="25" data-height="25"></span>
+            <div class="big">{{ movie.runtime }}</div>
+          </div>
+        </div>
+
+      </div>
+      <div id="text">{{ movie.overview }}</div>
+    </div>
+
+    <div id="space"></div>
+
+    {% if movie.directors %}
+    <div class="credit">
+      <div class="what">Directed by</div>
+      <div>{{ movie.directors|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    {% if movie.writers %}
+    <div class="credit">
+      <div class="what">Written by</div>
+      <div>{{ movie.writers|join:", " }}</div>
+    </div>
+    {% endif %}
+
+    <div class="cast">
+      {% for actor in movie.actors %}
+      <div class="actor">
+        {% if actor.profile_path %}
+        <img src="{{ actor.profile_path }}" />
+        {% else %}
+        <div class="empty"></div>
+        {% endif %}
+        <div class="info">
+          <div class="name">{{ actor.name }}</div>
+          {% if actor.character %}<div class="character">{{ actor.character }}</div>{% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% include 'web/carousel.html' with title="Similar movies" id='similar' movies=movie.similar only %}
+  </div>
 
 
-{% if not user.is_authenticated %}
-<p class="text-center">Log in to make a review</p>
-{% endif %}
+  <!-- {% if not user.is_authenticated %}
+  <p class="text-center">Log in to make a review</p>
+  {% endif %}
 
 <div class="{% if user_rating %} hidden {% endif %}">
   <!-- Rating form -->
@@ -56,160 +164,12 @@
   {% include 'web/review.html' with rating=rating movie=movie only %}
 </div> {% endcomment %}
 
-{% comment %} {% for rating in ratings %}
-  {% include 'web/review.html' with rating=rating only %}
-{% endfor %}  {% endcomment %}
-<!--
+    <div class="reviews">
+      {% for rating in ratings %}
+        {% include 'web/review.html' with review=rating %}
+      {% endfor%}
+    </div>
 
 </div>
 
-<script>
-  const one = document.getElementById("1");
-  const two = document.getElementById("2");
-  const three = document.getElementById("3");
-  const four = document.getElementById("4");
-  const five = document.getElementById("5");
-
-  const arr = [one, two, three, four, five];
-
-  const selected_class = "selected"
-  const checked_class = "checked"
-
-  const get_button_type_str = (value) => value == "True" ? "upvote" : "downvote"
-
-  const colorize_reputation = (rating_pk, value) => {
-    const type = get_button_type_str(value)
-    const button = document.getElementById(type + "-button-" + rating_pk)
-    if (button) {
-      button.classList.add(type)
-    }
-  }
-
-  const toggle_reputation_color = (type, rating_pk, user_pk) => {
-    const othertype = type == "upvote" ? "downvote" : "upvote"
-
-    const button = document.getElementById(type + "-button-" + rating_pk).classList
-    const otherbutton = document.getElementById(othertype + "-button-" + rating_pk).classList
-
-    if (button.contains(type)) {
-      button.remove(type)
-    } else {
-      button.add(type)
-      otherbutton.remove(othertype)
-    }
-  }
-
-  {% for rating in ratings %}
-  document.getElementById("upvote-button-" + {{ rating.pk }}).addEventListener("click", (event) => toggle_reputation_color("upvote", {{ rating.pk }}, {{ rating.user.pk }}))
-  document.getElementById("downvote-button-" + {{ rating.pk }}).addEventListener("click", (event) => toggle_reputation_color("downvote", {{ rating.pk }}, {{ rating.user.pk }}))
-  {% endfor %}
-  {% for rating in ratings %} {% for reputation in rating.reputation_set.all %}
-  {% if reputation.user == user %}
-  colorize_reputation({{ rating.pk }}, "{{reputation.value}}")
-  {% endif %} {% endfor %} {% endfor %}
-
-  const reputation_form_id = "reputation-form-"
-  const reputation_form = document.querySelectorAll('[id^=' + reputation_form_id + ']')
-  reputation_form.forEach((item) => {
-    item.addEventListener("submit", preventRefresh) // Prevent page refresh on submit
-    colorize_reputation(item)
-  })
-
-  const handle_mouseout = () => {
-    for (let i = 0; i < arr.length; i++) {
-      const current_class_list = arr[i].classList
-      if (!current_class_list.contains(selected_class)) {
-        current_class_list.remove(checked_class)
-      }
-    }
-  }
-
-  const handle_select = (target_id) => {
-    const target = parseInt(target_id);
-    for (let i = 0; i < arr.length; i++) {
-      if (i < target) {
-        arr[i].classList.add(selected_class)
-        arr[i].classList.add(checked_class)
-      } else {
-        arr[i].classList.remove(selected_class)
-        arr[i].classList.remove(checked_class)
-      }
-    }
-  }
-
-  const handle_hover = (target_id) => {
-    const target = parseInt(target_id);
-    for (let i = 0; i < arr.length; i++) {
-      if (i < target) {
-        if (!arr[i].classList.contains(selected_class)) {
-          arr[i].classList.add(checked_class)
-        }
-      } else {
-        if (!arr[i].classList.contains(selected_class)) {
-          arr[i].classList.remove(checked_class)
-        }
-      }
-    }
-  }
-
-  arr.forEach((item) =>
-    item.addEventListener("mouseover", (event) => handle_hover(event.target.id))
-  )
-
-  arr.forEach((item) =>
-    item.addEventListener("mouseout", (event) => handle_mouseout(event.target.id))
-  )
-
-  arr.forEach((item) =>
-    item.addEventListener("click", (event) => handle_select(event.target.id))
-  )
-
-  function reputationSubmit(value, rating_pk, user_pk) {
-    const getOtherStr = (value) => {
-      return value == "upvote" ? "downvote" : "upvote"
-    }
-
-    var formButton = document.getElementById(value + "-button-" + rating_pk)
-    var otherFormButton = document.getElementById(getOtherStr(value) + "-button-" + rating_pk)
-    const isput = () => {
-      const arr = ['upvote', 'downvote']
-      return arr.some((el, ind, arr) => formButton.classList.contains(el) || otherFormButton.classList.contains(el))
-    }
-
-    var isupvote = value == "upvote"
-
-    var httpmethod
-    if (isput())
-      httpmethod = 'PUT'
-    else
-      httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
-
-    var formData = {
-      'value': isupvote,
-      'rating': rating_pk,
-      'user': user_pk,
-    }
-
-    $.ajax({
-      url: '/reputation/',
-      type: httpmethod,
-      headers: {
-        'X-CSRFToken': Cookies.get('csrftoken')
-      },
-      data: formData,
-      success: function (response) { }
-    })
-  }
-
-  function preventRefresh(event) {
-    event.preventDefault()
-  }
-
-  {% if form.score.value != 0 %}
-  // Initalise previous user rating
-  handle_select({{ form.score.value }})
-  // Allows updating review without having to select a score again
-  document.getElementById('score' + {{ form.score.value }}).checked = true
-  {% endif %}
-</script>
 {% endblock %}

@@ -1,0 +1,7 @@
+<div id="{{ id }}" class="score">
+    {% include 'web/score.html' with value=score.value only %}
+    <div class="score-details">
+        <div class="score-source">{{ score.source }}</div>
+        <div class="score-amount">{{ score.count }}</div>
+    </div>
+</div>
