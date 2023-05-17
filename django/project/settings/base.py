@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'web',
     'bootstrap5',
     'compressor',
+    'behave_django',
 ]
 
 MIDDLEWARE = [

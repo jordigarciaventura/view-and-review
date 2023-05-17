@@ -19,7 +19,6 @@ django-compressor = "^4.3.1"
 django-libsass = "^0.9"
 tmdbv3api = "^1.7.7"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
