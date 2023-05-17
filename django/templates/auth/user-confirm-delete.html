@@ -1,5 +1,5 @@
 {% extends 'base_generic.html' %} {% block content %}
-<form method="POST">
+<form id="confirm-form" method="POST">
   {% csrf_token %}
 
   <p>Are you sure you want to delete your user <b>{{object}}</b>?</p>

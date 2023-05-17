@@ -35,7 +35,7 @@
             </div>
 
             {% endif %} {% endif %}
-            <form class="text-center w-75" method="post">
+            <form id="login-form" class="text-center w-75" method="post">
               {% csrf_token %}
               <div class="mb-3">
                 <input
@@ -64,7 +64,7 @@
               </a>
               <input type="hidden" name="next" value="{{ next }}" />
               <div class="mt-5 mb-3">
-                <button class="btn btn-primary d-block w-100" type="submit">
+                <button class="btn btn-primary d-block w-100" type="submit" value="login">
                   Log in
                 </button>
               </div>
