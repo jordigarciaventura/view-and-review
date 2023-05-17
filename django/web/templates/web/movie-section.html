@@ -8,11 +8,13 @@
 <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
 <link rel="stylesheet" href="{% static 'css/movie-section.css' %}" />
 <link rel="stylesheet" href="{% static 'css/rating.css' %}" />
+<link rel="stylesheet" href="{% static 'css/review.css' %}" />
 
 <!-- JS -->
 {% csrf_token %}
 <script src="{% static 'js/movie-preview.js' %}"></script>
 <script src="{% static 'js/rating.js' %}"></script>
+<script src="{% static 'js/review.js' %}"></script>
 {% endblock %}
 
 {% block content %}
@@ -33,7 +35,7 @@
     </div>
 
     <div id="star-box">
-      {% include 'web/rating.html' with rating=rating movie_id=movie.id only %}
+      {% include 'web/rating.html' with rating=rating.score movie_id=movie.id user_rating=True id=rating.id only %}
     </div>
 
     <div id="icon-box">
@@ -121,176 +123,26 @@
 
     {% include 'web/carousel.html' with title="Similar movies" id='similar' movies=movie.similar only %}
   </div>
+
+
+  <!-- {% if not user.is_authenticated %}
+  <p class="text-center">Log in to make a review</p>
+  {% endif %}
+
+  <div class="{% if user_rating %} hidden {% endif %}">
+    {% include 'web/user-rating.html' with rating=user_rating %}
+  </div>
+
+  <div class="{% if not user_rating %} hidden {% endif %}">
+    {% include 'web/rating.html' with rating=rating %}
+  </div> -->
+
+    <div class="reviews">
+      {% for rating in ratings %}
+        {% include 'web/review.html' with review=rating %}
+      {% endfor%}
+    </div>
+
 </div>
 
 {% endblock %}
-
-<!--
-
-{% if not user.is_authenticated %}
-<p class="text-center">Log in to make a review</p>
-{% endif %}
-
-<div class="{% if user_rating %} hidden {% endif %}">
-  {% include 'web/user-rating.html' with rating=user_rating %}
-</div>
-
-<div class="{% if not user_rating %} hidden {% endif %}">
-  {% include 'web/rating.html' with rating=rating %}
-</div>
-
-{% for rating in ratings %}
-  {% include 'web/rating.html' with rating=rating %}
-{% endfor%}
-
-</div>
-
-<script>
-  const one = document.getElementById("1");
-  const two = document.getElementById("2");
-  const three = document.getElementById("3");
-  const four = document.getElementById("4");
-  const five = document.getElementById("5");
-
-  const arr = [one, two, three, four, five];
-
-  const selected_class = "selected"
-  const checked_class = "checked"
-
-  const get_button_type_str = (value) => value == "True" ? "upvote" : "downvote"
-
-  const colorize_reputation = (rating_pk, value) => {
-    const type = get_button_type_str(value)
-    const button = document.getElementById(type + "-button-" + rating_pk)
-    if (button) {
-      button.classList.add(type)
-    }
-  }
-
-  const toggle_reputation_color = (type, rating_pk, user_pk) => {
-    const othertype = type == "upvote" ? "downvote" : "upvote"
-
-    const button = document.getElementById(type + "-button-" + rating_pk).classList
-    const otherbutton = document.getElementById(othertype + "-button-" + rating_pk).classList
-
-    if (button.contains(type)) {
-      button.remove(type)
-    } else {
-      button.add(type)
-      otherbutton.remove(othertype)
-    }
-  }
-
-  {% for rating in ratings %}
-  document.getElementById("upvote-button-" + {{ rating.pk }}).addEventListener("click", (event) => toggle_reputation_color("upvote", {{ rating.pk }}, {{ rating.user.pk }}))
-  document.getElementById("downvote-button-" + {{ rating.pk }}).addEventListener("click", (event) => toggle_reputation_color("downvote", {{ rating.pk }}, {{ rating.user.pk }}))
-  {% endfor %}
-  {% for rating in ratings %} {% for reputation in rating.reputation_set.all %}
-  {% if reputation.user == user %}
-  colorize_reputation({{ rating.pk }}, "{{reputation.value}}")
-  {% endif %} {% endfor %} {% endfor %}
-
-  const reputation_form_id = "reputation-form-"
-  const reputation_form = document.querySelectorAll('[id^=' + reputation_form_id + ']')
-  reputation_form.forEach((item) => {
-    item.addEventListener("submit", preventRefresh) // Prevent page refresh on submit
-    colorize_reputation(item)
-  })
-
-  const handle_mouseout = () => {
-    for (let i = 0; i < arr.length; i++) {
-      const current_class_list = arr[i].classList
-      if (!current_class_list.contains(selected_class)) {
-        current_class_list.remove(checked_class)
-      }
-    }
-  }
-
-  const handle_select = (target_id) => {
-    const target = parseInt(target_id);
-    for (let i = 0; i < arr.length; i++) {
-      if (i < target) {
-        arr[i].classList.add(selected_class)
-        arr[i].classList.add(checked_class)
-      } else {
-        arr[i].classList.remove(selected_class)
-        arr[i].classList.remove(checked_class)
-      }
-    }
-  }
-
-  const handle_hover = (target_id) => {
-    const target = parseInt(target_id);
-    for (let i = 0; i < arr.length; i++) {
-      if (i < target) {
-        if (!arr[i].classList.contains(selected_class)) {
-          arr[i].classList.add(checked_class)
-        }
-      } else {
-        if (!arr[i].classList.contains(selected_class)) {
-          arr[i].classList.remove(checked_class)
-        }
-      }
-    }
-  }
-
-  arr.forEach((item) =>
-    item.addEventListener("mouseover", (event) => handle_hover(event.target.id))
-  )
-
-  arr.forEach((item) =>
-    item.addEventListener("mouseout", (event) => handle_mouseout(event.target.id))
-  )
-
-  arr.forEach((item) =>
-    item.addEventListener("click", (event) => handle_select(event.target.id))
-  )
-
-  function reputationSubmit(value, rating_pk, user_pk) {
-    const getOtherStr = (value) => {
-      return value == "upvote" ? "downvote" : "upvote"
-    }
-
-    var formButton = document.getElementById(value + "-button-" + rating_pk)
-    var otherFormButton = document.getElementById(getOtherStr(value) + "-button-" + rating_pk)
-    const isput = () => {
-      const arr = ['upvote', 'downvote']
-      return arr.some((el, ind, arr) => formButton.classList.contains(el) || otherFormButton.classList.contains(el))
-    }
-
-    var isupvote = value == "upvote"
-
-    var httpmethod
-    if (isput())
-      httpmethod = 'PUT'
-    else
-      httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
-
-    var formData = {
-      'value': isupvote,
-      'rating': rating_pk,
-      'user': user_pk,
-    }
-
-    $.ajax({
-      url: '/reputation/',
-      type: httpmethod,
-      headers: {
-        'X-CSRFToken': Cookies.get('csrftoken')
-      },
-      data: formData,
-      success: function (response) { }
-    })
-  }
-
-  function preventRefresh(event) {
-    event.preventDefault()
-  }
-
-  {% if form.score.value != 0 %}
-  // Initalise previous user rating
-  handle_select({{ form.score.value }})
-  // Allows updating review without having to select a score again
-  document.getElementById('score' + {{ form.score.value }}).checked = true
-  {% endif %}
-</script>

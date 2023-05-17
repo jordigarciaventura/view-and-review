@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const stars = document.querySelectorAll('.rating input');
+    const stars = document.querySelectorAll('.user-rating input');
     stars.forEach(star => {
         star.addEventListener('click', e => {
             const target = e.currentTarget;

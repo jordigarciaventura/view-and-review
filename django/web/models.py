@@ -8,7 +8,6 @@ class Movie(models.Model):
     def __str__(self) -> str:
         return f"(tmdb_id {self.tmdb_id})"
 
-
 class Watchlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
     movie = models.ManyToManyField(Movie)
@@ -35,6 +34,11 @@ class Review(models.Model):
 
     def __str__(self) -> str:
         return f"(title {self.title}, content {self.content})"
+
+    def votes(self):
+        positive_votes_count = ReviewVote.objects.filter(review=self, value=True).count() or 0
+        negative_votes_count = ReviewVote.objects.filter(review=self, value=False).count() or 0
+        return positive_votes_count - negative_votes_count
 
 
 class ReviewVote(models.Model):
@@ -65,9 +69,7 @@ class Rating(models.Model):
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie}) -> {self.score} stars"
-
-
+    
     def average(movie_id):
         all_ratings = Rating.objects.filter(movie=movie_id)
         return all_ratings.aggregate(models.Avg('score'))['score__avg'] or 0
-    

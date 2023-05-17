@@ -64,14 +64,11 @@ class MovieView(generic.TemplateView):
         
         # Rating
         if self.request.user.is_authenticated:
-            rating = Rating.objects.filter(user=self.request.user, movie=movie_id)
-            if rating.exists():
-                context['rating'] = int(rating.first().score)
+            context['rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first() or None
         
         # Score
         score_count =  Rating.objects.filter(movie=movie_id).count()
         score_value = int(Rating.average(movie_id) * 20)
-        print(score_value)
         
         context['score'] = {
             'value': score_value,
@@ -81,7 +78,7 @@ class MovieView(generic.TemplateView):
         
         # Reviews
         
-        # context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
+        context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
         
         # if self.request.user.is_authenticated:
         #     context['ratings'] = context['ratings'].exclude(user=self.request.user)

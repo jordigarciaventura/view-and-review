@@ -1,13 +1,25 @@
-<div class="rating-container">
-    <form id="reputation-form-{{rating.pk}}" class="card-body flex-column align-items-right">
-        {% csrf_token %}
-        <i id="upvote-button-{{rating.pk}}" class="bi bi-arrow-up-square-fill" style="cursor: pointer;"
-            onclick="reputationSubmit('upvote', {{rating.pk}}, {{rating.user.pk}})"></i>
-        <i id="downvote-button-{{rating.pk}}" class="bi bi-arrow-down-square-fill" style="cursor: pointer;"
-            onclick="reputationSubmit('downvote', {{rating.pk}}, {{rating.user.pk}})"></i>
-    </form>
-    <p>
-        {{rating.user}} {{rating.score}}
-        <b>{{rating.review.title}}</b> {{rating.review.content}}
-    </p>
+<div class="review">
+    <div class="votes" data-rating-id="{{ rating.review.id }}">
+        <div class="downvote">
+            <span class="iconify" data-icon="bxs:downvote"></span>
+        </div>
+        <div>{{ rating.review.votes }}</div>
+        <div class="upvote">
+            <span class="iconify" data-icon="bxs:upvote"></span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="header">
+            <div class="info">
+                <p class="title">{{ rating.review.title }}</p>
+                <a class="author" href="profile/{{ review.author_id }}" >{{ rating.user }}</a>
+            </div>
+            <div class="rating-box">
+                {% include 'web/rating.html' with rating=rating.score ro=True id=rating.id|add:'1' %}
+            </div>
+        </div>
+        <div class="body">
+            <p>{{ rating.review.content }}</p>
+        </div>
+    </div>
 </div>
