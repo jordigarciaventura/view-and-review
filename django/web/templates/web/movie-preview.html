@@ -1,4 +1,4 @@
-<div class="movie">
+<div class="movie-preview">
     <div class="movie-poster">
         <a class="movie-image" href="{% url 'movie' movie.id %}">
             <img src="{{ movie.poster_path }}" alt="poster" draggable="false">
@@ -9,13 +9,13 @@
         </div>  
     </div>
     <div class="movie-options">
-        <div class="movie-option watchlist-option s42" data-movie-id="{{ movie.id }}" >    
+        <div class="movie-option watchlist-option s42" data-movie-id="{{ movie.id }}" data-watchlist="{{ movie.watchlist }}" >    
             <span class="iconify s24 watchlist-no {% if movie.watchlist %} hidden {% endif %}" data-icon="material-symbols:bookmark-outline-rounded"></span>
             <span class="iconify s24 watchlist-yes {% if not movie.watchlist %} hidden {% endif %}" data-icon="material-symbols:bookmark-rounded"></span>
         </div>
-        <div class="movie-option favorite-option s42" data-movie-id="{{ movie.id }}" >
-            <span class="iconify s24 favorite-no {% if movie.favorite %} hidden {% endif %}" data-icon="mdi:heart-outline"></span>
-            <span class="iconify s24 favorite-yes {% if not movie.favorite %} hidden {% endif %}" data-icon="mdi:heart"></span>
+        <div class="movie-option favlist-option s42" data-movie-id="{{ movie.id }}" data-favlist="{{ movie.favlist }}" >
+            <span class="iconify s24 favlist-no {% if movie.favlist %} hidden {% endif %}" data-icon="mdi:heart-outline"></span>
+            <span class="iconify s24 favlist-yes {% if not movie.favlist %} hidden {% endif %}" data-icon="mdi:heart"></span>
         </div>
     </div>
     <div class="movie-info">

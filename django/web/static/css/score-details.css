@@ -1,0 +1,29 @@
+.score {
+    display: flex;
+    height: 56px;
+    gap: 16px;
+}
+
+.score-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.score-details p {
+    margin: 0;
+    padding: 0;
+    display: block;
+    line-height: 0;
+}
+
+.score-source {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.score-amount {
+    font-size: 14px;
+    font-weight: 400;
+}

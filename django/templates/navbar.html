@@ -1,17 +1,20 @@
 {% load static %}
 <nav class="navbar">
-    <a href="{% url 'index' %}"><img src="{% static 'assets/img/vr.png' %}" alt="logo" class="logo"></a>
-    <form class="search-bar" action="/search">
-        <div class="input-text">
-            <div class="search-close">
-                <span class="iconify s24" data-icon="material-symbols:arrow-back-rounded"></span>
+    <a href="{% url 'index' %}" class="logo"><img src="{% static 'assets/img/vr.png' %}" alt="logo"></a>
+    
+    <form class="search-bar-container" action="/search">
+        <div class="search-bar">
+            <div class="input-text">
+                <div class="search-close">
+                    <span class="iconify s24" data-icon="material-symbols:arrow-back-rounded"></span>
+                </div>
+                <input id="search" class="search-input" type="text" placeholder="Search.." name="query" pattern=".*\S+.*" required>
             </div>
-            <input id="search" class="search-input" type="text" placeholder="Search.." name="search" pattern=".*\S+.*" required>
+            <div class="vline"></div>
+            <button class="search-icon search-accept" type="submit">
+                <span class="iconify s24" data-icon="material-symbols:search-rounded"></span>
+            </button>
         </div>
-        <div class="vline"></div>
-        <button class="search-icon search-accept" type="submit">
-            <span class="iconify s24" data-icon="material-symbols:search-rounded"></span>
-        </button>
     </form>
 
     <div class="nav-options">
@@ -26,7 +29,7 @@
         </a>
         <div class="nav-option dropdown">
             <span class="iconify s32" data-icon="mdi:account"></span>
-            <div id="username" class="cut-text">{{user.username}}</div>
+            <div id="username">{{user.username}}</div>
             <div class="dropdown-content">
                 <div>
                     <a href="{% url 'profile' user.pk %}">Account</a>

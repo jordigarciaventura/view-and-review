@@ -1,13 +1,18 @@
 $(document).ready(() => {
     $(".watchlist-option").click(e => {
-        const movieID = $(e.currentTarget).data('movie-id');
-        
+        const target = $(e.currentTarget);
+        const movieID = target.data('movie-id');
+        const watchlist = target.data('watchlist');
+
         const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         $.ajax({
-            type: 'POST',
-            url:`/watchlist/${movieID}`,
+            type:  (watchlist) ? 'DELETE' : 'POST',
+            url:`/watchlist/`,
             beforeSend: function (xhr){
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            data: {
+                'movie_id': movieID
             },
             statusCode: {
                 401: () => { 
@@ -16,20 +21,26 @@ $(document).ready(() => {
             },
             success: data => {
                 console.log("success");
-                $(e.currentTarget).children().toggleClass('hidden');
+                target.data('watchlist', !watchlist);
+                target.children().toggleClass('hidden');
             }
         });
     });
 
-    $(".favorite-option").click(e => {
-        const movieID = $(e.currentTarget).data('movie-id');
-        
+    $(".favlist-option").click(e => {
+        const target = $(e.currentTarget);
+        const movieID = target.data('movie-id');
+        const favorite = target.data('favlist');
+
         const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         $.ajax({
-            type: 'POST',
-            url:`/favorite/${movieID}`,
+            type: (favorite) ? 'DELETE' : 'POST',
+            url:`/favlist/`,
             beforeSend: function (xhr){
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            data: {
+                'movie_id': movieID
             },
             statusCode: {
                 401: () => { 
@@ -37,8 +48,9 @@ $(document).ready(() => {
                 }
             },
             success: data => {
+                target.data('favlist', !favorite);
                 console.log("success");
-                $(e.currentTarget).children().toggleClass('hidden');
+                target.children().toggleClass('hidden');
             }
         });
     });

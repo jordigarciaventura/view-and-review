@@ -1,7 +1,8 @@
 
 from typing import Any, Dict
-from django.http import HttpRequest, HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict, JsonResponse
-from django.views.generic.edit import DeleteView, UpdateView
+from django.db.models import Model, QuerySet
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseForbidden, QueryDict, JsonResponse
+from django.views.generic.edit import DeleteView
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -10,13 +11,20 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods 
 from django.contrib.auth.models import User
 from django.views import generic
+from django.db.models import Q
 
-from web.models import Rating, Reputation
-from web.forms import RegisterForm, RatingForm, ReputationForm
+from web.models import *
+from web.forms import *
 
 from . import api
+import datetime
 
 # Create your views here.
+
+class UserView(generic.DetailView):
+    model = User
+    template_name = "auth/profile.html" 
+    
 
 class IndexView(generic.TemplateView):
     template_name = "web/index.html"
@@ -41,46 +49,131 @@ class IndexView(generic.TemplateView):
         context['latest'] = latest
         
         return context
-
-class FilmView(generic.TemplateView):
-    template_name = 'web/film.html'
+    
+class MovieView(generic.TemplateView):
+    template_name = 'web/movie-section.html'
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = {}
         # Can raise 404
-        film = api.film(kwargs['pk'])           
-        context['film'] = film
-        context['RATING_CHOICES'] = Rating.RATING_CHOICES
-        context['form'] = RatingForm(initial={'film': film['id']})
-        context['ratings'] = Rating.objects.filter(film=film['id'])
+        movie_id = kwargs['pk']
+        movie = api.movie(movie_id)           
+        movie = movie_section_parser(movie)
+                
+        context['movie'] = movie
+        
+        # Rating
         if self.request.user.is_authenticated:
-            user_rating = Rating.objects.filter(user=self.request.user, film=film['id']).first()
-            if user_rating:
-                context['form'] = RatingForm(instance=user_rating)
-                context['user_rating'] = user_rating
+            context['rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first() or None
+        
+        # Score
+        score_count =  Rating.objects.filter(movie=movie_id).count()
+        score_value = int(Rating.average(movie_id) * 20)
+        
+        context['score'] = {
+            'value': score_value,
+            'count': score_count,
+            'source': 'V&R'
+        }
+        
+        # Reviews
+        
+        context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
+        
+        # if self.request.user.is_authenticated:
+        #     context['ratings'] = context['ratings'].exclude(user=self.request.user)
+        #     context['user_rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first()
 
         # Gets the form prefilled with the user's past choices
         return context
 
 class LogoutView(generic.TemplateView):
     template_name = 'registration/logout.html'
-
-
-class ProfileView(generic.TemplateView):
+    
+class ProfileSettingsView(generic.TemplateView):
     template_name = 'auth/profile_settings.html'
     
 
+@require_http_methods(['POST', 'DELETE'])
+def WatchlistView(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+    
+    # if request.method == 'POST':
+        # form = ListForm(request.POST)
+        # if form.is_valid():
+            # data = form.cleaned_data
+            # profile = MyProfile.objects.get(user=request.user)
+            # profile.add_to_wishlist(data['movie_id'])
+    # elif request.method == 'DELETE':    
+        # data = QueryDict(request.body)
+        # profile = MyProfile.objects.get(user=request.user)
+        # profile.remove_from_wishlist(data['movie_id'])
+
+    return HttpResponse()
+
+@require_http_methods(['POST', 'DELETE'])
+def FavlistView(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+    
+    # if request.method == 'POST':
+    #     form = ListForm(request.POST)
+    #     if form.is_valid():
+    #         data = form.cleaned_data
+    #         profile = MyProfile.objects.get(user=request.user)
+    #         profile.add_to_favlist(data['movie_id'])
+    # elif request.method == 'DELETE':    
+    #     data = QueryDict(request.body)
+    #     profile = MyProfile.objects.get(user=request.user)
+    #     profile.remove_from_favlist(data['movie_id'])
+
+    return HttpResponse()
+
+@require_http_methods(['POST', 'DELETE'])
+def RatingView(request):
+    if not request.user.is_authenticated:
+        return HttpResponse('Unauthorized', status=401)
+
+    data = QueryDict(request.body)
+    movie_id = data.get('movie_id')
+    movie, _ = Movie.objects.get_or_create(tmdb_id=movie_id)
+    
+    if request.method == 'POST':
+        rating = data.get('rating')
+
+        Rating.objects.update_or_create(
+            user=request.user,
+            movie=movie,
+            defaults={"score": rating}
+        )
+        
+    elif request.method == 'DELETE':    
+        Rating.objects.filter(movie=movie, user=request.user).delete()
+
+    # Score
+    score_count =  Rating.objects.filter(movie=movie_id).count()
+    score_value = int(Rating.average(movie_id) * 20)
+    
+    response = {
+        'value': score_value,
+        'count': score_count,
+    }
+
+    return JsonResponse(response)
+
 def RegisterView(request):
-    form = RegisterForm()
     if request.method == 'POST':
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # MyProfile.create(user).save()
             login(request, user)
             messages.success(request, "Registration succesful " + str(user))
             return redirect('/')
         messages.error(
             request, "Unsuccesful registration. Invalid information.")
+    form = RegisterForm()
     return render(request=request, template_name='registration/register.html', context={"form": form})
 
 @login_required
@@ -223,28 +316,82 @@ def movie_preview_parser(results, poster_size="w92", count=10):
         
     return filtered_results
 
+def movie_section_parser(movie_details):
+    # Get only the properties we want
+    properties = ["backdrop_path", "genres", "id", "overview", "poster_path", "release_date", "runtime", "title", "vote_average", "vote_count"]
+    filtered_details = get_dict_keys(movie_details, properties)
+
+     # Change poster path to url
+    poster_path = filtered_details['poster_path']
+    filtered_details['poster'] = api.get_image_url(poster_path, type="poster", size="w500")
+    filtered_details.pop('poster_path')
+
+    # Change backdrop path to url
+    backdrop_path = filtered_details['backdrop_path']
+    filtered_details['cover'] = api.get_image_url(backdrop_path, type="backdrop", size="original")
+    filtered_details.pop('backdrop_path')
+
+    # Change genre ids to names
+    genres = filtered_details['genres']
+    genre_ids = [genre['id'] for genre in genres]
+    genres = [api.get_genre_name(genre_id) for genre_id in genre_ids]
+    filtered_details['genres'] = genres
+
+    # Format the release date
+    year, month, day = map(int, filtered_details['release_date'].split('-'))
+    date = datetime.datetime(year, month, day).strftime("%Y, %b %d")
+    filtered_details['release_date'] = date
+
+    # Format runtime
+    runtime = filtered_details['runtime']
+    hours = runtime // 60
+    minutes = runtime % 60
+    filtered_details['runtime'] = f"{hours}h {minutes}m"
+    
+    # Format tmdb_score
+    score_value = int(filtered_details['vote_average'] * 10)
+    score_count = format_count(filtered_details['vote_count'])
+    
+    filtered_details['tmdb_score'] = {
+        'value': score_value,
+        'count': score_count,
+        'source': 'TMDB'
+    }
+    
+    filtered_details.pop('vote_average')
+    filtered_details.pop('vote_count')            
+    
+    # Similar movies
+    similar = api.get_similar(filtered_details['id'])["results"]
+    filtered_details['similar'] = movie_preview_parser(similar, poster_size="w342", count=10)
+    
+    # Add credits
+    cast = api.get_movie_credits(filtered_details['id'])
+    filtered_details['directors'] = set(x['name'] for x in api.get_directors(cast))
+    filtered_details['writers'] = set(x['name'] for x in api.get_writers(cast))
+    properties = ['name', 'character', 'profile_path']
+    filtered_details['actors'] = sorted([get_dict_keys(x, properties) for x in api.get_actors(cast)], key=lambda x: x['profile_path'] == None)
+    for i in range(len(filtered_details['actors'])):
+        # Change profile path to url
+        profile_path = filtered_details['actors'][i]['profile_path']
+        if profile_path:
+            filtered_details['actors'][i]['profile_path'] = api.get_image_url(profile_path, type="profile", size="w185")
+        else:
+            filtered_details['actors'][i]['profile_path'] = ""
+
+    return filtered_details
 
 def section(request, title):
     print(title)
-    return HttpResponse()
-
-@require_http_methods(['POST'])
-def watchlist(request, movie_id):
-    if not request.user.is_authenticated:
-        return HttpResponse('Unauthorized', status=401)
-    
-    return HttpResponse()
-
-@require_http_methods(['POST'])
-def favorite(request, movie_id):
-    if not request.user.is_authenticated:
-        return HttpResponse('Unauthorized', status=401)
-    
     return HttpResponse()
 
 def trailer(request, movie_id):
     trailer = api.get_movie_trailer(movie_id)
     return HttpResponse(trailer)
 
-def movie(request, pk):
-    return HttpResponse()
+def format_count(count):
+    if count > 1000000:
+        return f"{count/1000000:.1f}M"
+    if count > 1000:
+        return f"{count/1000:.1f}K"
+    return count

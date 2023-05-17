@@ -1,0 +1,73 @@
+.review {
+    display: flex;
+    gap: 17px;
+    width: 100%;
+    background-color: gray;
+    padding: 10px;
+}
+
+.review  .votes {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 400;
+    gap: 2px;
+    background-color: red;
+    height: fit-content;
+}
+
+.review .votes .downvote:hover {
+    color: red;
+}
+
+.review .votes .upvote:hover {
+    color: green;
+}
+
+.review .votes svg {
+    width: 18px;
+    height: 18px;
+    margin: 6px;
+}
+
+.review .votes svg:hover {
+    cursor: pointer;
+}
+
+.review .content {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    width: 100%;
+}
+
+.review .content .header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.review .content .header .info {
+    display: flex;
+    flex-direction: column;
+    background-color: green;
+}
+
+.review .content .header .info .title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    line-height: normal;
+}
+
+.review .content .header.info .author {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.review .content .rating-box {
+    height: 20px;
+}
+
+.body {
+    width: 100%;
+}

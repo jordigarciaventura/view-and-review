@@ -5,17 +5,13 @@
 {% block links %}
 {% csrf_token %}
 <link rel="stylesheet" href="{% static 'css/index.css' %}" />
-<link rel="stylesheet" href="{% static 'css/navbar.css' %}" />
-<link rel="stylesheet" href="{% static 'css/movie.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
 <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
 <script src="{% static 'js/deep-linking.js' %}"></script>
-<script src="{% static 'js/navbar.js' %}"></script>
-<script src="{% static 'js/autocomplete.js' %}"></script>
-<script src="{% static 'js/movie.js' %}"></script>
+<script src="{% static 'js/movie-preview.js' %}"></script>
 {% endblock %}
 
 {% block content %}
-{% include 'navbar.html' %}
 
 <div class="carousels">
 

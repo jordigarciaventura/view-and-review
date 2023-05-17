@@ -1,4 +1,4 @@
-.movie {
+.movie-preview {
     width: 100%;
     height: 100%;
 
@@ -11,7 +11,7 @@
     overflow: hidden;
 }
 
-.movie * {
+.movie-preview * {
     box-sizing: content-box;
 }
 
@@ -84,11 +84,11 @@
     display: inline;
 }
 
-.favorite-option:hover{
+.favlist-option:hover{
     color: red;
 }
 
-.favorite-yes {
+.favlist-yes {
     color: red;
 }
 

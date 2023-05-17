@@ -14,9 +14,6 @@ image_endpoint="https://image.tmdb.org/t/p/"
 api_key = environ.get('TMDB_BEARER_TOKEN', "")
 headers = {"Authorization": f"Bearer {api_key}"}
 
-def film(movie_id):
-    return movie.details(movie_id=movie_id)
-
 def top_most_rated(number=20):
     return movie.top_rated()[:number]
 
@@ -34,6 +31,10 @@ def top_most_rated_includes(number=20, min_votes=300, max_pages=1000, includes="
                 movies.append(result)
         
     return sorted(movies, key=lambda x: x.vote_average, reverse=True)[:number]
+
+
+def movie(movie_id):
+    return requests.get(f"{endpoint}/movie/{movie_id}", headers=headers).json()
 
 
 def search(query):
@@ -97,6 +98,8 @@ def get_genre_name(id):
         "10752": "War",
         "37": "Western"}
     
+    assert str(id) in genres.keys()
+    
     return genres[str(id)]
 
 
@@ -105,3 +108,20 @@ def get_movie_trailer(movie_id):
     for result in response["results"]:
         if result["type"] == "Trailer" and result["site"] == "YouTube":
             return result["key"]
+        
+        
+def get_movie_credits(movie_id):
+    result = requests.get(f"{endpoint}/movie/{movie_id}/credits", headers=headers).json()
+    return result['cast'] + result['crew']
+
+def get_directors(movie_cast):
+    return [member for member in movie_cast if member.get("job","") == "Director"]
+
+def get_writers(movie_cast):
+    return [member for member in movie_cast if member.get("job", "") == "Writer"]
+    
+def get_actors(movie_cast):
+    return [member for member in movie_cast if member.get("known_for_department", "") == "Acting"]
+
+def get_similar(movie_id):
+    return requests.get(f"{endpoint}/movie/{movie_id}/similar", headers=headers).json()
