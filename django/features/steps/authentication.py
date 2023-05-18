@@ -1,4 +1,6 @@
 from behave import *
+from selenium.webdriver.common.by import By
+
 
 use_step_matcher("parse")
 
@@ -9,8 +11,8 @@ def step_impl(context, username, password):
 
 @given('I login as user "{username}" with password "{password}"')
 def step_impl(context, username, password):
-    context.browser.visit(context.get_url('/accounts/login/?next=/'))
-    form = context.browser.find_by_id('login-form')
-    context.browser.fill('username', username)
-    context.browser.fill('password', password)
-    form.find_by_value('login').first.click()
+    context.browser.get(context.get_url('/accounts/login/?next=/'))
+    context.browser.find_element(By.ID, 'username').send_keys(username)
+    context.browser.find_element(By.ID, 'password').send_keys(password)
+    context.browser.find_element(By.ID, 'login-button').click()
+    assert context.get_url('index') in context.browser.current_url

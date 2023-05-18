@@ -27,7 +27,7 @@
     <form id="review-form" method="POST" action="{% url 'review' movie.id %}">
       {% csrf_token %}
       {{ form }}
-      <button>Submit</button>
+      <button id="submit-button">Submit</button>
     </form>
     <button onclick="submit_form({{movie.id}}, 'PUT')">Update</button>
     <button onclick="submit_form({{movie.id}}, 'DELETE')">Delete</button>
