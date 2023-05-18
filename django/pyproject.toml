@@ -21,6 +21,7 @@ django-libsass = "^0.9"
 tmdbv3api = "^1.7.7"
 splinter = "^0.19.0"
 behave-django = "^1.4.0"
+behave-webdriver = "^0.3.1"
 
 
 [build-system]

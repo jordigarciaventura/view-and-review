@@ -72,6 +72,22 @@ beautifulsoup4 = "*"
 behave = "*"
 
 [[package]]
+name = "behave-webdriver"
+version = "0.3.1"
+description = "Selenium webdriver step library for behave BDD testing"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "behave-webdriver-0.3.1.tar.gz", hash = "sha256:bd1102c4c72df45def84675eb341396b48266c3665fb990a31126bd46553ca6b"},
+    {file = "behave_webdriver-0.3.1-py2.py3-none-any.whl", hash = "sha256:4b194262dccf9f93c71aa70a47c1f57d660ec6d56356f8824371451e6d8b666b"},
+]
+
+[package.dependencies]
+behave = "*"
+selenium = "<4"
+
+[[package]]
 name = "brotli"
 version = "1.0.9"
 description = "Python bindings for the Brotli compression library"
@@ -624,6 +640,21 @@ files = [
 ]
 
 [[package]]
+name = "selenium"
+version = "3.141.0"
+description = "Python bindings for Selenium"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "selenium-3.141.0-py2.py3-none-any.whl", hash = "sha256:2d7131d7bc5a5b99a2d9b04aaf2612c411b03b8ca1b1ee8d3de5845a9be2cb3c"},
+    {file = "selenium-3.141.0.tar.gz", hash = "sha256:deaf32b60ad91a4611b98d8002757f29e6f2c2d5fcaf202e1c9ad06d6772300d"},
+]
+
+[package.dependencies]
+urllib3 = "*"
+
+[[package]]
 name = "setuptools"
 version = "67.7.2"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
@@ -769,4 +800,4 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "5000cd72f8678178109b2db4a3332ac190b7574083452a8509e2684a1bef23be"
+content-hash = "97e2471dc50cdb55b1afcae251397dafced698734af6115a90489f4399ce4685"
