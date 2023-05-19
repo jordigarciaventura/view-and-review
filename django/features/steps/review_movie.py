@@ -24,15 +24,20 @@ def step_impl(context, tmdb_id, username):
 
 @then(u'I can make a review')
 def step_impl(context):
+    add_review = context.browser.find_element(By.ID, 'add-review')
+    context.browser.execute_script("arguments[0].scrollIntoView();", add_review)
+    # WebDriverWait(context.browser, 100).until(EC.element_to_be_clickable((By.ID, 'add-review'))) # This is not working for some reason so...
+    ActionChains(context.browser).pause(1).move_to_element(add_review).click().perform() # Pause is needed for some reason
+
     form = context.browser.find_element(By.ID, 'review-form')
     for row in context.table:
         for heading in row.headings:
             input = form.find_element(By.ID, heading)
-            ActionChains(context.browser).move_to_element(input).perform()
             input.send_keys(row[heading])
             assert input.get_attribute('value') == row[heading], heading + ": " + input.get_attribute('value')
         submit_button = form.find_element(By.ID, 'submit-button')
-        ActionChains(context.browser).move_to_element(submit_button).click(submit_button).perform()
+        context.browser.execute_script("arguments[0].scrollIntoView();", submit_button)   
+        ActionChains(context.browser).pause(1).move_to_element(submit_button).click(submit_button).pause(1).perform()
     
     assert Review.objects.count() > 0, "There should be a review"
         

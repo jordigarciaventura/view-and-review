@@ -10,7 +10,7 @@ Background: There is a registered user and movie
 Scenario: I can make a rating of a movie
     When I make a rating of score "3" of the movie "156231"
     Then There is "1" ratings
-    
+
 Scenario: I can delete my rating of a movie
     Given Exists a rating for movie "156231" from user "admin" with score "3"
     When I can delete a rating of the movie "156231"

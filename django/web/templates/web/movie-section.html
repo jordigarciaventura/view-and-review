@@ -134,7 +134,7 @@
         <div class="stars">
           {% include 'web/rating.html' with rating=user_rating.score movie_id=movie.id user_rating=True ro=False id=rating.id|add:'1' only %}
         </div>
-        <div id="add-review" class="{% if not user_rating %}hidden{% endif %}">Add review</div>
+        <div id="add-review" {% if not user_rating %}class="hidden"{% endif %}>Add review</div>
       </div>
       
       <form id="review-form" method="POST" action="{% url 'review' movie.id %}"
