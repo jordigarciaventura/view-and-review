@@ -91,6 +91,14 @@ class IndexView(generic.TemplateView):
         latest = movie_preview_parser(latest, poster_size="w342", count=10)
         context['latest'] = latest
         
+        # URLS
+        context['urls'] = {
+            'login': reverse('login'),
+            'trailer': reverse('trailer'),
+            'watchlist': reverse('watchlist'),
+            'favlist': reverse('favlist')
+        }
+        
         if self.request.user.is_authenticated:
             mark_context_icons(context, self.request.user, ['latest', 'top_rated', 'popular', 'upcoming'])
         
@@ -101,15 +109,17 @@ class MovieView(generic.TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = {}
-        # Can raise 404
+        # Get movie details
         movie_id = kwargs['pk']
         movie = api.movie(movie_id)           
         movie = movie_section_parser(movie)
         context['movie'] = movie
         
-        # Rating
+        # User Rating
+        user_rating = None
         if self.request.user.is_authenticated:
-            context['rating'] = Rating.objects.filter(user=self.request.user, movie=movie_id).first() or None
+            user_rating = Rating.objects.filter(user=self.request.user, movie=movie_id).first() or None
+            context['user_rating'] = user_rating
         
         # Score
         score_count =  Rating.objects.filter(movie=movie_id).count()
@@ -121,23 +131,34 @@ class MovieView(generic.TemplateView):
             'source': 'V&R'
         }
         
-        # Reviews
+        # Similar movies
+        similar = api.get_similar(movie['id'])["results"]
+        context['similar_movies'] = movie_preview_parser(similar, poster_size="w342", count=10)
+    
+        # Ratings
+        context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(user=self.request.user).exclude(review=None)
         
-        context['ratings'] = Rating.objects.filter(movie=movie_id).exclude(review=None)
+        # Add rating user vote
+        for rating in context['ratings']:
+            rating.review.user_vote = rating.review.user_vote(self.request.user)
+    
+        # Review form        
+        if user_rating and user_rating.review:
+            user_review = ReviewForm(user_rating.review.__dict__)
+            context['review_form'] = user_review
+        else:
+            context['review_form'] = ReviewForm()
+                
+                
+        # URLS
+        context['urls'] = {
+            'login': reverse('login'),
+            'trailer': reverse('trailer'),
+            'watchlist': reverse('watchlist'),
+            'favlist': reverse('favlist'),
+            'review-vote': reverse('review-vote'),
+        }
         
-        if self.request.user.is_authenticated:
-            context['ratings'] = context['ratings'].exclude(user=self.request.user)
-            rating = Rating.objects.filter(user=self.request.user, movie=movie_id).first()
-            if rating:
-                context['user_rating'] = rating
-                if rating.review:
-                    form = ReviewForm({'title': rating.review.title, 'content': rating.review.content})
-                    context['form'] = form
-                else:
-                    context['form'] = ReviewForm()
-            else:
-                context['form'] = ReviewForm()
-        # Gets the form prefilled with the user's past choices
         return context
 
 class LogoutView(generic.TemplateView):
@@ -234,26 +255,29 @@ def RegisterView(request):
 def reviewVote(request):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)
-    
+
     data = QueryDict(request.body)    
     review = Review.objects.get(pk=data.get('review'))
     vote = ReviewVote.objects.filter(user=request.user, review=review)
-        
+    value = data.get('value')
+    
     if request.method == 'POST':
         if vote.exists():
-            return HttpResponse('Resource already exists', status=409)            
-        ReviewVote(user=request.user, review=review, value=data.get('value')=='true').save()
-        return HttpResponse(status=201)
-    else:
-        if not vote.exists():
-            return HttpResponse('Resource not found', status=404)
-        
-        if request.method == 'PUT':
-            new_value = data['value'] == 'true'
-            vote.update(value=new_value)
-        elif request.method == 'DELETE':
-            vote.delete()
+            if vote.value == value:
+                return HttpResponse('Resource already exists', status=409)            
+            vote.update(value=value)
+        else:
+            ReviewVote(user=request.user, review=review, value=data.get('value')=='true').save()
+
+    elif request.method == 'PUT':
+        new_value = data['value'] == 'true'
+        vote.update(value=new_value)
+    
+    elif request.method == 'DELETE':
+        vote.delete()
+    
     return HttpResponse()
+
 
 def userUpdateView(request):
     if not request.user.is_authenticated:
@@ -298,13 +322,15 @@ def review(request, movie_id):
     if not request.user.is_authenticated:
         return HttpResponse('Unauthorized', status=401)
                 
-    related_rating = get_object_or_404(Rating, user=request.user, movie=movie_id)
+    related_rating = get_object_or_404(Rating, user=request.user, movie=movie_id)    
+    
     if request.method == 'POST':
         form = ReviewForm(request.POST)
         if form.is_valid():
             new_review = form.save(commit=False)      
             if related_rating.review:
                 return HttpResponse('Resource already exists', status=409)
+            
             new_review.save()
             related_rating.review = new_review
             related_rating.review.save()
@@ -314,6 +340,7 @@ def review(request, movie_id):
         if request.method == 'DELETE':       
             related_rating.review.delete()
             related_rating.review = None
+            
         elif request.method == 'PUT':
             new_review = Review(title=data.get('title'), content=data.get('content'))
             related_rating.review = new_review
@@ -395,7 +422,7 @@ def movie_section_parser(movie_details):
     properties = ["backdrop_path", "genres", "id", "overview", "poster_path", "release_date", "runtime", "title", "vote_average", "vote_count"]
     filtered_details = get_dict_keys(movie_details, properties)
 
-     # Change poster path to url
+    # Change poster path to url
     poster_path = filtered_details['poster_path']
     filtered_details['poster'] = api.get_image_url(poster_path, type="poster", size="w500")
     filtered_details.pop('poster_path')
@@ -435,10 +462,6 @@ def movie_section_parser(movie_details):
     filtered_details.pop('vote_average')
     filtered_details.pop('vote_count')            
     
-    # Similar movies
-    similar = api.get_similar(filtered_details['id'])["results"]
-    filtered_details['similar'] = movie_preview_parser(similar, poster_size="w342", count=10)
-    
     # Add credits
     cast = api.get_movie_credits(filtered_details['id'])
     filtered_details['directors'] = set(x['name'] for x in api.get_directors(cast))
@@ -458,13 +481,13 @@ def movie_section_parser(movie_details):
 def section(request, title):
     return HttpResponse()
 
-def trailer(request, movie_id):
-    trailer = api.get_movie_trailer(movie_id)
-    return HttpResponse(trailer)
-
 def format_count(count):
     if count > 1000000:
         return f"{count/1000000:.1f}M"
     if count > 1000:
         return f"{count/1000:.1f}K"
     return count
+
+def trailer(request):
+    movie_id = request.GET.get('movie_id')
+    return HttpResponse(api.get_movie_trailer(movie_id))    

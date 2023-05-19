@@ -1,0 +1,26 @@
+<div class="review">
+    <div class="votes" data-rating-id="{{ rating.review.id }}">
+        <div class="downvote">
+            <span class="iconify" data-icon="bxs:downvote"></span>
+        </div>
+        <div>{{ rating.review.votes }}</div>
+        <div class="upvote">
+            <span class="iconify" data-icon="bxs:upvote"></span>
+        </div>
+    </div>
+    <div class="content">
+        <div class="header">
+            <div class="info">
+                {{ form.title }}
+                {{ review.user }}
+            </div>
+            <div class="rating-box">
+                {{ rating.score }}
+                {% include 'web/rating.html' with rating=rating.score ro=False id=rating.id|add:'1' %}
+            </div>
+        </div>
+        <div class="body">
+            {{ form.content }}
+        </div>
+    </div>
+</div>

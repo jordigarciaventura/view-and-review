@@ -9,12 +9,15 @@
 <link rel="stylesheet" href="{% static 'css/movie-section.css' %}" />
 <link rel="stylesheet" href="{% static 'css/rating.css' %}" />
 <link rel="stylesheet" href="{% static 'css/review.css' %}" />
+<link rel="stylesheet" href="{% static 'css/user-review.css' %}" />
 
 <!-- JS -->
 {% csrf_token %}
 <script src="{% static 'js/movie-preview.js' %}"></script>
 <script src="{% static 'js/rating.js' %}"></script>
 <script src="{% static 'js/review.js' %}"></script>
+<script src="{% static 'js/movie-section.js' %}"></script>
+{{ urls|json_script:"urls" }}
 {% endblock %}
 
 {% block content %}
@@ -35,7 +38,7 @@
     </div>
 
     <div id="star-box">
-      {% include 'web/rating.html' with rating=rating.score movie_id=movie.id user_rating=True id=rating.id only %}
+      {% include 'web/rating.html' with rating=user_rating.score movie_id=movie.id user_rating=True id=rating.id only %}
     </div>
 
     <div id="icon-box">
@@ -92,84 +95,72 @@
     <div id="space"></div>
 
     {% if movie.directors %}
-    <div class="credit">
-      <div class="what">Directed by</div>
-      <div>{{ movie.directors|join:", " }}</div>
-    </div>
+      <div class="credit">
+        <div class="what">Directed by</div>
+        <div>{{ movie.directors|join:", " }}</div>
+      </div>
     {% endif %}
 
     {% if movie.writers %}
-    <div class="credit">
-      <div class="what">Written by</div>
-      <div>{{ movie.writers|join:", " }}</div>
-    </div>
+      <div class="credit">
+        <div class="what">Written by</div>
+        <div>{{ movie.writers|join:", " }}</div>
+      </div>
     {% endif %}
 
     <div class="cast">
       {% for actor in movie.actors %}
-      <div class="actor">
-        {% if actor.profile_path %}
-        <img src="{{ actor.profile_path }}" />
-        {% else %}
-        <div class="empty"></div>
-        {% endif %}
-        <div class="info">
-          <div class="name">{{ actor.name }}</div>
-          {% if actor.character %}<div class="character">{{ actor.character }}</div>{% endif %}
+        <div class="actor">
+          {% if actor.profile_path %}
+            <img src="{{ actor.profile_path }}" />
+          {% else %}
+            <div class="empty"></div>
+          {% endif %}
+          
+          <div class="info">
+            <div class="name">{{ actor.name }}</div>
+            {% if actor.character %}<div class="character">{{ actor.character }}</div>{% endif %}
+          </div>
         </div>
-      </div>
       {% endfor %}
     </div>
 
-    {% include 'web/carousel.html' with title="Similar movies" id='similar' movies=movie.similar only %}
-  </div>
+    {% include 'web/carousel.html' with title="Similar movies" id='similar' movies=similar_movies only %}
 
-
-  <!-- {% if not user.is_authenticated %}
-  <p class="text-center">Log in to make a review</p>
-  {% endif %}
-
-<div class="{% if user_rating %} hidden {% endif %}">
-  <!-- Rating form -->
-  <div class="m-auto w-50">
-    <form id="review-form" method="POST" action="{% url 'review' movie.id %}">
+    <div id="user-rating">
+      
+      <div class="container {% if user_rating.review %}hidden{% endif %}">
+        <div class="stars-headline ">Your rating</div>
+        <div class="stars">
+          {% include 'web/rating.html' with rating=user_rating.score movie_id=movie.id user_rating=True ro=False id=rating.id|add:'1' only %}
+        </div>
+        <div id="add-review" class="{% if not user_rating %}hidden{% endif %}">Add review</div>
+      </div>
+      
+      <form id="review-form" method="POST" action="{% url 'review' movie.id %}"
+      class="form hidden" data-movie-id="{{ movie.id }}">
       {% csrf_token %}
-      {{ form }}
-      <button>Submit</button>
-    </form>
-    <button onclick="submit_form({{movie.id}}, 'PUT')">Update</button>
-    <button onclick="submit_form({{movie.id}}, 'DELETE')">Delete</button>
-  </div>
-  <script>
-    // Mejorar / Hacer bien    
-    function submit_form(movie_id, http_method) {
-      const form_data = $('form').serialize()
-      $.ajax({
-        url: '/review/' + movie_id + '/',
-        type: http_method,
-        headers: {
-          'X-CSRFToken': Cookies.get('csrftoken')
-        },
-        data: form_data,
-        success: function (response) { 
-          alert("De putis")
-        }
-      })
-    }
-  </script>
-</div>
-
-{% comment %} <div class="{% if not user_rating %} hidden {% endif %}">
-  <!-- User rating -->
-  {% include 'web/review.html' with rating=rating movie=movie only %}
-</div> {% endcomment %}
+      {{ review_form }}
+      <div class="options">
+          <div id="cancel-review" class="cancel">Cancel</div>
+          <div class="add">
+            <input type="submit" value="Add review">
+          </div>
+        </div>
+      </form>
+      
+      <div id="user-review" class="review {% if not user_rating.review %} hidden {% endif %}">
+        {% include 'web/user-review.html' with show_movie=False movie=movie rating=user_rating only %}
+      </div>
+    </div>
 
     <div class="reviews">
       {% for rating in ratings %}
-        {% include 'web/review.html' with review=rating %}
+        {% include 'web/review.html' with rating=rating only %}
       {% endfor%}
     </div>
+  </form>
 
-</div>
+  </div>
 
-{% endblock %}
+  {% endblock %}

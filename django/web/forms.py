@@ -19,6 +19,7 @@ class ReviewForm(forms.ModelForm):
         self.fields['title'].widget.attrs['class'] = 'form-control'
         self.fields['title'].widget.attrs['placeholder'] = 'lorem ipsum'
 
+
 class RegisterForm(UserCreationForm):
     attrs = {
         'class': 'form-control',
