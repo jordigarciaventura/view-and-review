@@ -58,7 +58,7 @@ class UserView(generic.TemplateView):
         ratings = [rating for rating in user_ratings if rating.review]
         for rating in ratings:
             rating.movie_info = single_movie_preview_parser(api.movie(rating.movie.tmdb_id), poster_size="w342")
-            rating.review.votecount = rating.review.vote_values()
+            rating.review.votecount = rating.review.votes()
                 
         mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
         mark_context_icons(ratings, self.request.user, ['movie_info']) # TODO

@@ -28,6 +28,7 @@ def step_impl(context):
     for row in context.table:
         for heading in row.headings:
             input = form.find_element(By.ID, heading)
+            ActionChains(context.browser).move_to_element(input).perform()
             input.send_keys(row[heading])
             assert input.get_attribute('value') == row[heading], heading + ": " + input.get_attribute('value')
         submit_button = form.find_element(By.ID, 'submit-button')

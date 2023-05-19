@@ -1,5 +1,4 @@
 from behave import *
-from selenium.webdriver.common.by import By
 
 from web.models import Movie
 from web.api import movie
@@ -14,8 +13,6 @@ def step_impl(context, tmdb_id):
 @when(u'I view a movie "{tmdb_id}"')
 def step_impl(context, tmdb_id):
     context.browser.get(context.get_url('movie', tmdb_id))
-    movie_info = movie(tmdb_id)
-    assert context.browser.find_element(By.ID, 'title').text == movie_info['title'] 
 
 
 @then(u'I\'m viewing the movie page for movie "{tmdb_id}"')
