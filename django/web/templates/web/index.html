@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
 <script src="{% static 'js/deep-linking.js' %}"></script>
 <script src="{% static 'js/movie-preview.js' %}"></script>
+{{ urls|json_script:"urls" }}
 {% endblock %}
 
 {% block content %}

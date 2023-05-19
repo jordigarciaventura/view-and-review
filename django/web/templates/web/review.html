@@ -1,25 +1,25 @@
 <div class="review">
-    <div class="votes" data-rating-id="{{ rating.review.id }}">
-        <div class="downvote">
+    <div class="votes" data-review-id="{{ rating.review.id }}">
+        <div class="downvote {% if rating.review.user_vote != None %}active{% endif %}">
             <span class="iconify" data-icon="bxs:downvote"></span>
         </div>
-        <div>{{ rating.review.votes }}</div>
-        <div class="upvote">
+        <div class="votes">{{ rating.review.votes }}</div>
+        <div class="upvote {% if rating.review.user_vote %} active {% endif %}">
             <span class="iconify" data-icon="bxs:upvote"></span>
         </div>
     </div>
     <div class="content">
         <div class="header">
             <div class="info">
-                <p class="title">{{ rating.review.title }}</p>
-                <a class="author" href="profile/{{ review.author_id }}" >{{ rating.user }}</a>
+                <div class="title">{{ rating.review.title }}</div>
+                <div class="user">{{ rating.user }}</div>
             </div>
             <div class="rating-box">
                 {% include 'web/rating.html' with rating=rating.score ro=True id=rating.id|add:'1' %}
             </div>
         </div>
         <div class="body">
-            <p>{{ rating.review.content }}</p>
+            {{ rating.review.content }}
         </div>
     </div>
 </div>

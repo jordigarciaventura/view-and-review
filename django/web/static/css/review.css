@@ -4,20 +4,29 @@
     width: 100%;
     background-color: gray;
     padding: 10px;
+    border-radius: 10px;
 }
 
-.review  .votes {
+.review .votes {
     display: flex;
     align-items: center;
     font-size: 14px;
     font-weight: 400;
     gap: 2px;
-    background-color: red;
+    background-color: blue;
     height: fit-content;
+}
+
+.review .votes .downvote.active {
+    color: red;
 }
 
 .review .votes .downvote:hover {
     color: red;
+}
+
+.review .votes .upvote.active {
+    color: green;
 }
 
 .review .votes .upvote:hover {
@@ -65,9 +74,10 @@
 }
 
 .review .content .rating-box {
-    height: 20px;
+    height: 18px;
 }
 
 .body {
     width: 100%;
+    background-color: pink;
 }

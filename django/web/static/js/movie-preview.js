@@ -1,4 +1,7 @@
 $(document).ready(() => {
+    const urls = JSON.parse(document.getElementById('urls').textContent);
+    console.log(urls);
+
     $(".watchlist-option").click(e => {
         const target = $(e.currentTarget);
         const movieID = target.data('movie-id');
@@ -7,7 +10,7 @@ $(document).ready(() => {
         const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         $.ajax({
             type:  (watchlist) ? 'DELETE' : 'POST',
-            url:`/watchlist/`,
+            url: urls['watchlist'],
             beforeSend: function (xhr){
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             },
@@ -16,7 +19,7 @@ $(document).ready(() => {
             },
             statusCode: {
                 401: () => { 
-                    window.location.href = `/accounts/login/?next=${window.location.pathname}`;
+                    window.location.href = `${urls['login']}/?next=${window.location.pathname}`;
                 }
             },
             success: data => {
@@ -35,7 +38,7 @@ $(document).ready(() => {
         const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         $.ajax({
             type: (favorite) ? 'DELETE' : 'POST',
-            url:`/favlist/`,
+            url: urls['favlist'],
             beforeSend: function (xhr){
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             },
@@ -44,7 +47,7 @@ $(document).ready(() => {
             },
             statusCode: {
                 401: () => { 
-                    window.location.href = `/accounts/login/?next=${window.location.pathname}`;
+                    window.location.href = `${urls['login']}/?next=${window.location.pathname}`;
                 }
             },
             success: data => {
@@ -61,9 +64,12 @@ $(document).ready(() => {
         const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         $.ajax({
             type: 'GET',
-            url:`/trailer/${movieID}`,
+            url: urls['trailer'],
             beforeSend: function (xhr){
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
+            },
+            data: {
+                'movie_id': movieID
             },
             success: data => {
                 if(data == "None") {   

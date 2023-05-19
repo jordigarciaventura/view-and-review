@@ -24,7 +24,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 success: data => {
                     updateScore(data.value, data.count);
-                    target.parentElement.parentElement.querySelector('.delete-rating').style.display = 'flex';
+                    updateStars(value);
+                    showDeleteRating();
+                    try {
+                        document.querySelector('#add-review').style.display = 'flex';
+                    } catch (e) {
+
+                    }
                 }
             });
         });
@@ -35,7 +41,6 @@ document.addEventListener('DOMContentLoaded', () => {
         elem.addEventListener('click', e => {
             const target = e.currentTarget;
             const parent = target.parentElement;
-            const radio = parent.querySelectorAll('input[type=radio]');
             const movieID = parent.dataset.movieId;
             console.log(movieID);
 
@@ -56,11 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 success: data => {
                     updateScore(data.value, data.count);
-
-                    radio.forEach(radio => {
-                        radio.checked = false;
-                    });
-                    target.style.display = 'none';
+                    updateStars(0);
+                    hideDeleteRating();
+                    try {
+                        document.querySelector('#add-review').style.display = 'none';
+                    } catch (e) {
+                        
+                    }
                 }
             });
         });
@@ -79,4 +86,27 @@ function updateScore(score, count) {
     const circle = scoreDiv.querySelector('.progress-circle');
     circle.setAttribute('aria-valuenow', score);
     circle.style.background = backgroundStyle;
+}
+
+function updateStars(score) {
+    console.log(score);
+    document.querySelectorAll('.user-rating input').forEach(input => {
+        if (input.value == score) {
+            input.checked = true;
+        } else {
+            input.checked = false;
+        }
+    });
+}
+
+function hideDeleteRating() {
+    document.querySelectorAll('.delete-rating').forEach(elem => {
+        elem.style.display = 'none';
+    });
+}
+
+function showDeleteRating() {
+    document.querySelectorAll('.delete-rating').forEach(elem => {
+        elem.style.display = 'flex';
+    });
 }

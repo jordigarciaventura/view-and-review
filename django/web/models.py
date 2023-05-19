@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.db.models import Sum
 
 class Movie(models.Model):
     tmdb_id = models.PositiveIntegerField(primary_key=True)
@@ -8,11 +8,12 @@ class Movie(models.Model):
     def __str__(self) -> str:
         return f"(tmdb_id {self.tmdb_id})"
 
+
 class Watchlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
     movie = models.ManyToManyField(Movie)
 
-    # models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie})"
@@ -22,7 +23,7 @@ class Favlist(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
     movie = models.ManyToManyField(Movie)
 
-    # models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, movie {self.movie})"
@@ -36,10 +37,17 @@ class Review(models.Model):
         return f"(title {self.title}, content {self.content})"
 
     def votes(self):
-        positive_votes_count = ReviewVote.objects.filter(review=self, value=True).count() or 0
-        negative_votes_count = ReviewVote.objects.filter(review=self, value=False).count() or 0
+        positive_votes_count = ReviewVote.objects.filter(
+            review=self, value=True).count() or 0
+        negative_votes_count = ReviewVote.objects.filter(
+            review=self, value=False).count() or 0
         return positive_votes_count - negative_votes_count
 
+    def user_vote(self, user):
+        try:
+            return ReviewVote.objects.get(review=self, user=user).value
+        except ReviewVote.DoesNotExist:
+            return None
 
 class ReviewVote(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE)
@@ -47,7 +55,7 @@ class ReviewVote(models.Model):
 
     value = models.BooleanField()  # True == upvote, False == downvote
 
-    # models.UniqueConstraint(fields=['rating', 'user'], name='composite_key')
+    models.UniqueConstraint(fields=['rating', 'user'], name='composite_key')
 
     def __str__(self) -> str:
         return f"(user {self.user}, review {self.review}) -> {self.value}"
@@ -65,11 +73,11 @@ class Rating(models.Model):
     review = models.ForeignKey(
         Review, on_delete=models.CASCADE, blank=True, null=True)
 
-    # models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
 
     def __str__(self) -> str:
-        return f"(user {self.user}, movie {self.movie}) -> {self.score} stars"
-    
+        return f"(user {self.user}, movie {self.movie}) -> {self.score}"
+
     def average(movie_id):
         all_ratings = Rating.objects.filter(movie=movie_id)
         return all_ratings.aggregate(models.Avg('score'))['score__avg'] or 0

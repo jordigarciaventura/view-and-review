@@ -11,9 +11,7 @@
         <input type="radio" name="{{ id }}" id="{{ id }}-1" value="1" {% if rating == 1 %} checked {% endif %} {% if ro %} disabled {% endif %}>
         <label for="{{ id }}-1"></label>
     </div>
-    {% if not ro %}
-    <div class="delete-rating {% if not rating %} hidden {% endif %}">
+    <div class="delete-rating {% if not rating %} hidden {% endif %}" {% if ro %} hidden {% endif %}>
         <span class="iconify" data-icon="material-symbols:delete-outline"></span>
     </div>
-    {% endif %}
 </div>
