@@ -25,9 +25,27 @@ def step_impl(context, tmdb_id, username):
 @then(u'I can make a review')
 def step_impl(context):
     add_review = context.browser.find_element(By.ID, 'add-review')
-    context.browser.execute_script("arguments[0].scrollIntoView();", add_review)
-    # WebDriverWait(context.browser, 100).until(EC.element_to_be_clickable((By.ID, 'add-review'))) # This is not working for some reason so...
-    ActionChains(context.browser).pause(1).move_to_element(add_review).click().perform() # Pause is needed for some reason
+    context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", add_review)
+    ActionChains(context.browser).move_to_element(add_review).click().perform() # Pause is needed for some reason
+    
+    form = context.browser.find_element(By.ID, 'review-form')
+    for row in context.table:
+        for heading in row.headings:
+            input = form.find_element(By.ID, heading)
+            input.send_keys(row[heading])
+            assert input.get_attribute('value') == row[heading], heading + ": " + input.get_attribute('value')
+        submit_button = form.find_element(By.ID, 'submit-button')
+        context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", submit_button)
+        ActionChains(context.browser).move_to_element(submit_button).click(submit_button).pause(1).perform()
+    
+    assert Review.objects.count() > 0, "There should be a review"
+        
+        
+@then(u'I can edit my review')
+def step_impl(context):
+    edit_button = context.browser.find_element(By.ID, 'edit-button')
+    context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", edit_button)
+    ActionChains(context.browser).pause(1).move_to_element(edit_button).click().perform() # Pause is needed for some reason
 
     form = context.browser.find_element(By.ID, 'review-form')
     for row in context.table:
@@ -36,19 +54,7 @@ def step_impl(context):
             input.send_keys(row[heading])
             assert input.get_attribute('value') == row[heading], heading + ": " + input.get_attribute('value')
         submit_button = form.find_element(By.ID, 'submit-button')
-        context.browser.execute_script("arguments[0].scrollIntoView();", submit_button)   
+        context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", submit_button)
         ActionChains(context.browser).pause(1).move_to_element(submit_button).click(submit_button).pause(1).perform()
     
     assert Review.objects.count() > 0, "There should be a review"
-        
-        
-@then(u'I can edit my review')
-def step_impl(context):
-    form = context.browser.find_element(By.ID, 'review-form')
-    
-    submit_button = form.find_element(By.ID, 'submit-button')
-    ActionChains(context.browser).move_to_element(submit_button).perform()
-    
-    # Check that form is prefilled
-    assert form.find_element(By.ID, 'id_title').text is not None
-    assert form.find_element(By.ID, 'id_content').text is not None
