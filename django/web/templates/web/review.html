@@ -11,14 +11,14 @@
     <div class="content">
         <div class="header">
             <div class="info">
-                <input type="text" class="title" value="{{ rating.review.title }}" readonly>
+                <input id="edit_id_title" type="text" class="title" value="{{ rating.review.title }}" readonly>
                 <div class="user">{% if user.is_authenticated and rating.user == user %}You{% else %}{{rating.user}}{% endif %}</div>
             </div>
             <div class="rating-box">
                 {% include 'web/stars.html' with movie_id=movie_id user_rating=user_rating rating=rating.score ro=True id=rating.id|add:'1' only %}
             </div>
         </div>
-        <textarea class="body" readonly>
+        <textarea id="edit_id_content" class="body" readonly>
             {{ rating.review.content }}
         </textarea>
     </div>

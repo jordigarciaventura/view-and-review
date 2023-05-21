@@ -26,7 +26,7 @@ def step_impl(context, tmdb_id, username):
 def step_impl(context):
     add_review = context.browser.find_element(By.ID, 'add-review')
     context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", add_review)
-    ActionChains(context.browser).move_to_element(add_review).click().perform() # Pause is needed for some reason
+    ActionChains(context.browser).move_to_element(add_review).click().perform() 
     
     form = context.browser.find_element(By.ID, 'review-form')
     for row in context.table:
@@ -45,16 +45,31 @@ def step_impl(context):
 def step_impl(context):
     edit_button = context.browser.find_element(By.ID, 'edit-button')
     context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", edit_button)
-    ActionChains(context.browser).pause(1).move_to_element(edit_button).click().perform() # Pause is needed for some reason
+    ActionChains(context.browser).move_to_element(edit_button).click(edit_button).pause(1).perform() 
 
-    form = context.browser.find_element(By.ID, 'review-form')
+    form = context.browser.find_element(By.ID, 'user-review-container')
     for row in context.table:
         for heading in row.headings:
             input = form.find_element(By.ID, heading)
+            input.clear()
             input.send_keys(row[heading])
             assert input.get_attribute('value') == row[heading], heading + ": " + input.get_attribute('value')
-        submit_button = form.find_element(By.ID, 'submit-button')
-        context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", submit_button)
-        ActionChains(context.browser).pause(1).move_to_element(submit_button).click(submit_button).pause(1).perform()
+        save_button = form.find_element(By.ID, 'save-changes')
+        context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", save_button)
+        ActionChains(context.browser).pause(1).move_to_element(save_button).click(save_button).pause(1).perform()
     
     assert Review.objects.count() > 0, "There should be a review"
+    
+    
+@when(u'I delete my review')
+def step_impl(context):
+    delete_button = context.browser.find_element(By.ID, 'delete-button')
+    context.browser.execute_script("window.scrollTo({ top: arguments[0].offsetTop, behavior: 'instant' })", delete_button)
+    delete_button.click()
+    
+    
+@then(u'There are no reviews of movie "{tmdb_id}" by user "{username}"')
+def step_impl(context, tmdb_id, username):
+    user = User.objects.get(username=username)
+    movie = Movie.objects.get(pk=tmdb_id)
+    assert Rating.objects.get(user=user, movie=movie).review is None

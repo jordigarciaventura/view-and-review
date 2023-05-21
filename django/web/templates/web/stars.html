@@ -1,12 +1,12 @@
 <div class="stars {% if user_rating %}user-rating{% endif %}" data-url="{% url 'rating' movie_id %}">
     <input type="radio" name="{{ id }}" id="{{ id }}-5" value="5" {% if rating == 5 %} checked {% endif %} {% if ro %} disabled {% endif %}>
-    <label for="{{ id }}-5"></label>
+    <label id="label-5" for="{{ id }}-5"></label>
     <input type="radio" name="{{ id }}" id="{{ id }}-4" value="4" {% if rating == 4 %} checked {% endif %} {% if ro %} disabled {% endif %}>
-    <label for="{{ id }}-4"></label>
+    <label id="label-4" for="{{ id }}-4"></label>
     <input type="radio" name="{{ id }}" id="{{ id }}-3" value="3" {% if rating == 3 %} checked {% endif %} {% if ro %} disabled {% endif %}>
-    <label for="{{ id }}-3"></label>
+    <label id="label-3" for="{{ id }}-3"></label>
     <input type="radio" name="{{ id }}" id="{{ id }}-2" value="2" {% if rating == 2 %} checked {% endif %} {% if ro %} disabled {% endif %}>
-    <label for="{{ id }}-2"></label>
+    <label id="label-2" for="{{ id }}-2"></label>
     <input type="radio" name="{{ id }}" id="{{ id }}-1" value="1" {% if rating == 1 %} checked {% endif %} {% if ro %} disabled {% endif %}>
-    <label for="{{ id }}-1"></label>
+    <label id="label-1" for="{{ id }}-1"></label>
 </div>

@@ -18,8 +18,7 @@ def step_impl(context, tmdb_id, username, score):
 @when(u'I make a rating of score "{score}" of the movie "{tmdb_id}"')
 def step_impl(context, score, tmdb_id):
     context.browser.get(context.get_url('movie', tmdb_id))
-    star_div = context.browser.find_element(By.ID, 'star-box')
-    star = star_div.find_element(By.ID, 'label--' + score)
+    star = context.browser.find_element(By.ID, 'label-' + score)
     ActionChains(context.browser).move_to_element(star).click(star).pause(1).perform()
     stored_score = Rating.objects.first().score 
     assert str(stored_score) == score, "Saved score [" + str(stored_score) + "] instead of " + score
@@ -27,14 +26,13 @@ def step_impl(context, score, tmdb_id):
 @when(u'I can delete a rating of the movie "{tmdb_id}"')
 def step_impl(context, tmdb_id):
     context.browser.get(context.get_url('movie', tmdb_id))
-    delete_button = context.browser.find_element(By.ID, 'delete-rating-button')
+    delete_button = context.browser.find_element(By.ID, 'delete-rating')
     ActionChains(context.browser).move_to_element(delete_button).click(delete_button).pause(1).perform()
     
 @when(u'I can edit a rating with new score "{score}" of the movie "{tmdb_id}"')
 def step_impl(context, score, tmdb_id):
     context.browser.get(context.get_url('movie', tmdb_id))
-    star_div = context.browser.find_element(By.ID, 'star-box')
-    star = star_div.find_element(By.ID, 'label--' + score)
+    star = context.browser.find_element(By.ID, 'label-' + score)
     ActionChains(context.browser).move_to_element(star).click(star).pause(1).perform()
     stored_score = Rating.objects.first().score 
     assert str(stored_score) == score, "Saved score [" + str(stored_score) + "] instead of " + score
