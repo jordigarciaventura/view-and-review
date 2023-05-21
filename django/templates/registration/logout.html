@@ -2,9 +2,38 @@
 
 {% block content %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'css/registration/logout.css' %}">
-<div class="container">
-  <p>Logged out!</p>
-  <a href="{% url 'login'%}">Click here to login again</a><small> or </small><a href="{% url 'index' %}">go to the main page</a>.
-</div>
+
+{% if not user.is_authenticated %}
+<head>
+  <meta http-equiv="refresh" content="0; URL={% url 'login' %}" />
+</head>
+{% endif %}
+
+<section>
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-8 col-xl-6 text-center mx-auto">
+        <a href="{% url 'index' %}">
+          <img src="{% static 'assets/img/vr_extended.png' %}" class="w-50" />
+        </a>
+        <h1>Logged out</h1>
+        <p></p>
+      </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6 col-xl-4">
+        <div class="mb-5">
+          <div class="d-flex flex-column align-items-center">
+            <div class="text-center w-75">
+              <div class="mb-3">
+                <p>Click here to <a href="{% url 'login'%}" style="color: white;">log in</a> again</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

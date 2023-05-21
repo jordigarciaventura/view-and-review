@@ -1,74 +1,42 @@
-{% extends "base_generic.html" %}
+{% extends 'base_generic.html' %}
+
+{% load static %}
+
+{% block links %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<script src="{% static 'js/deep-linking.js' %}"></script>
+<script src="{% static 'js/movie-preview.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/index.css' %}">
+<div class="carousels">
 
-<div class="white_search_bar_background">
-  <div class="search_bar">
-    <input type="text" placeholder=" Search movies, actors, genres...">
-  </div>
-</div>
+    {% url 'upcoming' as upcoming_url %}
+    {% include 'web/carousel.html' with title="Upcoming" id='upcoming' movies=upcoming url=upcoming_url only %}
 
-<div class="large_pink">
-  <div class="title_text"><b>
-    <ccc>❚</ccc>Recommendations
-  </b></div>
-  
-  <div class="movie_container">
-    <img src="https://i.ebayimg.com/images/g/V-EAAOSwrKBi4aU1/s-l500.jpg" class="movie_cover"></img>
-    <img src="https://th.bing.com/th/id/R.fd8a92ef5d9d8c7db80c7b8edcfcab01?rik=FwTL2j8UgEhyxA&riu=http%3a%2f%2ffr.web.img6.acsta.net%2fpictures%2f210%2f412%2f21041261_20130918111051913.jpg&ehk=UUnUpk0VBWv%2fuRufPKZc7%2babzAa4KENjpSOeAhmKOz4%3d&risl=&pid=ImgRaw&r=0" class="movie_cover"></img>
-    <img src="https://pics.filmaffinity.com/Creed_III-358416025-large.jpg" class="movie_cover"></img>
-    <img src="https://m.media-amazon.com/images/M/MV5BODZhNzlmOGItMWUyYS00Y2Q5LWFlNzMtM2I2NDFkM2ZkYmE1XkEyXkFqcGdeQXVyMTU5OTA4NTIz._V1_FMjpg_UX1000_.jpg" class="movie_cover"></img>
-  </div>
-</div>
+    {% url 'popular' as popular_url %}
+    {% include 'web/carousel.html' with title="Popular" id='popular' movies=popular url=popular_url only %}
 
-<div class="space">
-  <div class="quote"><b><i>"Which would be worse, to live as a monster, or to die as a good man?"</i></b></div>
-  <div class="quote">Shutter Island (2010)</div>
+    {% url 'top-rated' as top_rated_url %}
+    {% include 'web/carousel.html' with title="Top rated" id='top-rated' movies=top_rated url=top_rated_url only %}
+
+    {% url 'now-playing' as now_playing_url %}
+    {% include 'web/carousel.html' with title="Now playing" id='now-playing' movies=now_playing url=now_playing_url only %}
+
+    {% url 'genre' 'action' as action_url %}
+    {% include 'web/carousel.html' with title="Action" id='action' movies=action url=action_url only %}
+
+    {% url 'genre' 'animation' as animation_url %}
+    {% include 'web/carousel.html' with title="Animation" id='animation' movies=animation url=animation_url only %}
+
+    {% url 'genre' 'horror' as horror_url %}
+    {% include 'web/carousel.html' with title="Horror" id='horror' movies=horror url=horror_url only %}
+
 </div>
 
-<div class="large_pink">
-  <div class="title_text"><b>
-    <ccc>❚</ccc>Best Rated Films
-    </b></div>
-  
-  <div class="movie_container"> 
-    <img src="https://m.media-amazon.com/images/M/MV5BM2MyNjYxNmUtYTAwNi00MTYxLWJmNWYtYzZlODY3ZTk3OTFlXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_FMjpg_UX1000_.jpg" class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BNGNhMDIzZTUtNTBlZi00MTRlLWFjM2ItYzViMjE3YzI5MjljXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_.jpg" class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg" class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BNDE3ODcxYzMtY2YzZC00NmNlLWJiNDMtZDViZWM2MzIxZDYwXkEyXkFqcGdeQXVyNjAwNDUxODI@._V1_FMjpg_UX1000_.jpg" class="movie_cover">
-    </img>
-  </div>
-</div>
-<div class="space">
-  <div class="quote"><b><i>"Good morning, and in case I don't see ya, good afternoon, good evening, and good night."</i></b></div>
-  <div class="quote">The Truman Show (1998)</div>
-</div>
-
-<div class="large_pink">
-  <div class="title_text"><b>
-    <ccc>❚</ccc>Top Christopher Nolan Films
-  </b></div>
-  
-  <div class="movie_container"> 
-    <img src="https://th.bing.com/th/id/R.f29873f5a2ed9069bd85f6b98bd9f205?rik=3YAyevDH37XWWg&riu=http%3a%2f%2fwww.razorfine.com%2fwp-content%2fuploads%2f2008%2f07%2fthe-dark-knight-poster-2.jpg&ehk=gloZCJOyByjSpNKRW5ZKMPlCgcqqMoLf1QhzmRQhnF4%3d&risl=&pid=ImgRaw&r=0" class="movie_cover">
-    </img>
-    <img src="https://th.bing.com/th/id/R.4d7d7c6aad47a525104637ff8b2d3b94?rik=3s%2b3yUyuGQgzpg&pid=ImgRaw&r=0" class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BNDhiZTE2NjUtMDlkNS00NGI5LWJkMjYtMjJhNzRhZmFkYTUxXkEyXkFqcGdeQXVyNjMwMzc3MjE@._V1_.jpg" class="movie_cover">
-    </img>
-    <img src="https://m.media-amazon.com/images/M/MV5BMjAxMzY3NjcxNF5BMl5BanBnXkFtZTcwNTI5OTM0Mw@@._V1_.jpg" class="movie_cover">
-    </img>
-  </div>
-</div>
-
-<div class="large_space">
-  <div class="copyright">Copyright © View&Review. All rights reserved.</div>
-</div>
 
 {% endblock %}

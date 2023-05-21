@@ -1,0 +1,195 @@
+{% extends "base_generic.html" %} {% load static %}
+
+{% block links %}
+<!-- Style -->
+<link rel="stylesheet" href="{% static 'css/score.css' %}" />
+<link rel="stylesheet" href="{% static 'css/score-details.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<link rel="stylesheet" href="{% static 'css/stars.css' %}" />
+<link rel="stylesheet" href="{% static 'css/review.css' %}" />
+<link rel="stylesheet" href="{% static 'css/user-review.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-section.css' %}" />
+
+<!-- JS -->
+{% csrf_token %}
+<script src="{% static 'js/movie-preview.js' %}"></script>
+<script src="{% static 'js/stars.js' %}"></script>
+<script src="{% static 'js/review.js' %}"></script>
+<script src="{% static 'js/user-review.js' %}"></script>
+<script src="{% static 'js/movie-section.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div id="movie-section">
+
+  <div class="banner">
+  
+    <div class="poster">
+      <img src="{{ movie.poster }}" draggable="false">
+    </div>
+
+    <div class="cover">
+      <img src="{{ movie.cover }}" draggable="false">
+      <div class="trailer">
+        <div class="movie-option play-option s64" data-url="{% url 'trailer' movie.id %}">
+          <span class="iconify movie-option-icon s42"
+              data-icon="material-symbols:play-arrow-rounded"></span>
+        </div>
+        <div>Play trailer</div> 
+      </div>
+    </div>
+
+    <div id="info-bar">
+      <div id="rating-box">
+        {% include 'web/score-details.html' with score=movie.tmdb_score id='tmdb_score' only %}
+        {% include 'web/score-details.html' with score=score id='score' only %}
+      </div>
+  
+      <div class="star-box">
+        <p class="headline">Your rating</p>
+        <div class="content">
+          {% if user_rating and user_rating.review %}
+            {% include 'web/stars.html' with movie_id=movie.id rating=user_rating.score user_rating=True id=rating.id ro=True %}
+          {% else %}
+            {% include 'web/stars.html' with movie_id=movie.id rating=user_rating.score user_rating=True id=rating.id %}
+          {% endif %}
+          <div id="delete-rating" class="delete-rating {% if not user_rating or user_rating.review %}hidden{% endif %}">
+            <span class="iconify" data-icon="material-symbols:delete-outline"></span>
+          </div>
+          <div id="edit-rating" class="edit-rating {% if not user_rating or not user_rating.review %}hidden{% endif %}">
+            <span class="iconify" data-icon="material-symbols:edit-rounded"></span>
+          </div>
+        </div>
+      </div>
+  
+      <div id="options-box">
+        <div class="option">
+          <div class="movie-option favlist-option s42" data-url="{% url 'favlist' movie.id %}" data-favlist="{{ movie.favlist }}">
+            <span class="iconify s24 favlist-no {% if movie.favlist %} hidden {% endif %}"
+              data-icon="mdi:heart-outline"></span>
+            <span class="iconify s24 favlist-yes {% if not movie.favlist %} hidden {% endif %}"
+              data-icon="mdi:heart"></span>
+          </div>
+          <p>Favorites</p>
+        </div>
+        <div class="option">
+          <div class="movie-option watchlist-option s42" data-url="{% url 'watchlist' movie.id %}" data-watchlist="{{ movie.watchlist }}">
+            <span class="iconify s24 watchlist-no {% if movie.watchlist %} hidden {% endif %}"
+              data-icon="material-symbols:bookmark-outline-rounded"></span>
+            <span class="iconify s24 watchlist-yes {% if not movie.watchlist %} hidden {% endif %}"
+              data-icon="material-symbols:bookmark-rounded"></span>
+          </div>
+          <p>Watchlist</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="genres-box">
+    {% for genre in movie.genres %}
+    <a class="genre" href="{% url 'genre' genre|slugify %}">
+      {{ genre }}
+    </a>
+    {% endfor %}
+  </div>
+
+  <div id="all">
+    <div id="info">
+      <div id="prev">
+        <div id="title" class="title">{{ movie.title }}</div>
+        <div class="date-time">
+          <div class="icon-inf">
+            <span class="iconify" data-icon="material-symbols:calendar-today-rounded" data-width="25"
+              data-height="25"></span>
+            <div class="big">{{ movie.release_date }}</div>
+          </div>
+          <div class="icon-inf">
+            <span class="iconify" data-icon="mdi:clock-time-four-outline" data-width="25" data-height="25"></span>
+            <div class="big">{{ movie.runtime }}</div>
+          </div>
+        </div>
+
+      </div>
+      <div id="text">{{ movie.overview }}</div>
+    </div>
+
+    {% if movie.directors %}
+      <div class="credit">
+        <div class="what">Directed by</div>
+        <div>{{ movie.directors|join:", " }}</div>
+      </div>
+    {% endif %}
+
+    {% if movie.writers %}
+      <div class="credit">
+        <div class="what">Written by</div>
+        <div>{{ movie.writers|join:", " }}</div>
+      </div>
+    {% endif %}
+
+    <div id="cast" class="cast">
+      {% for actor in movie.actors %}
+        <div class="actor">
+          {% if actor.profile_path %}
+            <img src="{{ actor.profile_path }}" />
+          {% else %}
+            <div class="empty"></div>
+          {% endif %}
+          
+          <div class="info">
+            <div class="name">{{ actor.name }}</div>
+            {% if actor.character %}<div class="character">{{ actor.character }}</div>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div id="show-more-cast">
+      <button>Show more</button>
+      <span class="iconify" data-icon="material-symbols:expand-more"></span>
+    </div>
+
+    {% url 'similar' movie.id as similar_url %}
+    {% include 'web/carousel.html' with title="Similar movies" id='similar' movies=similar_movies url=similar_url only %}
+
+    <div id="user-rating">
+      <div id="rating-form" class="rating-form {% if user_rating.review %}hidden{% endif %}">
+        <div class="star-box">
+          <p class="headline">Your rating</p>
+          <div class="content">
+            {% include 'web/stars.html' with movie_id=movie.id rating=user_rating.score user_rating=True id=rating.id %}
+            <div class="delete-rating {% if not user_rating or user_rating.review %}hidden{% endif %}" >
+              <span class="iconify" data-icon="material-symbols:delete-outline"></span>
+            </div>
+          </div>
+        </div>
+        <button id="add-review" class="add-review {% if not user_rating %}hidden{% endif %}">Write review</button>
+      </div>
+      
+      <form id="review-form" method="POST" action="{% url 'review' movie.id %}"
+      class="review-form hidden" data-movie-id="{{ movie.id }}">
+        {% csrf_token %}
+        {{ review_form }}
+        <div class="options">
+          <button id="cancel-review" class="cancel">Cancel</button>
+          <input id="submit-button" type="submit" value="Add review" class="add">
+        </div>
+      </form>
+      
+      <div id="user-review-container" class="{% if not user_rating.review %}hidden{% endif %}">
+        {% include 'web/user-review.html' with rating=user_rating movie_id=movie.id  %}
+      </div>
+    </div>
+
+    <div class="reviews">
+      {% for rating in ratings %}
+        {% include 'web/review.html' with rating=rating movie_id=movie.id %}
+      {% endfor%}
+    </div>
+  </form>
+
+  </div>
+</div>
+
+{% endblock %}

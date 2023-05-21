@@ -1,64 +1,83 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 
-# Create your models here.
-class Actor(models.Model):
-    full_name = models.CharField(max_length=64)
-    
-    def __str__(self):
-        return self.full_name
-    
-class Director(models.Model):
-    full_name = models.CharField(max_length=64)
-    
-    def __str__(self):
-        return self.full_name
-    
-class Language(models.Model):
-    name = models.CharField(max_length=32)
-    
-    def __str__(self):
-        return self.name
-    
-class Genre(models.Model):
-    name = models.CharField(max_length=32)
-    
-    def __str__(self):
-        return self.name  
+class Movie(models.Model):
+    tmdb_id = models.PositiveIntegerField(primary_key=True)
 
-    
- 
-    
-class Film(models.Model):
-    title = models.CharField(max_length=64)
-    release_date = models.DateField()
-    duration = models.IntegerField()
-    plot = models.CharField(max_length=512)
-    photo_url = models.URLField(default="")
-    
-    directors = models.ManyToManyField(Director)
-    languages = models.ManyToManyField(Language)
-    genres = models.ManyToManyField(Genre)
-    actors = models.ManyToManyField(Actor)
-    
-    def __str__(self):
-        return self.title
-        
-class Rating(models.Model):     
-    score_choices = ((0, 0), (0.5, 0.5), (1, 1), (1.5, 1.5), (2, 2), (2.5, 2.5), (3, 3), (3.5, 3.5), (4, 4), (4.5, 4.5), (5, 5))
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
-    film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
-    site = models.URLField(default="")
-    score = models.DecimalField(decimal_places=1, max_digits=2, choices=score_choices)    
-    
     def __str__(self) -> str:
-        return str(self.user) + " " + str(self.score) 
-    
-class Review(models.Model):
-    film = models.OneToOneField(Film, on_delete=models.CASCADE, default="")
-    user = models.OneToOneField(User, on_delete=models.CASCADE, default="")
-    rating = models.ForeignKey(Rating, on_delete=models.CASCADE, default="")
-    body = models.CharField(max_length=1024, default="")
+        return f"(tmdb_id {self.tmdb_id})"
 
-    def __str__(self):
-        return self.rating.__str__() + " " + self.body   
+
+class Watchlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
+    movie = models.ManyToManyField(Movie)
+
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+
+    def __str__(self) -> str:
+        return f"(user {self.user}, movie {self.movie})"
+
+
+class Favlist(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, db_index=True)
+    movie = models.ManyToManyField(Movie)
+
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+
+    def __str__(self) -> str:
+        return f"(user {self.user}, movie {self.movie})"
+
+
+class Review(models.Model):
+    title = models.CharField(max_length=64)
+    content = models.CharField(max_length=512)
+
+    def __str__(self) -> str:
+        return f"(title {self.title}, content {self.content})"
+
+    def votes(self):
+        positive_votes_count = ReviewVote.objects.filter(
+            review=self, value=True).count() or 0
+        negative_votes_count = ReviewVote.objects.filter(
+            review=self, value=False).count() or 0
+        return positive_votes_count - negative_votes_count
+
+    def user_vote(self, user):
+        try:
+            return ReviewVote.objects.get(review=self, user=user).value
+        except ReviewVote.DoesNotExist:
+            return None
+
+class ReviewVote(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    value = models.BooleanField()  # True == upvote, False == downvote
+
+    models.UniqueConstraint(fields=['rating', 'user'], name='composite_key')
+
+    def __str__(self) -> str:
+        return f"(user {self.user}, review {self.review}) -> {self.value}"
+
+
+class Rating(models.Model):
+    RATING_CHOICES = [(1, "1 star"), (2, "2 stars"),
+                      (3, "3 stars"), (4, "4 stars"), (5, "5 stars")]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_index=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, db_index=True)
+
+    score = models.PositiveIntegerField(default=0, choices=RATING_CHOICES)
+
+    review = models.OneToOneField(
+        Review, on_delete=models.CASCADE, blank=True, null=True)
+
+    models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')
+
+    def __str__(self) -> str:
+        return f"(user {self.user}, movie {self.movie}) -> {self.score}"
+
+    def average(movie_id):
+        all_ratings = Rating.objects.filter(movie=movie_id)
+        return all_ratings.aggregate(models.Avg('score'))['score__avg'] or 0

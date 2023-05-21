@@ -1,0 +1,24 @@
+{% extends 'base_generic.html' %}
+
+{% load static %}
+
+{% block links %}
+{% csrf_token %}
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/list.css' %}" />
+<script src="{% static 'js/movie-preview.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="list">
+    <div class="title">{{ title }}</div>
+    <div class="content">
+        {% for movie in movies %}
+            {% include 'web/movie-preview.html' with movie=movie only %}
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

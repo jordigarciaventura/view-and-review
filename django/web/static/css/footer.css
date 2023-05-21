@@ -1,0 +1,48 @@
+footer {
+    position: absolute;
+    bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: black;
+    gap: 12px;
+    height: 100px;
+    width: 100%;
+
+    font-size: 12px;
+    font-weight: normal;
+
+    margin-top: 64px;
+
+    padding: 56px 32px 24px 32px;
+}
+
+footer * {
+    display: flex;
+    box-sizing: border-box;
+    margin : 0;
+}
+
+footer .caption {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+footer .github-logo {
+    display: flex;
+    width: 28px;
+    height: 28px;
+}
+
+footer .credits {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 11px;
+    font-weight: lighter;
+    color: #949494;
+}

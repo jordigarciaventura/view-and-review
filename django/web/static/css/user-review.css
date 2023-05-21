@@ -1,0 +1,75 @@
+.user-review {
+    display: flex;
+    width: 100%;
+    padding: 20px;
+    background-color: #2A2A2A;
+    border-radius: 10px;
+}
+
+.user-review .movie {
+    display: flex;
+    height: 419px;
+}
+
+.user-review .review-box {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.user-review .review-box .options {
+    display: flex;
+    align-items: flex-end;
+    gap: 22px;
+}
+
+.user-review .review-box .options .edit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.user-review .review-box .options .edit:hover {
+    cursor: pointer;
+    color: goldenrod;
+}
+
+.user-review .review-box .options .edit svg {
+    width: 24px;
+    height: 24px;
+}
+
+.user-review .review-box .options .delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: black;
+}
+
+.user-review .review-box .options .delete:hover {
+    cursor: pointer;
+    color: red;
+}
+
+.user-review .review-box .options .delete svg {
+    width: 24px;
+    height: 24px;
+}
+
+.user-review .review-box .options .cancel {
+    display: none;
+}
+
+.user-review .review-box .options .save {
+    display: none;
+}

@@ -1,13 +1,37 @@
 body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans",
+        Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+    background-color: #16191b;
+    color: #e0e0e0;
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    position: relative;
+    min-height: 100vh;
+
+    padding-bottom: 100px;
 }
 
-.logo {
-    height: 345.85794038454145px;
-    width: 306.8154599484478px;
-    left: 70px;
-    top: -75.796875px;
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: #e0e0e0;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #FFFFFF;
+    text-decoration: none;
 }
 
 .img_logo {
@@ -16,7 +40,7 @@ body {
     height: 255.32px;
     left: 50px;
     top: -50px;
-    background: url("/static/logo/extended_logo.png");
+    background: url("/static/assets/img/vr_extended.png");
     transform: matrix(1, 0, 0, 1, 0, 0);
     z-index: 1;
 }
@@ -61,7 +85,8 @@ body {
 
 .menu {
     display: flex;
-    justify-content: center; /* centramos en el eje horizontal*/
+    justify-content: center;
+    /* centramos en el eje horizontal*/
     margin-top: 20px;
     gap: 180px;
     padding: 0;
@@ -78,4 +103,31 @@ body {
 .text_menu:hover {
     font-family: Arial, Helvetica, sans-serif;
     color: #000000;
+}
+
+.btn-warning {
+    background: #AA4747;
+    opacity: 80%;
+    border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    opacity: 100%;
+    border: none;
+    color: white;
+}
+
+.btn-primary {
+    background: #AC4841;
+    border: none;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open>.dropdown-toggle.btn-primary {
+    background: #A53F37;
+    border-color: #A53F37;
 }

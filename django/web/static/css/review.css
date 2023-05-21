@@ -1,0 +1,102 @@
+.review {
+    display: flex;
+    gap: 17px;
+    width: 100%;
+    padding: 10px;
+}
+
+.review .votes-box {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 400;
+    gap: 2px;
+    height: fit-content;
+}
+
+.review .votes-box .downvote.active {
+    color: rgb(219, 68, 55);
+}
+
+.review .votes-box .downvote:hover {
+    color: rgb(219, 68, 55);
+}
+
+.review .votes-box .upvote.active {
+    color: rgb(61,168,94);
+}
+
+.review .votes-box .upvote:hover {
+    color: rgb(61,168,4);
+}
+
+.review .votes-box .votes {
+    text-align: center;    
+    margin: 0;
+    min-width: 18px;
+}
+
+.review .votes-box svg {
+    width: 18px;
+    height: 18px;
+    margin: 6px;
+}
+
+.review .votes-box svg:hover {
+    cursor: pointer;
+}
+
+.review .content {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    width: 100%;
+}
+
+.review .content .header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.review .content .header .info {
+    display: flex;
+    flex-direction: column;
+}
+
+.review .content .header .info .title {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    line-height: normal;
+    
+    color: #e0e0e0;
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.review .content .header.info .author {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.review .content .rating-box {
+    height: 18px;
+}
+
+.review .body {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+
+    overflow: hidden;
+
+    color: #e0e0e0;
+    background: none;
+    border: none;
+    outline: none;
+    resize: none;
+}

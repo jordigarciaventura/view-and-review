@@ -1,0 +1,44 @@
+{% load static %}
+<nav class="navbar">
+    <a href="{% url 'index' %}" class="logo"><img src="{% static 'assets/img/vr.png' %}" alt="logo"></a>
+    
+    <form class="search-bar-container" action="/search">
+        <div class="search-bar">
+            <div class="input-text">
+                <div class="search-close">
+                    <span class="iconify s24" data-icon="material-symbols:arrow-back-rounded"></span>
+                </div>
+                <input id="search" class="search-input" type="text" placeholder="Search.." name="query" pattern=".*\S+.*" required>
+            </div>
+            <div class="vline"></div>
+            <button class="search-icon search-accept" type="submit">
+                <span class="iconify s24" data-icon="material-symbols:search-rounded"></span>
+            </button>
+        </div>
+    </form>
+
+    <div class="nav-options">
+        <div class="nav-option search-option">
+            <span class="iconify s32" data-icon="material-symbols:search-rounded"></span>
+        </div> 
+        {% if user.is_authenticated %}
+        <a href="{% url 'user-profile' username=user.username %}">
+            <div class="nav-option">
+                <span class="iconify s32" data-icon="material-symbols:home-rounded"></span>
+            </div>
+        </a>
+        <div class="nav-option dropdown">
+            <span class="iconify s32" data-icon="mdi:account"></span>
+            <div id="username">{{user.username}}</div>
+            <div class="dropdown-content">
+                <div>
+                    <a href="{% url 'user-settings' %}">Settings</a>
+                    <a href="{% url 'logout' %}">Logout</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <a class="login-option" href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>   
+</nav>

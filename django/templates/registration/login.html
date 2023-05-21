@@ -1,37 +1,86 @@
-{% extends "base_generic.html" %}
-
-{% block content %}
-{% load static %}
-<link rel="stylesheet" href="{% static 'css/registration/login.css' %}">
-
-  <div class="login-container">
-    <h1>Login</h1>
-    <form method="post" action="{% url 'login' %}">
-      {% csrf_token %}
-      <div class="form-group">
-				<label for="username">{{ form.username.label_tag }}</label>
-				<input type="text" id="username" name="username" required>
-			</div>  
-      <div class="form-group">
-        <label for="password">{{ form.password.label_tag }}</label>
-        <input type="password" id="password" name="password" required>
+{% extends 'base_generic.html' %} {% block content %} {% load static %}
+<section>
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-8 col-xl-6 text-center mx-auto">
+        <a href="{% url 'index' %}">
+          <img src="{% static 'assets/img/vr_extended.png' %}" class="w-50" />
+        </a>
+        <h1>Log in</h1>
+        <p></p>
       </div>
-        <input type="hidden" name="next" value="{{ next }}">
-      <button type="submit" value="login">Login</button>
-    </form>
-    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>
-	  <p class="text-center">Don't have an account? <a href="{% url 'register' %}">Register</a> instead.</p>
+    </div>
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-6 col-xl-4">
+        <div class="mb-5">
+          <div class="d-flex flex-column align-items-center">
+            {% if form.errors %}
+            <div class="rounded text-center alert-danger mb-3 px-3">
+              <small
+                ><strong>
+                  Username and password didn't match.
+                </strong></small
+              >
+            </div>
+            {% endif %} {% if next %}
+            <div class="rounded text-center alert-danger mb-3 px-3 pt-3">
+            {% if user.is_authenticated %}
+                <p class="warning">
+                This account doesn't have access to this page. To proceed,
+                please log in with an account that has access.
+              </p>
+            </div>
+              {% else %}
+              <p class="warning">Please log in to see this page.</p>
+            </div>
 
-    {% if form.errors %}
-      <p class="warning">Your username and password didn't match. Please try again.</p>
-    {% endif %}
-    {% if next %}
-      {% if user.is_authenticated %}
-        <p class="warning">Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-      {% else %}
-        <p class="warning">Please login to see this page.</p>
-      {% endif %}
-    {% endif %}
+            {% endif %} {% endif %}
+            <form id="login-form" class="text-center w-75" method="post">
+              {% csrf_token %}
+              <div class="mb-3">
+                <input
+                  class="form-control"
+                  id="username"
+                  style="background-color: #2d2d2d; border: none; color: white"
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <input
+                  class="form-control"
+                  id="password"
+                  style="background: #2d2d2d; border: none; color: white"
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  required
+                />
+              </div>
+              <a href="{% url 'password_reset' %}" style="color: white">
+                <p style="text-align: right">Forgot password?</p>
+              </a>
+              <input type="hidden" name="next" value="{{ next }}" />
+              <div class="mt-5 mb-3">
+                <button class="btn btn-primary d-block w-100" type="submit" value="login" id="login-button">
+                  Log in
+                </button>
+              </div>
+              <p>
+                Not a member?&nbsp;<a
+                  href="{% url 'register' %}"
+                  style="color: white"
+                  >Register</a
+                >
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</section>
+
 {% endblock %}

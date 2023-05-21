@@ -1,0 +1,24 @@
+<form action="{% url 'rating' movie.id %}" method="POST" class="flex-column align-items-center w-50">
+    <div>
+    <div>{{form.review_title}}</div>
+    <div class="pt-3 mb-2">{{form.review}}</div>
+    <div class="pt-3 mb-2">{{form.review}}</div>
+    <div class="text-center d-flex flex-row align-items-center w-100">
+      <div class="d-flex justify-content-between">
+        
+        
+      
+      </div>
+      <div class="d-inline-flex flex-row justify-content-end col" >
+        {% if user_rating %}
+        <a href="{% url 'review' movie.id %}" class="btn btn-warning d-block" style="background: #aa4747;
+      opacity: 80%;
+      border: none;
+      color: #dd8686;text-decoration: none;">
+          <b>Delete</b></a>
+        {% endif %}
+        <button class="btn btn-primary d-block main-button" type="submit" value="submit" name="submit">
+          <b>{% if form.score.value == 0 %}Submit{% else %}Update{% endif %}</b>
+        </button>
+      </div>
+  </form>
