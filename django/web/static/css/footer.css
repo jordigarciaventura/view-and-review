@@ -1,7 +1,4 @@
 footer {
-    position: absolute;
-    bottom: 0;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -13,7 +10,7 @@ footer {
     font-size: 12px;
     font-weight: normal;
 
-    margin-top: 64px;
+    margin-top: auto;
 
     padding: 56px 32px 24px 32px;
 }
