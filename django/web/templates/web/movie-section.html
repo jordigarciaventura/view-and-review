@@ -47,7 +47,7 @@
           {% else %}
             {% include 'web/stars.html' with movie_id=movie.id rating=user_rating.score user_rating=True id=rating.id %}
           {% endif %}
-          <div class="delete-rating {% if not user_rating or user_rating.review %}hidden{% endif %}">
+          <div id="delete-rating" class="delete-rating {% if not user_rating or user_rating.review %}hidden{% endif %}">
             <span class="iconify" data-icon="material-symbols:delete-outline"></span>
           </div>
           <div id="edit-rating" class="edit-rating {% if not user_rating or not user_rating.review %}hidden{% endif %}">
