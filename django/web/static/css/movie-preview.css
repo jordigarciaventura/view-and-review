@@ -1,8 +1,9 @@
 .movie-preview {
-    height: 100%;
-    width: 202px;
-
     display: flex;
+    height: 100%;
+
+    width: 206px;
+    
     flex-direction: column;
     align-items: flex-start;
     padding: 0px;

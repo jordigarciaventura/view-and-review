@@ -1,6 +1,6 @@
 $(document).ready(() => {
     $("#search").autocomplete({
-    source: "/search",
+    source: "/search/json",
     minLength: 2,
     messages: {
         noResults: '',

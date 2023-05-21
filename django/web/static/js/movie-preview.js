@@ -1,85 +1,73 @@
 $(document).ready(() => {
-    const urls = JSON.parse(document.getElementById('urls').textContent);
-    console.log(urls);
+    const csrftoken = $("[name=csrfmiddlewaretoken]").val();
 
     $(".watchlist-option").click(e => {
         const target = $(e.currentTarget);
-        const movieID = target.data('movie-id');
-        const watchlist = target.data('watchlist');
 
-        const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        const watchlist = target.data('watchlist');
+        const url = target.data('url');
+
         $.ajax({
-            type:  (watchlist) ? 'DELETE' : 'POST',
-            url: urls['watchlist'],
-            beforeSend: function (xhr){
+            type: (watchlist) ? 'DELETE' : 'POST',
+            url: url,
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             },
-            data: {
-                'movie_id': movieID
-            },
-            statusCode: {
-                401: () => { 
-                    window.location.href = `${urls['login']}/?next=${window.location.pathname}`;
-                }
-            },
-            success: data => {
-                console.log("success");
+            success: () => {
                 target.data('watchlist', !watchlist);
                 target.children().toggleClass('hidden');
+            },
+            error: xhr => {
+                if (xhr.status == 401) {
+                    redirectUrl = xhr.responseText
+                    window.location.href = `${redirectUrl}?next=${window.location.pathname}`;
+                }
             }
         });
     });
 
     $(".favlist-option").click(e => {
         const target = $(e.currentTarget);
-        const movieID = target.data('movie-id');
-        const favorite = target.data('favlist');
 
-        const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+        const favorite = target.data('favlist');
+        const url = target.data('url');
+
         $.ajax({
             type: (favorite) ? 'DELETE' : 'POST',
-            url: urls['favlist'],
-            beforeSend: function (xhr){
+            url: url,
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             },
-            data: {
-                'movie_id': movieID
-            },
-            statusCode: {
-                401: () => { 
-                    window.location.href = `${urls['login']}/?next=${window.location.pathname}`;
-                }
-            },
-            success: data => {
+            success: () => {
                 target.data('favlist', !favorite);
-                console.log("success");
                 target.children().toggleClass('hidden');
+            },
+            error: xhr => {
+                if (xhr.status == 401) {
+                    redirectUrl = xhr.responseText
+                    window.location.href = `${redirectUrl}?next=${window.location.pathname}`;
+                }
             }
         });
     });
 
     $(".play-option").click(e => {
-        const movieID = $(e.currentTarget).data('movie-id');
+        const url = $(e.currentTarget).data('url');
 
-        const csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
         $.ajax({
             type: 'GET',
-            url: urls['trailer'],
-            beforeSend: function (xhr){
+            url: url,
+            beforeSend: function (xhr) {
                 xhr.setRequestHeader('X-CSRFToken', csrftoken);
             },
-            data: {
-                'movie_id': movieID
-            },
             success: data => {
-                if(data == "None") {   
+                if (data == "None") {
                     alert("No trailer available")
                     return
                 }
 
                 key = data
-                url = `https://www.youtube.com/embed/${key}?autoplay=1`
-                window.location.href = url
+                window.location.href = `https://www.youtube.com/embed/${key}?autoplay=1`
             }
         });
 

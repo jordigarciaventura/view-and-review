@@ -16,7 +16,7 @@
             </div>
             <div class="rating-box">
                 {{ rating.score }}
-                {% include 'web/rating.html' with rating=rating.score ro=False id=rating.id|add:'1' %}
+                {% include 'web/stars.html' with  movie_id=rating.movie.pk rating=rating.score ro=False id=rating.id|add:'1' %}
             </div>
         </div>
         <div class="body">

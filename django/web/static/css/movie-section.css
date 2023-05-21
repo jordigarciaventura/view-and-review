@@ -1,42 +1,124 @@
-#principal {
+#movie-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
     max-width: 890px;
     margin:auto;
 }
 
-.cover {
-    width: 27.8%;
-    height: 100%;
-    max-height: 360px;
-    float: left;
-    flex: 1;
-    margin-bottom: -40px;
-    /*!!!!!!!!!  calc(width*1.5)  28,1%*/
-}
+/* Banner */
 
-.image_cover {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
-    max-height: 360px;
+.banner {
+    display: flex;
+    gap: 2px;
+    position: relative;
+    margin-bottom: 28px;
 }
 
 .poster {
-    width: 72%;
-    /*!!!!!!!!! calc(width*1.5625);   71,91%*/
-    height: 100%;
-    --h: height;
-    max-height: 360px;
-    float: right;
-    flex: 1;
-    margin-bottom: -40px;
+    display: flex;
+    width: 33%;
 }
 
-.image_poster {
-    object-fit: cover;
+.poster img {
     width: 100%;
     height: 100%;
-    max-height: 360px;
+    object-fit: cover;
 }
+
+.cover {
+    display: flex;
+    flex: 1;
+}
+
+.cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#info-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 24px 8px 24px;
+    position: absolute;
+    width: 100%;
+    bottom: -42px;
+    left: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 35.56%);
+}
+
+/* Rating box */
+
+#rating-box {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    gap: 18px;
+}
+
+/* Star box */
+
+.star-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.star-box .headline {
+    font-size: 11px;
+    font-weight: lighter;
+    color: #575757;
+    margin: 0;
+}
+
+.star-box .content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+} 
+
+.star-box .content .edit-rating svg{
+    height: 24px;
+    width: 24px;
+}
+
+.star-box .content .delete-rating svg{
+    height: 24px;
+    width: 24px;
+}
+
+.star-box .content .delete-rating:hover {
+    cursor: pointer;
+    color: red;
+}
+
+/* Options box */
+
+#options-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 40px;
+    padding-right: 20px;
+
+    font-size: 15px;
+    font-weight: 200;
+}
+
+#options-box * {
+    margin: 0;
+}
+
+#options-box .option {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Genres box */
 
 .genres-box {
     float: right;
@@ -49,18 +131,6 @@
     margin-bottom: 20px;
 }
 
-@media (max-width: 460px) {
-    .genres-box {
-        margin-right: 7px;
-    }
-}
-
-@media (max-width: 600px) {
-    .genres-box {
-        margin-top: 30px;
-    }
-}
-
 .genre {
     border: 1px solid #938F99;
     border-radius: 10px;
@@ -70,89 +140,12 @@
     font-weight: 500;
 }
 
-#rating-box {
-    align-items: center;
-    justify-content: center;
-    display: flex;
-    gap: 18px;
-}
-
-#star-box {
-    height: 28px;
-    align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
-@media (max-width: 600px) {
-    #star-box {
-        position: absolute;
-        top: 62px;
-    }
-}
-
-#icon-box {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 40px;
-    padding-right: 20px;
-}
-
-.icon {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.icon-source {
-    font-size: 15px;
-    font-weight: 200;
-}
-
-#favlist:hover {
-    cursor: pointer;
-    color: red;
-}
-
-#whatchlist:hover {
-    cursor: pointer;
-    color: #ffae00;
-}
-
-#container {
-    width: 100%;
-    align-items: center;
-    display: flex;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 35.56%);
-    position: relative;
-    justify-content: space-between;
-    padding: 10px;
-}
-
-@media (max-width: 500px) {
-    #container>div {
-        transform: scale(0.8);
-    }
-}
-
-@media (max-width: 500px) {
-    .score-source {
-        transform: scale(0.8);
-    }
-}
+/* Content */
 
 #all {
     justify-content: center;
     align-items: center;
     margin-top: 50px;
-}
-
-@media (max-width: 500px) {
-    #all>div {
-        transform: scale(0.8);
-    }
 }
 
 #info {
@@ -192,10 +185,7 @@
     width: 100%;
     text-align: justify;
     margin-top: 25px;
-}
-
-#space {
-    height: 80px;
+    margin-bottom: 54px;
 }
 
 .credit {
@@ -219,20 +209,22 @@
     background-color: black;
 }
 
+/* Casting */
+
 .cast {
-    display: flex;
-    max-width: 665px;
-    margin: 76px auto;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 36px;
+    display: grid;
+    grid-template-columns: repeat(2, auto); /* Example grid configuration */
+    justify-content: center;
+    grid-gap: 64px 64px;
+    max-height: calc((96px + 58px) * 5);
+    overflow: hidden;
+    margin-top: 72px;
 }
 
 .actor {
     display: flex;
     align-items: center;
     gap: 12px;
-    width: 289px;
     height: 96px;
 }
 
@@ -261,9 +253,29 @@
     font-weight: 400;
 }
 
-.reviews {
-    margin-top: 48px;
+#show-more-cast {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
+
+#show-more-cast:hover {
+    cursor: pointer;
+}
+
+.show-all-rows {
+    max-height: none;
+}
+
+/* Similar movies */
+
+.movie-carousel {
+    margin: 64px 0;
+}
+
+/* User rating */
+
 
 #user-rating .stars {
     display: flex;
@@ -271,6 +283,14 @@
     height: 24px;
     width: 100%;
 }
+
+#user-rating {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+}
+
 
 .form {
     display: flex;
@@ -285,17 +305,38 @@
     align-items: center;
 }
 
+.rating-form {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+}
+
+.add-review {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border-radius: 32px;
+    background-color: #575757;
+    margin: 0;
+    height: 36px;
+}
+
+.rating {
+    display: flex;
+    align-items: flex-end;
+    gap: 18px;
+    height: 100%;
+}
+
+/* Reviews */
+
+.reviews {
+    margin-top: 48px;
+}
+
+/* Utils */
+
 .hidden {
     display: none;
-}
-
-#user_review {
-    display: flex;
-    width: 100%;
-}
-
-@media screen and (max-width: 630px) {
-    .cast {
-        justify-content: center;
-    }
 }

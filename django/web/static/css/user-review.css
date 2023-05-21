@@ -2,6 +2,8 @@
     display: flex;
     width: 100%;
     padding: 20px;
+    background-color: gray;
+    border-radius: 10px;
 }
 
 .user-review .movie {
@@ -60,4 +62,12 @@
 .user-review .review-box .options .delete svg {
     width: 24px;
     height: 24px;
+}
+
+.user-review .review-box .options .cancel {
+    display: none;
+}
+
+.user-review .review-box .options .save {
+    display: none;
 }

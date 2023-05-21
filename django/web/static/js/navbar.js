@@ -1,20 +1,19 @@
-document.addEventListener("DOMContentLoaded", () => { 
-
-    document.querySelector(".search-option").addEventListener("click", () => {    
-        document.querySelector(".search-close").style.display = "flex";
-        document.querySelector(".navbar").classList.toggle("navbar-full");
+$(document).ready(() => {
+    $(".search-option").click(() => {    
+        $(".search-close").css("display", "flex");
+        $(".navbar").toggleClass("navbar-full");
         
-        document.querySelector(".search-bar-container").style.display = "flex";
-        document.querySelector(".search-bar-container").classList.toggle("search-bar-container-full");
+        $(".search-bar-container").css("display", "flex");
+        $(".search-bar-container").toggleClass("search-bar-container-full");
     });
 
-    document.querySelector(".search-close").addEventListener("click", () => {    
-        document.querySelector(".search-close").style.display = "none";
-        document.querySelector(".navbar").classList.toggle("navbar-full");
+    $(".search-close").click( () => {    
+        $(".search-close").css("display", "none");
+        $(".navbar").toggleClass("navbar-full");
         
-        document.querySelector(".search-bar-container").style.display = "";
-        document.querySelector(".search-bar-container").classList.toggle("search-bar-container-full");
-    
-        document.querySelector(".search-input").value = "";
+        $(".search-bar-container").css("display", "");
+        $(".search-bar-container").toggleClass("search-bar-container-full");
+
+        $(".search-input").value = "";
     });
 });

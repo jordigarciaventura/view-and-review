@@ -54,9 +54,8 @@ def upcoming():
     return requests.get(f"{endpoint}/movie/upcoming", headers=headers).json()
 
 
-def latest():
-    params = {"sort_by": "popularity.desc", "year": "2023"}
-    return requests.get(f"{endpoint}/discover/movie", headers=headers, params=params).json()
+def now_playing():
+    return requests.get(f"{endpoint}/movie/now_playing", headers=headers).json()
 
 
 def get_image_url(path, type="poster", size="w92"):
@@ -77,7 +76,7 @@ def get_image_url(path, type="poster", size="w92"):
 
 
 def get_genre_name(id):
-    genres = { 
+    genre_names_by_id = { 
         "28": "Action",
         "12": "Adventure",
         "16": "Animation",
@@ -96,12 +95,35 @@ def get_genre_name(id):
         "10770": "TV Movie",
         "53": "Thriller",
         "10752": "War",
-        "37": "Western"}
-    
-    assert str(id) in genres.keys()
-    
-    return genres[str(id)]
+        "37": "Western"
+    }
+    assert str(id) in genre_names_by_id
+    return genre_names_by_id[str(id)]
 
+def get_genre_id(genre_slug):
+    genre_ids_by_slug = {
+        "action": 28,
+        "adventure": 12,
+        "animation": 16,
+        "comedy": 35,
+        "crime": 80,
+        "documentary": 99,
+        "drama": 18,
+        "family": 10751,
+        "fantasy": 14,
+        "history": 36,
+        "horror": 27,
+        "music": 10402,
+        "mystery": 9648,
+        "romance": 10749,
+        "sci-fi": 878,
+        "tv-movie": 10770,
+        "thriller": 53,
+        "war": 10752,
+        "western": 37
+    }
+    assert genre_slug in genre_ids_by_slug
+    return genre_ids_by_slug[genre_slug]
 
 def get_movie_trailer(movie_id):
     response = requests.get(f"{endpoint}/movie/{movie_id}/videos", headers=headers).json()
@@ -125,3 +147,9 @@ def get_actors(movie_cast):
 
 def get_similar(movie_id):
     return requests.get(f"{endpoint}/movie/{movie_id}/similar", headers=headers).json()
+
+def get_movies_by_genre(genre_id):
+    return requests.get(f"{endpoint}/discover/movie", headers=headers, params={"with_genres": genre_id}).json()
+
+def get_movies_by_year(year):
+    return requests.get(f"{endpoint}/discover/movie", headers=headers, params={"primary_release_year": year}).json()

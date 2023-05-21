@@ -70,7 +70,7 @@ class Rating(models.Model):
 
     score = models.PositiveIntegerField(default=0, choices=RATING_CHOICES)
 
-    review = models.ForeignKey(
+    review = models.OneToOneField(
         Review, on_delete=models.CASCADE, blank=True, null=True)
 
     models.UniqueConstraint(fields=['user', 'movie'], name='composite_key')

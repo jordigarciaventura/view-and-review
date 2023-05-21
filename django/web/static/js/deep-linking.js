@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+$(document).ready(() => {
     var sections = document.querySelectorAll('.step');
 
     var observer = new IntersectionObserver(entries => {
@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }, { threshold: 0.01 });
 
-    sections.forEach(function (section) {
+    $('.step').each((index, section) => {
         observer.observe(section);
-    });
+    })
 });

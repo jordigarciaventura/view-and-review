@@ -1,25 +1,25 @@
-<div class="review">
-    <div class="votes" data-review-id="{{ rating.review.id }}">
-        <div class="downvote {% if rating.review.user_vote != None %}active{% endif %}">
+<div class="review" data-review-id="{{ rating.review.id }}" data-vote-url="{% url 'review-vote' %}">
+    <div class="votes-box">
+        <div class="downvote {% if rating.review.user_vote == False %}active{% endif %}">
             <span class="iconify" data-icon="bxs:downvote"></span>
         </div>
-        <div class="votes">{{ rating.review.votes }}</div>
-        <div class="upvote {% if rating.review.user_vote %} active {% endif %}">
+        <p class="votes">{{ rating.review.votes|default:0 }}</p>
+        <div class="upvote {% if rating.review.user_vote == True %}active{% endif %}">
             <span class="iconify" data-icon="bxs:upvote"></span>
         </div>
     </div>
     <div class="content">
         <div class="header">
             <div class="info">
-                <div class="title">{{ rating.review.title }}</div>
-                <div class="user">{{ rating.user }}</div>
+                <input type="text" class="title" value="{{ rating.review.title }}" readonly>
+                <div class="user">{% if user.is_authenticated and rating.user == user %}You{% else %}{{rating.user}}{% endif %}</div>
             </div>
             <div class="rating-box">
-                {% include 'web/rating.html' with rating=rating.score ro=True id=rating.id|add:'1' %}
+                {% include 'web/stars.html' with movie_id=movie_id rating=rating.score ro=True id=rating.id|add:'1' only %}
             </div>
         </div>
-        <div class="body">
+        <textarea class="body" readonly>
             {{ rating.review.content }}
-        </div>
+        </textarea>
     </div>
 </div>
