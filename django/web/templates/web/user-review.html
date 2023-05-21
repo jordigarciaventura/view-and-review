@@ -7,9 +7,9 @@
     <div class="review-box">
         {% include 'web/review.html' with rating=rating ro=True user_rating=True movie_id=movie_id only %}
         <div class="options">
-            <button class="cancel">Cancel</button>
-            <button class="save">Save changes</button>
-            <div class="delete">
+            <button id="cancel-changes" class="cancel">Cancel</button>
+            <button id="save-changes" class="save">Save changes</button>
+            <div id="delete-button" class="delete">
                 <span class="iconify" data-icon="material-symbols:delete-outline-rounded"></span>
             </div>
             <div id="edit-button" class="edit">
