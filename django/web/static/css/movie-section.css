@@ -29,6 +29,24 @@
 .cover {
     display: flex;
     flex: 1;
+    position: relative;
+}
+
+.trailer {
+    position: absolute;
+    bottom: 64px;
+    left: 32px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 16px;
+
+    font-size: 24px;
+    font-weight: lighter;
+}
+
+.trailer * {
+    position: initial;
 }
 
 .cover img {

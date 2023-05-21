@@ -23,12 +23,15 @@
 <div class="profile-info">
   <h1 id="profile-name">{{username}}</h1>
   <div class="carousels">
-    {% include 'web/carousel.html' with title='Watch List' id='watchlist' movies=watchlist only %}
-    {% include 'web/carousel.html' with title='Favorite List' id='favlist' movies=favlist only %}
+    {% url 'user-watchlist' username as watchlist_url %}
+    {% include 'web/carousel.html' with title='Watch List' id='watchlist' movies=watchlist url=watchlist_url only %}
+    
+    {% url 'user-favlist' username as favlist_url %}
+    {% include 'web/carousel.html' with title='Favorite List' id='favlist' movies=favlist url=favlist_url only %}
     <h2 class="">Reviews</h2>
     <div class="reviews">
-      {% for rating in ratings %}
-        {% include 'web/user-review.html' with rating=rating show_movie=True movie=rating.movie_info movie_id=rating.movie_info.id only %}
+      {% for user_rating in user_ratings %}
+        {% include 'web/user-review.html' with rating=user_rating.rating show_movie=True movie=user_rating.movie movie_id=user_rating.movie.id %}
       {% endfor %}
     </div>
   </div>

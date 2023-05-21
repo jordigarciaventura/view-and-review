@@ -14,6 +14,8 @@ urlpatterns = [
     path('accounts/update/', views.userUpdateView, name='user-update'),
     path('accounts/settings/', views.ProfileSettingsView.as_view(), name='user-settings'),
     path('accounts/<slug:username>/', views.UserView.as_view(), name='user-profile'),
+    path('accounts/<slug:username>/watchlist', views.UserWatchlistView.as_view(), name='user-watchlist'),
+    path('accounts/<slug:username>/favlist', views.UserFavlistView.as_view(), name='user-favlist'),
     
     path('search/', views.SearchView.as_view(), name='search'),
     path('search/json', views.search, name='json-search'),

@@ -1,4 +1,5 @@
 
+from django.db.models import Case, When, BooleanField
 from typing import Any, Dict, Optional
 from django.db import models
 from django.db.models import Model, QuerySet
@@ -13,7 +14,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_http_methods 
 from django.contrib.auth.models import User
 from django.views import generic
-from django.db.models import Q
 
 from web.models import *
 from web.forms import *
@@ -41,32 +41,84 @@ class UserView(generic.TemplateView):
     
     def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        user = User.objects.filter(username=kwargs['username']).first()
-
-        context['username'] = user.username
         
-        favlist = Favlist.objects.filter(user=user).values('movie')
+        if not User.objects.filter(username=kwargs['username']).exists():
+            return HttpResponseNotFound("User not found")
+        
+        profile_user = User.objects.filter(username=kwargs['username']).first()
+        
+        context['username'] = profile_user.username
+        
+        favlist = Favlist.objects.filter(user=profile_user).values('movie')
         if favlist.exists() and favlist.first()['movie']:
             favlist = list(map(lambda movie: api.movie(movie['movie']), favlist))
             context['favlist'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in favlist]
         
-        watchlist = Watchlist.objects.filter(user=user).values('movie')
+        watchlist = Watchlist.objects.filter(user=profile_user).values('movie')
         if watchlist.exists() and watchlist.first()['movie']:
             watchlist = list(map(lambda movie: api.movie(movie['movie']), watchlist))
             context['watchlist'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in watchlist]            
                 
-        user_ratings = Rating.objects.filter(user=user)
-        ratings = [rating for rating in user_ratings if rating.review]
-        for rating in ratings:
-            rating.movie_info = single_movie_preview_parser(api.movie(rating.movie.tmdb_id), poster_size="w342")
-                
         mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
-        mark_context_icons(ratings, self.request.user, ['movie_info']) # TODO
         
-        context['ratings'] = ratings
-                
+        ratings = []
+        user_ratings = Rating.objects.filter(user=profile_user).exclude(review=None)
+        for user_rating in user_ratings:
+            
+            lists = {}
+            if self.request.user.is_authenticated:
+                logged_user = self.request.user
+                lists = {
+                    "favlist": Favlist.objects.filter(user=logged_user, movie=user_rating.movie).exists(),
+                    "watchlist": Watchlist.objects.filter(user=logged_user, movie=user_rating.movie).exists(),
+                }
+            
+            movie_info = single_movie_preview_parser(api.movie(user_rating.movie.pk), poster_size="w342")
+            
+            result = {
+                "rating": user_rating,
+                "movie": dict(**movie_info, **lists)
+            }
+            ratings.append(result)
+        
+            context['user_ratings'] = ratings
+        
         return context
     
+    
+class UserWatchlistView(generic.TemplateView):
+    template_name = 'web/list.html'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = {}
+        context['title'] = "Watch List"
+    
+        username = kwargs['username']
+        watchlist = Watchlist.objects.filter(user__username=username).values('movie')
+        if watchlist.exists() and watchlist.first()['movie']:
+            watchlist = list(map(lambda movie: api.movie(movie['movie']), watchlist))
+            context['movies'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in watchlist]            
+                
+        mark_context_icons(context, self.request.user, ['movies'])
+    
+        return context   
+
+class UserFavlistView(generic.TemplateView):
+    template_name = 'web/list.html'
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        context = {}
+        context['title'] = "Favorite List"
+    
+        username = kwargs['username']
+        favlist = Favlist.objects.filter(user__username=username).values('movie')
+        if favlist.exists() and favlist.first()['movie']:
+            favlist = list(map(lambda movie: api.movie(movie['movie']), favlist))
+            context['movies'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in favlist]            
+                
+        mark_context_icons(context, self.request.user, ['movies'])
+    
+        return context   
 
 class IndexView(generic.TemplateView):
     template_name = "web/index.html"

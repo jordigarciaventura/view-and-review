@@ -31,6 +31,13 @@
 
     <div class="cover">
       <img src="{{ movie.cover }}" draggable="false">
+      <div class="trailer">
+        <div class="movie-option play-option s64" data-url="{% url 'trailer' movie.id %}">
+          <span class="iconify movie-option-icon s42"
+              data-icon="material-symbols:play-arrow-rounded"></span>
+        </div>
+        <div>Play trailer</div> 
+      </div>
     </div>
 
     <div id="info-bar">
@@ -180,7 +187,7 @@
 
     <div class="reviews">
       {% for rating in ratings %}
-        {% include 'web/review.html' with rating=rating movier_id=movie.id only %}
+        {% include 'web/review.html' with rating=rating movie_id=movie.id only %}
       {% endfor%}
     </div>
   </form>
@@ -188,4 +195,4 @@
   </div>
 </div>
 
-  {% endblock %}
+{% endblock %}
