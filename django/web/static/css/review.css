@@ -11,28 +11,29 @@
     font-size: 14px;
     font-weight: 400;
     gap: 2px;
-    background-color: blue;
     height: fit-content;
 }
 
 .review .votes-box .downvote.active {
-    color: red;
+    color: rgb(219, 68, 55);
 }
 
 .review .votes-box .downvote:hover {
-    color: red;
+    color: rgb(219, 68, 55);
 }
 
 .review .votes-box .upvote.active {
-    color: green;
+    color: rgb(61,168,94);
 }
 
 .review .votes-box .upvote:hover {
-    color: green;
+    color: rgb(61,168,4);
 }
 
 .review .votes-box .votes {
+    text-align: center;    
     margin: 0;
+    min-width: 18px;
 }
 
 .review .votes-box svg {
@@ -60,7 +61,6 @@
 .review .content .header .info {
     display: flex;
     flex-direction: column;
-    background-color: green;
 }
 
 .review .content .header .info .title {
@@ -68,6 +68,11 @@
     font-weight: 700;
     margin: 0;
     line-height: normal;
+    
+    color: #e0e0e0;
+    background: none;
+    border: none;
+    outline: none;
 }
 
 .review .content .header.info .author {
@@ -79,7 +84,19 @@
     height: 18px;
 }
 
-.body {
+.review .body {
     width: 100%;
-    background-color: pink;
+    display: flex;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+
+    overflow: hidden;
+
+    color: #e0e0e0;
+    background: none;
+    border: none;
+    outline: none;
+    resize: none;
 }

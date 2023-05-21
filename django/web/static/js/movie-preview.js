@@ -41,6 +41,7 @@ $(document).ready(() => {
             success: () => {
                 target.data('favlist', !favorite);
                 target.children().toggleClass('hidden');
+
             },
             error: xhr => {
                 if (xhr.status == 401) {

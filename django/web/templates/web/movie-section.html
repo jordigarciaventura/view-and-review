@@ -168,14 +168,12 @@
       </div>
       
       <form id="review-form" method="POST" action="{% url 'review' movie.id %}"
-      class="form hidden" data-movie-id="{{ movie.id }}">
-      {% csrf_token %}
-      {{ review_form }}
-      <div class="options">
-          <div id="cancel-review" class="cancel">Cancel</div>
-          <div class="add">
-            <input id="submit-button" type="submit" value="Add review">
-          </div>
+      class="review-form hidden" data-movie-id="{{ movie.id }}">
+        {% csrf_token %}
+        {{ review_form }}
+        <div class="options">
+          <button id="cancel-review" class="cancel">Cancel</button>
+          <input id="submit-button" type="submit" value="Add review" class="add">
         </div>
       </form>
       
@@ -186,7 +184,7 @@
 
     <div class="reviews">
       {% for rating in ratings %}
-        {% include 'web/review.html' with rating=rating movie_id=movie.id only %}
+        {% include 'web/review.html' with rating=rating movie_id=movie.id %}
       {% endfor%}
     </div>
   </form>

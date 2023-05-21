@@ -10,14 +10,14 @@ class ReviewForm(forms.ModelForm):
     class Meta:
         model = web.models.Review
         fields = "__all__"
-        
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super(ReviewForm, self).__init__(*args, **kwargs)
-        self.fields['content'].widget = forms.Textarea(attrs={'rows':'5'})
-        self.fields['content'].widget.attrs['class'] = 'form-control'
-        self.fields['content'].widget.attrs['placeholder'] = 'lorem ipsum'
-        self.fields['title'].widget.attrs['class'] = 'form-control'
-        self.fields['title'].widget.attrs['placeholder'] = 'lorem ipsum'
+        labels = {
+            'title': '',
+            'content': ''
+        }
+        widgets = {
+            'title': forms.TextInput(attrs={'placeholder': 'Title', 'class': 'form-control form-title'}),
+            'content': forms.Textarea(attrs={'placeholder': 'Content', 'class': 'form-control form-content', 'rows': 5}),
+        }
 
 
 class RegisterForm(UserCreationForm):

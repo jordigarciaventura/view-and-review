@@ -31,9 +31,9 @@ def mark_context_icons(context, user, list_keys):
         if key not in context: continue
         for movie in context[key]:
             if favlist.exists() and favlist.filter(user=user, movie=movie['id']).exists():
-                movie['favlist'] = 1
+                movie['favlist'] = True
             if watchlist.exists() and watchlist.filter(user=user, movie=movie['id']).exists():
-                movie['watchlist'] = 1
+                movie['watchlist'] = True
 
 
 class UserView(generic.TemplateView):
@@ -58,8 +58,9 @@ class UserView(generic.TemplateView):
         if watchlist.exists() and watchlist.first()['movie']:
             watchlist = list(map(lambda movie: api.movie(movie['movie']), watchlist))
             context['watchlist'] = [single_movie_preview_parser(movie_detail, poster_size="w342") for movie_detail in watchlist]            
-                
-        mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
+
+        if self.request.user.is_authenticated:          
+            mark_context_icons(context, self.request.user, ['favlist', 'watchlist'])
         
         ratings = []
         user_ratings = Rating.objects.filter(user=profile_user).exclude(review=None)
@@ -67,11 +68,15 @@ class UserView(generic.TemplateView):
             
             lists = {}
             if self.request.user.is_authenticated:
+                # Add vote
+                user_rating.review.user_vote = user_rating.review.user_vote(self.request.user)
+                
+                # Add watchlist and favlist
                 logged_user = self.request.user
-                lists = {
-                    "favlist": Favlist.objects.filter(user=logged_user, movie=user_rating.movie).exists(),
-                    "watchlist": Watchlist.objects.filter(user=logged_user, movie=user_rating.movie).exists(),
-                }
+                if Favlist.objects.filter(user=logged_user, movie=user_rating.movie).exists():
+                    lists['favlist'] = True
+                if Watchlist.objects.filter(user=logged_user, movie=user_rating.movie).exists():
+                    lists['watchlist'] = True
             
             movie_info = single_movie_preview_parser(api.movie(user_rating.movie.pk), poster_size="w342")
             
@@ -156,7 +161,7 @@ class IndexView(generic.TemplateView):
         context['horror'] = horror
         
         if self.request.user.is_authenticated:
-            mark_context_icons(context, self.request.user, ['latest', 'top_rated', 'popular', 'upcoming'])
+            mark_context_icons(context, self.request.user, ['upcoming', 'popular', 'top_rated', 'now_playing', 'action', 'animation', 'horror'])
         
         return context
     
@@ -246,16 +251,17 @@ def FavlistView(request, movie_id):
     if not request.user.is_authenticated:
         return HttpResponse(reverse('login'), status=401)
     
-    data = QueryDict(request.body)
     user_favlist = Favlist.objects.get_or_create(user=request.user)[0]
     movie = Movie.objects.get_or_create(tmdb_id=movie_id)[0]
-    
+        
     if request.method == 'POST':
         movie.save()
         user_favlist.movie.add(movie_id)
+        print("Adding...")
 
     elif request.method == 'DELETE':
         user_favlist.movie.remove(movie)
+        print("Removing...")
 
     return HttpResponse()
 
@@ -313,9 +319,10 @@ def reviewVote(request):
     review = Review.objects.get(pk=data.get('review'))
     vote = ReviewVote.objects.filter(user=request.user, review=review)
     value = data.get('value')
-    
+                
     if request.method == 'POST':
         if vote.exists():
+            print(vote)
             if vote.value == value:
                 return HttpResponse('Resource already exists', status=409)            
             vote.update(value=value)

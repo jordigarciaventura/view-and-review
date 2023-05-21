@@ -1,5 +1,28 @@
 .profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     margin-top: 64px;
+    max-width: 960px;
+    margin: auto;
+    margin-top: 64px;
+    flex: 1;
+}
+
+.carousels {
+    width: 100%;
+}
+
+.reviews-box {
+    max-width: 720px;
+}
+
+.reviews {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 64px;
 }
 
 #profile-name {
@@ -7,13 +30,3 @@
     font-weight: lighter;
     text-align: center;
 }
-
-/* .heading {
-    display: flex;
-    gap: 22px;
-}
-
-.reviews-title {
-    font-size: 24px;
-    font-weight: bold;
-} */
