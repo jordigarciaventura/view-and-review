@@ -1,4 +1,14 @@
-.heading {
+.profile-info {
+    margin-top: 64px;
+}
+
+#profile-name {
+    font-size: 32px;
+    font-weight: lighter;
+    text-align: center;
+}
+
+/* .heading {
     display: flex;
     gap: 22px;
 }
@@ -6,4 +16,4 @@
 .reviews-title {
     font-size: 24px;
     font-weight: bold;
-}
+} */

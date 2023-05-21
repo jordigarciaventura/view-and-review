@@ -2,12 +2,10 @@
     display: flex;
     gap: 17px;
     width: 100%;
-    background-color: gray;
     padding: 10px;
-    border-radius: 10px;
 }
 
-.review .votes {
+.review .votes-box {
     display: flex;
     align-items: center;
     font-size: 14px;
@@ -17,29 +15,33 @@
     height: fit-content;
 }
 
-.review .votes .downvote.active {
+.review .votes-box .downvote.active {
     color: red;
 }
 
-.review .votes .downvote:hover {
+.review .votes-box .downvote:hover {
     color: red;
 }
 
-.review .votes .upvote.active {
+.review .votes-box .upvote.active {
     color: green;
 }
 
-.review .votes .upvote:hover {
+.review .votes-box .upvote:hover {
     color: green;
 }
 
-.review .votes svg {
+.review .votes-box .votes {
+    margin: 0;
+}
+
+.review .votes-box svg {
     width: 18px;
     height: 18px;
     margin: 6px;
 }
 
-.review .votes svg:hover {
+.review .votes-box svg:hover {
     cursor: pointer;
 }
 

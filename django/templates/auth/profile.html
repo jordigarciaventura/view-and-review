@@ -4,71 +4,33 @@
 
 {% block links %}
 {% csrf_token %}
-    <link rel="stylesheet" href="{% static 'css/index.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/profile.css' %}" />
-    <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
-    <script src="{% static 'js/deep-linking.js' %}"></script>
-    <script src="{% static 'js/movie-preview.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+<link rel="stylesheet" href="{% static 'css/movie-preview.css' %}" />
+<link rel="stylesheet" href="{% static 'css/profile.css' %}" />
+<link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
+<link rel="stylesheet" href="{% static 'css/user-review.css' %}" />
+<link rel="stylesheet" href="{% static 'css/review.css' %}" />
+<link rel="stylesheet" href="{% static 'css/stars.css' %}" />
+<script src="{% static 'js/deep-linking.js' %}"></script>
+<script src="{% static 'js/movie-preview.js' %}"></script>
+<script src="{% static 'js/user-review.js' %}"></script>
+<script src="{% static 'js/review.js' %}"></script>
+<script src="{% static 'js/stars.js' %}"></script>
 {% endblock %}
 
 
 {% block content %}
-<div class="container">
-    <h1>{{username}}</h1>
-    <div class="carousels">
-        {% include 'web/carousel.html' with title='Watch List' id='watchlist' movies=watchlist only %}
-        {% include 'web/carousel.html' with title='Favorite List' id='favlist' movies=favlist only %}
+<div class="profile-info">
+  <h1 id="profile-name">{{username}}</h1>
+  <div class="carousels">
+    {% include 'web/carousel.html' with title='Watch List' id='watchlist' movies=watchlist only %}
+    {% include 'web/carousel.html' with title='Favorite List' id='favlist' movies=favlist only %}
+    <h2 class="">Reviews</h2>
+    <div class="reviews">
+      {% for rating in ratings %}
+        {% include 'web/user-review.html' with rating=rating show_movie=True movie=rating.movie_info movie_id=rating.movie_info.id only %}
+      {% endfor %}
     </div>
-    <div>
-        <div class="heading w-100">
-            <p class="reviews-title">Reviews</p>
-        </div>
-        <div class="d-flex flex-column">
-            {% for rating in ratings %}
-            <div class="row w-100 justify-content-center">
-                {% include 'web/review.html' with rating=rating only %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    <script>
-        function reputationSubmit(value, review_pk, user_pk) {
-            const getOtherStr = (value) => {
-              return value == "upvote" ? "downvote" : "upvote"
-            }
-        
-            var formButton = document.getElementById(value + "-button-" + review_pk)
-            var otherFormButton = document.getElementById(getOtherStr(value) + "-button-" + review_pk)
-            const isput = () => {
-              const arr = ['upvote', 'downvote']
-              return arr.some((el, ind, arr) => formButton.classList.contains(el) || otherFormButton.classList.contains(el))
-            }
-        
-            var isupvote = value == "upvote"
-        
-            var httpmethod
-            if (isput())
-              httpmethod = 'PUT'
-            else
-              httpmethod = formButton.classList.contains(isupvote ? "upvote" : "downvote") ? "DELETE" : "POST"
-        
-            var formData = {
-              'value': isupvote,
-              'review': review_pk,
-              'user': user_pk,
-            }
-        
-            $.ajax({
-              url: '/review/vote/',
-              type: httpmethod,
-              headers: {
-                'X-CSRFToken': Cookies.get('csrftoken')
-              },
-              data: formData,
-              success: function (response) { }
-            })
-          }
-    </script>
+  </div>
 </div>
 {% endblock %}

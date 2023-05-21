@@ -9,20 +9,32 @@
 <link rel="stylesheet" href="{% static 'css/carousel.css' %}" />
 <script src="{% static 'js/deep-linking.js' %}"></script>
 <script src="{% static 'js/movie-preview.js' %}"></script>
-{{ urls|json_script:"urls" }}
 {% endblock %}
 
 {% block content %}
 
 <div class="carousels">
 
-    {% include 'web/carousel.html' with title="Upcoming" id='upcoming' movies=upcoming only %}
+    {% url 'upcoming' as upcoming_url %}
+    {% include 'web/carousel.html' with title="Upcoming" id='upcoming' movies=upcoming url=upcoming_url only %}
 
-    {% include 'web/carousel.html' with title="Popular" id='popular' movies=popular only %}
+    {% url 'popular' as popular_url %}
+    {% include 'web/carousel.html' with title="Popular" id='popular' movies=popular url=popular_url only %}
 
-    {% include 'web/carousel.html' with title="Top rated" id='top-rated' movies=top_rated only %}
+    {% url 'top-rated' as top_rated_url %}
+    {% include 'web/carousel.html' with title="Top rated" id='top-rated' movies=top_rated url=top_rated_url only %}
 
-    {% include 'web/carousel.html' with title="Latest" id='latest' movies=latest only %}
+    {% url 'now-playing' as now_playing_url %}
+    {% include 'web/carousel.html' with title="Now playing" id='now-playing' movies=now_playing url=now_playing_url only %}
+
+    {% url 'genre' 'action' as action_url %}
+    {% include 'web/carousel.html' with title="Action" id='action' movies=action url=action_url only %}
+
+    {% url 'genre' 'animation' as animation_url %}
+    {% include 'web/carousel.html' with title="Animation" id='animation' movies=animation url=animation_url only %}
+
+    {% url 'genre' 'horror' as horror_url %}
+    {% include 'web/carousel.html' with title="Horror" id='horror' movies=horror url=horror_url only %}
 
 </div>
 

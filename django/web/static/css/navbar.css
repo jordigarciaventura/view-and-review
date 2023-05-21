@@ -46,7 +46,7 @@
 
 .search-bar {
     display: flex;
-    height: 56px;
+    height: 46px;
     align-items: center;
     width: 512px;
     min-width: 100px;
@@ -87,7 +87,7 @@
     height: 100%;
     width: 64px;
     right: 0;
-    padding-right: 12px;
+    padding-right: 4px;
     align-items: center;
     background: none;
     border: none;
