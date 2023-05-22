@@ -5,4 +5,6 @@ if [ "$DJANGO_MIGRATE_DB_ON_STARTUP" != "False" ]; then
   python manage.py migrate --noinput
 fi
 
+python manage.py createsuperuser --noinput
+
 exec "$@"
