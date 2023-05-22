@@ -11,9 +11,9 @@ MIDDLEWARE += [
 ]
 
 CSP_DEFAULT_SRC = ("'none'",)
-CSP_SCRIPT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = ("'self'", "https://code.iconify.design", "https://code.jquery.com", "https://cdnjs.cloudflare.com", "https://cdn.jsdelivr.net")
 CSP_STYLE_SRC = ("'self'", "https://cdn.jsdelivr.net",)
-CSP_IMG_SRC = ("'self'", "https://m.media-amazon.com", "https://th.bing.com", "https://pics.filmaffinity.com", "https://i.ebayimg.com")
+CSP_IMG_SRC = ("'self'", "https://www.themoviedb.org/", "https://image.tmdb.org/t/p/")
 CSP_OBJECT_SRC = ("'none'",)
 CSP_MEDIA_SRC = ("'none'",)
 CSP_FRAME_SRC = ("'none'",)
