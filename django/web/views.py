@@ -148,15 +148,15 @@ class IndexView(generic.TemplateView):
         now_playing = movie_preview_parser(now_playing, poster_size="w342", count=10)
         context['now_playing'] = now_playing
         
-        action = api.get_movies_by_genre("action")["results"]
+        action = api.get_movies_by_genre_slug("action")["results"]
         action = movie_preview_parser(action, poster_size="w342", count=10)
         context['action'] = action
         
-        animation = api.get_movies_by_genre("animation")["results"]
+        animation = api.get_movies_by_genre_slug("animation")["results"]
         animation = movie_preview_parser(animation, poster_size="w342", count=10)
         context['animation'] = animation
         
-        horror = api.get_movies_by_genre("horror")["results"]
+        horror = api.get_movies_by_genre_slug("horror")["results"]
         horror = movie_preview_parser(horror, poster_size="w342", count=10)
         context['horror'] = horror
         
@@ -598,7 +598,7 @@ class GenreView(generic.TemplateView):
         genre_name = api.get_genre_name(genre_id)
         context['title'] = genre_name
         
-        movies = api.get_movies_by_genre(genre_id)["results"]
+        movies = api.get_movies_by_genre_id(genre_id)["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
         return context
     
