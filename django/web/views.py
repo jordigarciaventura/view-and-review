@@ -177,6 +177,16 @@ class MovieView(generic.TemplateView):
         movie = movie_section_parser(movie)
         context['movie'] = movie
         
+        # Add user lists
+        if self.request.user.is_authenticated:
+            user = self.request.user
+            favlist   = Favlist.objects.filter(user=user)
+            watchlist = Watchlist.objects.filter(user=user)
+            if favlist.exists() and favlist.filter(user=user, movie=movie['id']).exists():
+                movie['favlist'] = True
+            if watchlist.exists() and watchlist.filter(user=user, movie=movie['id']).exists():
+                movie['watchlist'] = True
+        
         # User Rating
         user_rating = None
         if self.request.user.is_authenticated:
@@ -539,6 +549,8 @@ class UpcomingView(generic.TemplateView):
         
         movies = api.upcoming()["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
 
 
@@ -551,6 +563,8 @@ class PopularView(generic.TemplateView):
         
         movies = api.popular()["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
     
     
@@ -563,6 +577,8 @@ class TopRatedView(generic.TemplateView):
         
         movies = api.top_rated()["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
     
 class NowPlayingView(generic.TemplateView):
@@ -574,6 +590,8 @@ class NowPlayingView(generic.TemplateView):
         
         movies = api.now_playing()["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
     
 class SimilarView(generic.TemplateView):
@@ -585,6 +603,8 @@ class SimilarView(generic.TemplateView):
         
         movies = api.get_similar(kwargs['movie_id'])["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
         
     
@@ -600,6 +620,8 @@ class GenreView(generic.TemplateView):
         
         movies = api.get_movies_by_genre_id(genre_id)["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
     
 class YearView(generic.TemplateView):
@@ -611,6 +633,8 @@ class YearView(generic.TemplateView):
         
         movies = api.get_movies_by_year(kwargs['year'])["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context
     
 class SearchView(generic.TemplateView):
@@ -623,6 +647,8 @@ class SearchView(generic.TemplateView):
         query = self.request.GET.get('query')
         movies = api.search(query)["results"]
         context['movies'] = movie_preview_parser(movies, poster_size="w342")
+        if self.request.user.is_authenticated:
+            mark_context_icons(context, self.request.user, ['movies'])
         return context                
 
 def search(request):  
