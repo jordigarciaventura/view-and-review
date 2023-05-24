@@ -135,7 +135,9 @@
           {% if actor.profile_path %}
             <img src="{{ actor.profile_path }}" property="image" />
           {% else %}
-            <div class="empty"></div>
+          <div class="no-profile-image">
+            <span class="iconify" data-icon="ic:round-account-circle"></span>
+          </div>          
           {% endif %}
           
           <div class="info">

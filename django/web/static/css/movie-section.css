@@ -246,7 +246,7 @@
     height: 96px;
 }
 
-.actor img, .empty {
+.actor img, .no-profile-image {
     display: flex;
     aspect-ratio: 1/1;
     object-fit: cover;
@@ -254,6 +254,12 @@
     height: 100%;
     border: 0;
     border-radius: 50%;
+}
+
+.no-profile-image svg {
+    height: 100%;
+    width: 100%;
+    color: rgb(155, 155, 155);
 }
 
 .actor .empty {
