@@ -1,7 +1,7 @@
-<div class="movie-carousel">
+<div class="movie-carousel" vocab="http://schema.org/" typeof="MovieSeries">
 
-    <div class="movie-carousel-heading">
-        <a id="{{ id }}" class="section-title step" href={{url}} >{{ title }}</a>
+    <div class="movie-carousel-heading" property="name">
+        <a id="{{ id }}" class="section-title step" href={{url}} property="url">{{ title }}</a>
         <span class="iconify s24" data-icon="material-symbols:arrow-back-ios-new-rounded" data-flip="horizontal"></span>
     </div>
     <div class="carousel">
