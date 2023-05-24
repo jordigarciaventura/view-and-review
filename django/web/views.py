@@ -517,8 +517,13 @@ def movie_section_parser(movie_details):
     cast = api.get_movie_credits(filtered_details['id'])
     filtered_details['directors'] = set(x['name'] for x in api.get_directors(cast))
     filtered_details['writers'] = set(x['name'] for x in api.get_writers(cast))
-    properties = ['name', 'character', 'profile_path']
-    filtered_details['actors'] = sorted([get_dict_keys(x, properties) for x in api.get_actors(cast)], key=lambda x: x['profile_path'] == None)
+    
+    actors = api.get_actors(cast)
+    actors_set = set()
+    properties = ['name', 'character', 'profile_path', 'popularity']
+    unique_actors = [get_dict_keys(actor, properties) for actor in actors if actor['name'] not in actors_set and not actors_set.add(actor['name'])]
+    filtered_details['actors'] = sorted(unique_actors, key=lambda x: 0 if x['profile_path'] == None else x['popularity'], reverse=True)
+    
     for i in range(len(filtered_details['actors'])):
         # Change profile path to url
         profile_path = filtered_details['actors'][i]['profile_path']
