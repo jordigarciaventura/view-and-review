@@ -5,7 +5,8 @@
     margin: auto;
     padding: 0px 24px;
     align-content: center;
-    height: 100%;
+    margin-bottom: 100px;
+    width: 100%;
 }
 
 .list .title {

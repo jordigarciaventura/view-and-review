@@ -148,8 +148,11 @@ def get_actors(movie_cast):
 def get_similar(movie_id):
     return requests.get(f"{endpoint}/movie/{movie_id}/similar", headers=headers).json()
 
-def get_movies_by_genre(genre):
-    genre_id = get_genre_id(genre)
+def get_movies_by_genre_slug(genre_slug):
+    genre_id = get_genre_id(genre_slug)
+    return get_movies_by_genre_id(genre_id)
+
+def get_movies_by_genre_id(genre_id):
     return requests.get(f"{endpoint}/discover/movie", headers=headers, params={"with_genres": genre_id}).json()
 
 def get_movies_by_year(year):

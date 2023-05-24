@@ -24,7 +24,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', "foo")
 
 DEBUG = int(os.environ.get("DEBUG", 0))
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', "localhost").split(' ')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', "*").split(' ')
 
 # Application definition
 
@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    "whitenoise.runserver_nostatic",
     'django.contrib.staticfiles',
     'web',
     'bootstrap5',
@@ -233,3 +234,50 @@ COMPRESS_PRECOMPILERS = (
 )
 
 COMPRESS_CSS_FILTERS = []
+
+
+# LOGGING
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt' : "%d/%b/%Y %H:%M:%S"
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': 'logs/debug.log',
+            'backupCount': 10,
+            'formatter': 'verbose',
+            'maxBytes': 5242880, # 5MB
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers':['console'],
+            'propagate': True,
+            'level':'DEBUG',
+        },
+        '': {
+            'handlers': ['file'],
+        }
+    }
+}

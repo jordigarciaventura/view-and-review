@@ -24,14 +24,16 @@ RUN poetry config virtualenvs.create false && \
 # Copy files
 COPY . .
 
-# Collect static files
-RUN python manage.py collectstatic --noinput --clear
+# Install development dependencies
+RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list
 
-# Creates a non-root user with an explicit UID and adds permission to access the /app folder
-# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 1000 --disabled-password --gecos "" appuser && chown -R appuser .
-USER appuser
+RUN apt update && \
+    apt install -y make \
+    --no-install-recommends firefox
+
+# Change PATH for installing geckodriver
+ENV PATH=${PATH}:./
 
 ENTRYPOINT [ "./entrypoint.sh" ]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]

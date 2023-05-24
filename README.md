@@ -17,7 +17,7 @@
 1. Copy the `secrets/env.template` file to `secrets/.env.dep` and fill it
 2. Run the containers:
     ```
-    docker compose -f docker-compose.dep.yml up  --build
+    docker compose -f docker-compose.dep.yml up --build
     ```
 3. Visit http://localhost
 
@@ -39,7 +39,7 @@
     ```
 5. Run the containers:
     ```
-    docker compose -f docker-compose.deps.yml up  --build
+    docker compose -f docker-compose.deps.yml up --build
     ```
 6. Visit https://localhost
 
