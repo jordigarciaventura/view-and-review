@@ -1,5 +1,5 @@
 <div class="radial-progress">
-    <div class="score-text">{% if value != 0%}{{ value }}{% else %}-{%endif%}</div>
+    <div class="score-text" property="ratingValue">{% if value != 0%}{{ value }}{% else %}-{%endif%}</div>
     <div class="progress-circle" role="progressbar" aria-valuenow="{{ value }}" aria-valuemin="0"
         aria-valuemax="100" style="background: radial-gradient(closest-side, #222222 79%, transparent 80% 100%),
         conic-gradient(hsl(calc({{ value }} * 1.2), 100%, 50%) {{ value }}%, #606060 0)"></div>

@@ -1,7 +1,7 @@
-<div id="{{ id }}" class="score">
+<div id="{{ id }}" class="score" vocab="http://schema.org/" typeof="AggregateRating">
     {% include 'web/score.html' with value=score.value only %}
     <div class="score-details">
-        <div class="score-source">{{ score.source }}</div>
-        <div class="score-amount">{{ score.count }}</div>
+        <div class="score-source" property="author">{{ score.source }}</div>
+        <div class="score-amount" property="ratingCount">{{ score.count }}</div>
     </div>
 </div>
