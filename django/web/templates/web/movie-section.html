@@ -21,16 +21,16 @@
 {% endblock %}
 
 {% block content %}
-<div id="movie-section">
+<div id="movie-section" vocab="http://schema.org/" typeof="Movie" >
 
   <div class="banner">
   
-    <div class="poster">
+    <div class="poster" property="image">
       <img src="{{ movie.poster }}" draggable="false">
     </div>
 
     <div class="cover">
-      <img src="{{ movie.cover }}" draggable="false">
+      <img src="{{ movie.cover }}" draggable="false" property="image">
       <div class="trailer">
         <div class="movie-option play-option s64" data-url="{% url 'trailer' movie.id %}">
           <span class="iconify movie-option-icon s42"
@@ -89,7 +89,7 @@
 
   <div class="genres-box">
     {% for genre in movie.genres %}
-    <a class="genre" href="{% url 'genre' genre|slugify %}">
+    <a class="genre" href="{% url 'genre' genre|slugify %}" property="genre" >
       {{ genre }}
     </a>
     {% endfor %}
@@ -98,49 +98,51 @@
   <div id="all">
     <div id="info">
       <div id="prev">
-        <div id="title" class="title">{{ movie.title }}</div>
+        <div id="title" class="title" property="name" >{{ movie.title }}</div>
         <div class="date-time">
           <div class="icon-inf">
             <span class="iconify" data-icon="material-symbols:calendar-today-rounded" data-width="25"
               data-height="25"></span>
-            <div class="big">{{ movie.release_date }}</div>
+            <div class="big" property="datePublished" >{{ movie.release_date }}</div>
           </div>
           <div class="icon-inf">
             <span class="iconify" data-icon="mdi:clock-time-four-outline" data-width="25" data-height="25"></span>
-            <div class="big">{{ movie.runtime }}</div>
+            <div class="big" property="duration" >{{ movie.runtime }}</div>
           </div>
         </div>
 
       </div>
-      <div id="text">{{ movie.overview }}</div>
+      <div id="text" property="abstract">{{ movie.overview }}</div>
     </div>
 
     {% if movie.directors %}
       <div class="credit">
         <div class="what">Directed by</div>
-        <div>{{ movie.directors|join:", " }}</div>
+        <div property="director" >{{ movie.directors|join:", " }}</div>
       </div>
     {% endif %}
 
     {% if movie.writers %}
       <div class="credit">
         <div class="what">Written by</div>
-        <div>{{ movie.writers|join:", " }}</div>
+        <div property="author">{{ movie.writers|join:", " }}</div>
       </div>
     {% endif %}
 
     <div id="cast" class="cast">
       {% for actor in movie.actors %}
-        <div class="actor">
+        <div class="actor" property="actor" typeof="PerformanceRole">
           {% if actor.profile_path %}
-            <img src="{{ actor.profile_path }}" />
+            <img src="{{ actor.profile_path }}" property="image" />
           {% else %}
             <div class="empty"></div>
           {% endif %}
           
           <div class="info">
-            <div class="name">{{ actor.name }}</div>
-            {% if actor.character %}<div class="character">{{ actor.character }}</div>{% endif %}
+            <div typeof="Person">
+              <span class="name" property="name">{{ actor.name }}</span>
+            </div>
+            {% if actor.character %}<span class="character" property="characterName">{{ actor.character }}</span>{% endif %}
           </div>
         </div>
       {% endfor %}

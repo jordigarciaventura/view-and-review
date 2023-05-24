@@ -261,6 +261,11 @@
     border-radius: 50%;
 }
 
+.actor .info {
+    display: flex;
+    flex-direction: column;
+}
+
 .actor .name {
     font-size: 16px;
     font-weight: 700;
