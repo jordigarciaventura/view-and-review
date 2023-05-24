@@ -25,7 +25,8 @@ $(document).on('submit', '#review-form', e => {
             $('#user-review-container').css('display', 'flex');
             $('#add-review').css('display', 'flex');
             $('.user-review').css('display', 'flex');
-            
+            $('.user-review .options').css('display', 'flex');
+
             $('.user-review').find('.title').val(title);
             $('.user-review').find('.body').val(content);
             $('.user-review').find('.user').text("You");

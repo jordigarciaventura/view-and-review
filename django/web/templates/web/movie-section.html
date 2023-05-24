@@ -180,7 +180,7 @@
       </form>
       
       <div id="user-review-container" class="{% if not user_rating.review %}hidden{% endif %}">
-        {% include 'web/user-review.html' with rating=user_rating movie_id=movie.id  %}
+        {% include 'web/user-review.html' with rating=user_rating movie_id=movie.id %}
       </div>
     </div>
 
