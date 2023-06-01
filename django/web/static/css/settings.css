@@ -1,0 +1,116 @@
+.container {
+    margin: auto;
+    max-width: 427px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.container .title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 64px;
+}
+
+.settings {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.setting {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.setting * {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.setting .name {
+    display: flex;
+    width: 80px;
+    justify-content: flex-end;
+    font-size: 16px;
+    color: #A9A9A9;
+    margin: 0;
+}
+
+.group {
+    border-top: 1px solid #A9A9A9;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.user-input {
+    display: flex;
+    flex: 1;
+    gap: 17px;
+    min-width: 0;
+    width: 0;
+}
+
+#change-username {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px;
+
+    height: 36px;
+
+    background: #2D2D2D;
+    color: #CBCBCB;
+    border-radius: 9px;
+    border: none;
+}
+
+#username-input {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    padding: 10px;
+    gap: 10px;
+
+    height: 36px;
+
+    background-color: #2D2D2D;
+    border-radius: 5px;
+    min-width: 0;
+
+    flex: 1;
+}
+
+#request-password {
+    display: flex;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    background-color: #2D2D2D;
+    border-radius: 9px;
+    padding: 10px;
+    color: #CBCBCB;
+    border: none;
+}
+
+#delete-account {
+    display: flex;
+    height: 36px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(170, 71, 71, 0.8);
+    color: #DD8686;
+    border-radius: 9px;
+    padding: 10px;
+}

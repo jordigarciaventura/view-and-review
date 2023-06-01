@@ -361,7 +361,8 @@ def userUpdateView(request):
     
     request.user.username = new_username
     request.user.save()
-    return HttpResponse()
+    next = request.POST.get('next', '/')
+    return HttpResponseRedirect(next)
 
 
 @require_http_methods(['GET', 'POST'])
