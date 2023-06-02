@@ -1,10 +1,20 @@
-{% extends 'base_generic.html' %} {% block content %}
-<form id="confirm-form" method="POST">
-  {% csrf_token %}
+{% extends 'base_generic.html' %} 
 
-  <p>Are you sure you want to delete your user <b>{{object}}</b>?</p>
+{% block title %}
+<title>User Deletion - View & Review</title>
+{% endblock %}
 
-  <input type="submit" value="Confirm" id="confirm-button" />
-</form>
-
+{% block content %}
+<main>
+  <section>
+    <form id="confirm-form" method="POST">
+      {% csrf_token %}
+    
+      <p>Are you sure you want to delete your user <b>{{object}}</b>?</p>
+    
+      <input type="submit" value="Confirm" id="confirm-button" />
+    </form>
+  </section>
+</main>
+  
 {% endblock %}
