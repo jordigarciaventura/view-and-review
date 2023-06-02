@@ -15,7 +15,7 @@ class ReviewForm(forms.ModelForm):
             'content': ''
         }
         widgets = {
-            'title': forms.TextInput(attrs={'placeholder': 'Title', 'class': 'form-control form-title'}),
+            'title': forms.Textarea(attrs={'placeholder': 'Title', 'class': 'form-control form-title'}),
             'content': forms.Textarea(attrs={'placeholder': 'Content', 'class': 'form-control form-content', 'rows': 5}),
         }
 

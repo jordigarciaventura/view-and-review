@@ -11,7 +11,7 @@
     <div class="content">
         <div class="header">
             <div class="info">
-                <input id="edit_id_title" type="text" class="title" value="{{ rating.review.title }}" readonly property="name">
+                <textarea id="edit_id_title" class="title" readonly property="name">{{ rating.review.title }}</textarea>
                 <div class="user" property="author">{% if user.is_authenticated and rating.user == user %}You{% else %}{{rating.user}}{% endif %}</div>
             </div>
             <div class="rating-box" property="reviewRating" typeof="Rating">

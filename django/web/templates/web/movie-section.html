@@ -31,12 +31,12 @@
 
     <div class="cover">
       <img src="{{ movie.cover }}" draggable="false" property="image">
-      <div class="trailer">
-        <div class="movie-option play-option s64" data-url="{% url 'trailer' movie.id %}">
-          <span class="iconify movie-option-icon s42"
+      <div class="trailer play-option" data-url="{% url 'trailer' movie.id %}">
+        <div class="movie-option">
+          <span class="iconify movie-option-icon"
               data-icon="material-symbols:play-arrow-rounded"></span>
         </div>
-        <div>Play trailer</div> 
+        <p>Play trailer</p> 
       </div>
     </div>
 
@@ -62,7 +62,7 @@
           </div>
         </div>
       </div>
-  
+
       <div id="options-box">
         <div class="option">
           <div class="movie-option favlist-option s42" data-url="{% url 'favlist' movie.id %}" data-favlist="{{ movie.favlist }}">
