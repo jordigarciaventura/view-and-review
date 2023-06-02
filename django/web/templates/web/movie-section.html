@@ -46,7 +46,7 @@
         {% include 'web/score-details.html' with score=score id='score' only %}
       </div>
   
-      <div class="star-box">
+      <div id="main-star-box" class="star-box">
         <p class="headline">Your rating</p>
         <div class="content">
           {% if user_rating and user_rating.review %}

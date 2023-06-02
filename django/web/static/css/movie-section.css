@@ -427,7 +427,7 @@
         margin-bottom: 110px;
     }
 
-    .star-box {
+    #main-star-box {
         position: absolute;
         bottom: -56px;
     }
@@ -444,7 +444,7 @@
         left: 0;
     }
 
-    .star-box {
+    #main-star-box {
         right: 0;
     }
 }
