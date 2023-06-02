@@ -104,7 +104,7 @@
     border: none;
 }
 
-#delete-account {
+#delete-button {
     display: flex;
     height: 36px;
     align-items: center;
