@@ -1,22 +1,21 @@
-<div class="user-review" data-review-url="{% url 'review' movie_id %}">
+<div class="user-review" data-review-url="{% url 'review' movie_id %}" vocab="http://schema.org/" typeof="Review">
     {% if show_movie %}
-    <div class="movie">
+    <div class="movie" typeof="itemReviewed">
         {% include 'web/movie-preview.html' with movie=movie %}
     </div>
     {% endif %}
-    <div class="review-box">
+    <div class="review-box" typeof="associatedReview">
         {% include 'web/review.html' with rating=rating ro=True user_rating=True movie_id=movie_id %}
-        {% if user == rating.user %}
-            <div class="options">
-                <button class="cancel">Cancel</button>
-                <button id="save-changes" class="save">Save changes</button>
-                <div id="delete-button" class="delete">
-                    <span class="iconify" data-icon="material-symbols:delete-outline-rounded"></span>
-                </div>
-                <div id="edit-button" class="edit">
-                    <span class="iconify" data-icon="material-symbols:edit-rounded"></span>
-                </div>
+        
+        <div class="options" {% if user != rating.user %}hidden{% endif %}>
+            <button class="cancel">Cancel</button>
+            <button id="save-changes" class="save">Save changes</button>
+            <div id="delete-button" class="delete">
+                <span class="iconify" data-icon="material-symbols:delete-outline-rounded"></span>
             </div>
-        {% endif %}
+            <div id="edit-button" class="edit">
+                <span class="iconify" data-icon="material-symbols:edit-rounded"></span>
+            </div>
+        </div>
     </div>
 </div>

@@ -12,3 +12,6 @@ static:
 
 clean:
 	rm -rf staticfiles
+
+test:
+	python /app/django/manage.py behave

@@ -11,14 +11,14 @@
 
 {% block content %}
 
-<div class="list">
+<section class="list">
     <div class="title">{{ title }}</div>
     <div class="content">
         {% for movie in movies %}
             {% include 'web/movie-preview.html' with movie=movie only %}
         {% endfor %}
     </div>
-</div>
+</section>
 
 
 {% endblock %}

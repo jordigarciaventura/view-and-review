@@ -33,3 +33,22 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # Referrer Policy
 SECURE_REFERRER_POLICY = 'same-origin'
 
+# Permissions Policy
+PERMISSIONS_POLICY = {
+    "accelerometer": [],
+    "ambient-light-sensor": [],
+    "autoplay": [],
+    "camera": [],
+    "display-capture": [],
+    "document-domain": [],
+    "encrypted-media": [],
+    "fullscreen": [],
+    "geolocation": [],
+    "gyroscope": [],
+    "interest-cohort": [],
+    "magnetometer": [],
+    "microphone": [],
+    "midi": [],
+    "payment": [],
+    "usb": [],
+}
