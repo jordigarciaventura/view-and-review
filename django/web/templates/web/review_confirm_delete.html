@@ -1,4 +1,10 @@
-{% extends 'base_generic.html' %} {% block content %}
+{% extends 'base_generic.html' %} 
+
+{% block title %}
+<title>Delete Rating - View & Review</title>
+{% endblock %}
+
+{% block content %}
 <form method="POST">
   {% csrf_token %}
 

@@ -20,6 +20,10 @@
 <script src="{% static 'js/movie-section.js' %}"></script>
 {% endblock %}
 
+{% block title %}
+<title>{{ movie.title }} - View & Review</title>
+{% endblock %}
+
 {% block content %}
 <div id="movie-section" vocab="http://schema.org/" typeof="Movie" >
 
