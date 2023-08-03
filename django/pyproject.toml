@@ -24,6 +24,7 @@ behave-django = "^1.4.0"
 behave-webdriver = "^0.3.1"
 django-permissions-policy = "^4.15.0"
 dj-database-url = "^2.0.0"
+python-dotenv = "^1.0.0"
 
 
 [build-system]
