@@ -5,7 +5,6 @@ services:
     env: docker
     dockerfilePath: Dockerfile
     dockerContext: .
-    dockerCommand: /bin/bash -c python manage.py migrate --noinput && gunicorn --bind 0.0.0.0:8000 project.wsgi
     repo: https://github.com/GEI-WP/view-and-review
     region: frankfurt
     branch: main

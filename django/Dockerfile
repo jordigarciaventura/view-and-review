@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-EXPOSE 8000
+EXPOSE $PORT
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -34,4 +34,4 @@ USER appuser
 
 ENTRYPOINT [ "./entrypoint.sh" ]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "project.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "project.wsgi"]
