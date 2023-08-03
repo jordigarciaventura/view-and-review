@@ -1,8 +1,8 @@
 FROM python:3.10-slim
 
+# Set port that gunicorn will listen to
 ARG PORT=8000
 ENV PORT=$PORT
-
 EXPOSE $PORT
 
 # Keeps Python from generating .pyc files in the container
@@ -11,7 +11,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-# Install python packages
+# Install python package manager
 RUN pip install poetry
 
 # Set current working directory
