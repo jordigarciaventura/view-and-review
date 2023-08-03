@@ -1,5 +1,8 @@
 FROM python:3.10-slim
 
+ARG PORT=8000
+ENV PORT=$PORT
+
 EXPOSE $PORT
 
 # Keeps Python from generating .pyc files in the container
@@ -34,4 +37,4 @@ USER appuser
 
 ENTRYPOINT [ "./entrypoint.sh" ]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:$PORT", "project.wsgi"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} project.wsgi"]
