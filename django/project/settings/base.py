@@ -11,6 +11,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import dj_database_url
 from pathlib import Path
 import os
 
@@ -80,16 +81,22 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get('DB_ENGINE', "django.db.backends.sqlite3"),
-        "NAME": os.environ.get('DB_NAME', BASE_DIR / "db.sqlite3"),
-        "USER": os.environ.get('DB_USER', "user"),
-        "PASSWORD": os.environ.get('DB_PASS', "password"),
-        "HOST": os.environ.get('DB_HOST', "localhost"),     # set in docker-compose.yml
-        "PORT": os.environ.get('DB_PORT', "5432"),     # default postgres port
-        "CONN_MAX_AGE": 60          # don't close connection after X seconds
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+        "USER": "user",
+        "PASSWORD": "password",
+        "HOST": "localhost",
+        "PORT": "5432",
+        "CONN_MAX_AGE": 60
     }
 }
 
+# Automatic database configuration from DATABASE_URL environment variable
+if (os.environ.get('DATABASE_URL', '')):
+    DATABASES['default'] = dj_database_url.config(
+        conn_max_age=600,
+        conn_health_checks=True
+    )
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -138,7 +145,7 @@ if not DEBUG:
     # and creating unique names for each version so they can safely be cached forever.
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-STATICFILES_FINDERS = ( 
+STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
     'compressor.finders.CompressorFinder',
@@ -230,7 +237,7 @@ BOOTSTRAP5 = {
     },
 }
 
-COMPRESS_PRECOMPILERS = (    
+COMPRESS_PRECOMPILERS = (
     ('text/x-scss', 'django_libsass.SassCompiler'),
 )
 
