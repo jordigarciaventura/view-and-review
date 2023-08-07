@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENV_PATH=/etc/secrets/.env
+ENV_PATH=.env
 
 # Load environment variables
 if [[ -f  $ENV_PATH ]] ; then
