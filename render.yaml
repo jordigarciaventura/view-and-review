@@ -17,6 +17,8 @@ services:
       fromDatabase:
         name: view-and-review-db
         property: connectionString   
+    envVarGroups:
+    - name: view-and-review
 
 databases:
   - name: view-and-review-db

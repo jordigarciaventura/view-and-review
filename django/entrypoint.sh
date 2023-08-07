@@ -1,10 +1,12 @@
 #!/bin/bash
 
+ENV_PATH=/etc/secrets/.env
+
 # Load environment variables
-if [[ -f x.txt ]] ; then
+if [[ -f  $ENV_PATH ]] ; then
   echo "Loading environment variables..."
 else
-  echo 'File ".env" is not there, aborting.'
+  echo "File $ENV_PATH not found, aborting."
   exit 1
 fi
 
