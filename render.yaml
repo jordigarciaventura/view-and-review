@@ -11,18 +11,12 @@ services:
     rootDir: django
     healthCheckPath: /health
     envVars:
-      - key: DEBUG
-        value: 0
-      - key: DJANGO_MIGRATE_DB_ON_STARTUP
-        value: true
-      - key: SECRET_KEY
-        generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: view-and-review-db
-          property: connectionString   
-      - key: DJANGO_SETTINGS_MODULE
-        value: project.settings.deps
+    - key: SECRET_KEY
+      generateValue: true
+    - key: DATABASE_URL
+      fromDatabase:
+        name: view-and-review-db
+        property: connectionString   
 
 databases:
   - name: view-and-review-db
