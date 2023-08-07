@@ -1,5 +1,8 @@
 #!/bin/bash
 
+ls -a
+ls -a /etc/secrets
+
 # Apply database migrations
 if [ "$DJANGO_MIGRATE_DB_ON_STARTUP" != "false" ]; then
   echo "Running database migrations..."
