@@ -9,7 +9,7 @@ services:
     region: frankfurt
     branch: main
     rootDir: django
-    healthCheckPath: /
+    healthCheckPath: /health
     envVars:
       - key: DEBUG
         value: 0

@@ -35,7 +35,9 @@ urlpatterns = [
     
     path('list/similar/<movie_id>', views.SimilarView.as_view(), name='similar'),
     path('list/genre/<slug:genre>/', views.GenreView.as_view(), name='genre'), 
-    path('list/year/<int:year>/', views.YearView.as_view(), name='year'),    
+    path('list/year/<int:year>/', views.YearView.as_view(), name='year'),
+    
+    path('health/', views.healthCheck, name='health')    
 ]
 
 urlpatterns += staticfiles_urlpatterns()

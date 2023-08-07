@@ -666,3 +666,6 @@ def search(request):
     movies = movie_preview_parser(movies, poster_size="w92", count=10)
     
     return JsonResponse(movies, safe=False)
+
+def healthCheck(request):
+    return HttpResponse(status=200)
