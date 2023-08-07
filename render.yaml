@@ -1,5 +1,16 @@
 envVarGroups:
   - name: view-and-review-env
+    envVars:
+    - key: DJANGO_SUPERUSER_USERNAME
+      sync: false
+    - key: DJANGO_SUPERUSER_PASSWORD
+      sync: false
+    - key: DJANGO_SUPERUSER_EMAIL
+      sync: false
+    - key: DJANGO_MIGRATE_DB_ON_STARTUP
+      value: true
+    - key: PORT
+      sync: false
 
 services:
   - type: web
