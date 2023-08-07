@@ -15,6 +15,9 @@ import dj_database_url
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import subprocess
+
+subprocess.run('ls -a', shell=True)
 
 # Load environment variables
 load_dotenv()
