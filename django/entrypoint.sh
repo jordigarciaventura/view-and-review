@@ -15,7 +15,7 @@ while read -r LINE; do
     ENV_VAR="$(echo $LINE | envsubst)"
     eval "declare $ENV_VAR"
   fi
-done < .env
+done < $ENV_PATH
 
 # Apply database migrations
 if [ "$DJANGO_MIGRATE_DB_ON_STARTUP" != "False" ]; then
