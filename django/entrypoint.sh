@@ -1,7 +1,9 @@
 #!/bin/bash
 
-ls -a
-ls -a /etc/secrets
+# Load environment variables
+set -a
+source .env
+set +a
 
 # Apply database migrations
 if [ "$DJANGO_MIGRATE_DB_ON_STARTUP" != "false" ]; then
