@@ -2,7 +2,7 @@
 
 # Load environment variables
 set -a
-source .env
+source /etc/secrets/.env
 set +a
 
 # Apply database migrations
