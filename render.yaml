@@ -1,15 +1,29 @@
 envVarGroups:
   - name: view-and-review-env
     envVars:
+    - key: DJANGO_MIGRATE_DB_ON_STARTUP
+      value: true
+    - key: DEBUG
+      value: 0
+    - key: DJANGO_SETTINGS_MODULE
+      value: project.settings.deps
     - key: DJANGO_SUPERUSER_USERNAME
       sync: false
     - key: DJANGO_SUPERUSER_PASSWORD
       sync: false
     - key: DJANGO_SUPERUSER_EMAIL
       sync: false
-    - key: DJANGO_MIGRATE_DB_ON_STARTUP
-      value: true
     - key: PORT
+      sync: false
+    - key: ALLOWED_HOSTS
+      sync: false
+    - key: API_KEY
+      sync: false
+    - key: TMDB_BEARER_TOKEN
+      sync: false
+    - key: EMAIL_USER
+      sync: false
+    - key: EMAIL_PASSWORD
       sync: false
 
 services:
@@ -32,6 +46,7 @@ services:
         name: view-and-review-db
         property: connectionString   
     - fromGroup: view-and-review-env
+
 
 databases:
   - name: view-and-review-db
