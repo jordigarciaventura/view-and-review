@@ -2,6 +2,13 @@ FROM python:3.10-slim
 
 EXPOSE 8000
 
+# Install development dependencies
+RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list
+
+RUN apt update && \
+    apt install -y make \
+    --no-install-recommends firefox
+
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -23,13 +30,6 @@ RUN poetry config virtualenvs.create false && \
 
 # Copy files
 COPY . .
-
-# Install development dependencies
-RUN echo "deb http://deb.debian.org/debian/ unstable main contrib non-free" >> /etc/apt/sources.list.d/debian.list
-
-RUN apt update && \
-    apt install -y make \
-    --no-install-recommends firefox
 
 # Change PATH for installing geckodriver
 ENV PATH=${PATH}:./

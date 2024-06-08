@@ -7,7 +7,7 @@ tmdb = TMDb()
 # Configura la API key de TMDb
 movie = Movie()
 
-tmdb.api_key = environ.get('API_KEY')
+tmdb.api_key = environ.get('TMDB_API_KEY')
 
 endpoint="https://api.themoviedb.org/3/"
 image_endpoint="https://image.tmdb.org/t/p/"

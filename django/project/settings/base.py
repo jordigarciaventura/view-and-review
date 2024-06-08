@@ -21,11 +21,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 # Quick-start development settings
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
-SECRET_KEY = os.environ.get('SECRET_KEY', "foo")
-
-DEBUG = int(os.environ.get("DEBUG", 0))
-
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', "*").split(' ')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+DEBUG = int(os.environ.get("DEBUG"))
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(' ')
 
 # Application definition
 
@@ -80,23 +78,11 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE"      : f'django.db.backends.{os.environ.get("DB_ENGINE", "sqlite3")}',
-        "NAME"        : os.environ.get("DB_USER", BASE_DIR / "django"),
-        "USER"        : os.environ.get("DB_USER", "user"),
-        "PASSWORD"    : os.environ.get("DB_PASSWORD", "password"),
-        "HOST"        : os.environ.get("DB_HOST", "localhost"),
-        "PORT"        : os.environ.get("DB_PORT", "5432"),
-        "CONN_MAX_AGE": 60
-    }
-}
-
-# Automatic database configuration from DATABASE_URL environment variable
-if (os.environ.get('DATABASE_URL', '')):
-    DATABASES['default'] = dj_database_url.config(
+    "default": dj_database_url.config(
         conn_max_age=600,
         conn_health_checks=True
     )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -163,8 +149,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_PASSWORD')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 

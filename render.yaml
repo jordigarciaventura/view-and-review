@@ -2,7 +2,7 @@ envVarGroups:
   - name: view-and-review-env
     envVars:
     - key: DJANGO_MIGRATE_DB_ON_STARTUP
-      value: true
+      value: 1
     - key: DEBUG
       value: 0
     - key: DJANGO_SETTINGS_MODULE
@@ -17,20 +17,24 @@ envVarGroups:
       sync: false
     - key: ALLOWED_HOSTS
       sync: false
-    - key: API_KEY
+    - key: TMDB_API_KEY
       sync: false
     - key: TMDB_BEARER_TOKEN
       sync: false
-    - key: EMAIL_USER
+    - key: DJANGO_EMAIL_USER
       sync: false
-    - key: EMAIL_PASSWORD
+    - key: DJANGO_EMAIL_PASSWORD
       sync: false
+    - key: DATABASE_URL
+      sync: false
+    - key: SECRET_KEY
+      generateValue: true
 
 services:
   - type: web
     plan: free
     name: view-and-review
-    env: docker
+    runtime: docker
     dockerfilePath: Dockerfile
     dockerContext: .
     repo: https://github.com/GEI-WP/view-and-review
@@ -38,19 +42,3 @@ services:
     branch: main
     rootDir: django
     healthCheckPath: /health
-    envVars:
-    - key: SECRET_KEY
-      generateValue: true
-    - key: DATABASE_URL
-      fromDatabase:
-        name: view-and-review-db
-        property: connectionString   
-    - fromGroup: view-and-review-env
-
-
-databases:
-  - name: view-and-review-db
-    region: frankfurt
-    plan: free
-    databaseName: viewandreview
-    postgresMajorVersion: 15
